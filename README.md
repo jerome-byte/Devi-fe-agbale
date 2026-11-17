@@ -57,18 +57,14 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 - Tables OMS poids pour l'âge et règle de stagnation (18 nov.)
 - Vérification des calculs de l'application (20 nov.) et relecture santé du PDF (21 nov.)
 
-## État d'avancement — voix en éwé (17 nov.)
+## État d'avancement — voix en éwé (17 nov.) : terminé
 
 **Fait (Jérôme)**
 - Voix Meta MMS éwé réglée : dictionnaire de prononciation (prénoms, centres), pauses entre les phrases, vitesse 1,0.
 - 16 messages traduits et validés à l'écoute (`voix/catalogue_messages.xlsx`).
-- Tous les audios générés dans `voix/audio/messages/` : **99 audios** (10 prénoms × 2 centres), en `.ogg` (WhatsApp) et `.wav` (journal des messages).
+- Tous les audios générés dans `voix/audio/messages/` : **99 audios**, en `.ogg` (WhatsApp) et `.wav` (journal des messages), pour les 10 prénoms du dictionnaire (Kosi, Ama, Yao, Afi, Kodzo, Akosiwa, Komi, Sena, Abla, Mawuli) et les 2 centres (Sylvanus Olympio, Bè-Kpota).
+- Ajouter un prénom ou un centre : une ligne dans `voix/prononciation.json`, puis relancer `voix/02_generation_audios.ipynb`.
 - Remise à l'équipe : `voix/audio/messages/index_messages.json` (fichier à lire par l'application) et `voix/README_voix.md` (notice).
-
-**Limite actuelle**
-- Les messages avec prénom existent pour les **10 prénoms du dictionnaire** : Kosi (Kossi), Ama, Yao, Afi, Kodzo (Kodjo), Akosiwa (Akossiwa), Komi, Sena, Abla, Mawuli, et pour les **2 centres** : Sylvanus Olympio et Bè-Kpota.
-- Pour la démo, le formulaire d'inscription propose le prénom et le centre **dans une liste**. Un autre prénom demande de l'ajouter à `prononciation.json` et de relancer `voix/02_generation_audios.ipynb`.
-- Plus tard (après le dépôt du 22) : un petit service de synthèse à la demande pour prononcer n'importe quel prénom saisi en direct.
 
 **Reste à faire**
 - Transmettre `voix/README_voix.md` à Blaise et Cherif.

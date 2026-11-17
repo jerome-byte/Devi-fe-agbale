@@ -28,9 +28,8 @@ Chaque message a un `id` (ex. `rappel_j2`). Dans `index_messages.json`, `message
 **Prénoms disponibles (10)** : Kosi (ou Kossi), Ama, Yao, Afi, Kodzo (ou Kodjo), Akosiwa (ou Akossiwa), Komi, Sena, Abla, Mawuli.
 **Centres (2)** : `sylvanus_olympio` (Sylvanus Olympio), `be_kpota` (Bè-Kpota).
 
-Pour la démo, le formulaire d'inscription doit proposer le **prénom dans une liste** (ces 10 prénoms) et le **centre dans une liste** (ces 2 centres) :
-ainsi chaque enfant inscrit a ses audios. Un prénom hors liste n'a pas d'audio tant qu'on ne l'ajoute pas à `prononciation.json` et qu'on ne relance pas `02_generation_audios.ipynb`.
-Un service de synthèse à la demande (n'importe quel prénom saisi en direct) est prévu après le dépôt du 22 novembre.
+Le formulaire d'inscription propose le **prénom dans une liste** (ces 10 prénoms) et le **centre dans une liste** (ces 2 centres) : chaque enfant inscrit a ainsi ses audios.
+Pour ajouter un prénom ou un centre : une ligne dans `prononciation.json`, puis relancer `02_generation_audios.ipynb` (Jérôme).
 
 **Texte à afficher** dans le journal des messages : `modele_ewe`, en remplaçant `{prenom}` par le prénom de l'enfant et `{centre}` par le nom du centre (`centres`).
 
