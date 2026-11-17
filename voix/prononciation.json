@@ -1,0 +1,56 @@
+{
+  "prononciation": {
+    "Kosi": "Kɔssi",
+    "Kossi": "Kɔssi",
+    "Ama": "A-ma",
+    "Yao": "Yawo",
+    "Afi": "Affi",
+    "Kodzo": "Kɔdzo",
+    "Kodjo": "Kɔdzo",
+    "Akosiwa": "Ako-ssi-wa",
+    "Akossiwa": "Ako-ssi-wa",
+    "Komi": "Kɔmi",
+    "Sena": "Se-na",
+    "Abla": "Abla",
+    "Mawuli": "Mawuli",
+    "vaksin": "abɔta",
+    "Sylvanus Olympio": "Silvanus Olimpio"
+  },
+  "lexique": {
+    "vaccin": "abɔta",
+    "bienvenue": "Woèzɔnlo"
+  },
+  "reglages": {
+    "bruit": 0.667,
+    "graine": 42,
+    "vitesse": 1.0,
+    "vitesse_prenom_seul": 0.9,
+    "pause_phrase_s": 0.45,
+    "pause_virgule_s": 0.2
+  },
+  "messages_valides": {
+    "bienvenue": {
+      "fr": "Bienvenue. Votre enfant est maintenant inscrit dans le carnet ɖevi ƒe agbalẽ.",
+      "ewe_voix": "Woèzɔnlo! Ŋdi na wò. Wotsɔ viò ƒe ŋkɔ ŋlɔ ɖe ɖevi ƒe agbalẽ la me fifia."
+    },
+    "rappel_vaccin": {
+      "fr": "Après-demain, votre enfant doit recevoir son vaccin au centre de santé. Ce vaccin est gratuit.",
+      "ewe_voix": "Le ŋkeke eve si gbɔna me la, mia vi la axɔ ye ƒe Abɔta ssi-ssi le dɔyɔƒe. Abɔta la , fe aɖeke mele eŋu o"
+    },
+    "rendez_vous_manque": {
+      "fr": "Votre enfant n'est pas venu à son rendez-vous de vaccin. Appuyez sur 1 si vous viendrez, sur 2 si vous avez un empêchement.",
+      "ewe_voix": "mi mé va do mia vi la ƒe abɔta-lao le eyĩ-ĩɣi si oɖo ne la o. Zi ŋu ŋlɔ-ŋlɔ ɖeka la di, ne mi àva dɔyɔƒe. zi ŋu ŋlɔ-ŋlɔ e-ve, ne nu aɖe xe emɔ na mi."
+    }
+  },
+  "notes": "Choix de Jérôme, notebook voix/01_test_mms_ewe.ipynb (17 nov. 2026). Textes 'ewe_voix' écrits phonétiquement pour MMS. Vitesse des messages confirmée : 1.0. Message rendez_vous_manque gardé long (choix de Jérôme). Centres de la démo : Sylvanus Olympio (voix : Silvanus Olimpio) et Bè-Kpota.",
+  "centres": {
+    "sylvanus_olympio": {
+      "nom_affiche": "Sylvanus Olympio",
+      "voix": "Silvanus Olimpio"
+    },
+    "be_kpota": {
+      "nom_affiche": "Bè-Kpota",
+      "voix": "Bè-Kpota"
+    }
+  }
+}

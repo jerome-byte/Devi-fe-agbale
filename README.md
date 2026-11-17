@@ -57,6 +57,23 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 - Tables OMS poids pour l'âge et règle de stagnation (18 nov.)
 - Vérification des calculs de l'application (20 nov.) et relecture santé du PDF (21 nov.)
 
+## État d'avancement — voix en éwé (17 nov.)
+
+**Fait (Jérôme)**
+- Voix Meta MMS éwé réglée : dictionnaire de prononciation (prénoms, centres), pauses entre les phrases, vitesse 1,0.
+- 16 messages traduits et validés à l'écoute (`voix/catalogue_messages.xlsx`).
+- Tous les audios générés dans `voix/audio/messages/` : **99 audios** (10 prénoms × 2 centres), en `.ogg` (WhatsApp) et `.wav` (journal des messages).
+- Remise à l'équipe : `voix/audio/messages/index_messages.json` (fichier à lire par l'application) et `voix/README_voix.md` (notice).
+
+**Limite actuelle**
+- Les messages avec prénom existent pour les **10 prénoms du dictionnaire** : Kosi (Kossi), Ama, Yao, Afi, Kodzo (Kodjo), Akosiwa (Akossiwa), Komi, Sena, Abla, Mawuli, et pour les **2 centres** : Sylvanus Olympio et Bè-Kpota.
+- Pour la démo, le formulaire d'inscription propose le prénom et le centre **dans une liste**. Un autre prénom demande de l'ajouter à `prononciation.json` et de relancer `voix/02_generation_audios.ipynb`.
+- Plus tard (après le dépôt du 22) : un petit service de synthèse à la demande pour prononcer n'importe quel prénom saisi en direct.
+
+**Reste à faire**
+- Transmettre `voix/README_voix.md` à Blaise et Cherif.
+- Jérôme : présentation PDF et notes du dépôt (21-22 nov.), puis envoi officiel.
+
 ## Organisation du dossier
 
 ```
@@ -66,10 +83,13 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 ├── Plan_prototype_repartition_taches.docx    plan détaillé (Word)
 ├── Plan_prototype_repartition_taches.pdf     plan détaillé (PDF)
 └── voix/
+    ├── README_voix.md                        notice voix pour Blaise et Cherif
     ├── 01_test_mms_ewe.ipynb                 réglages de la voix éwé (Colab)
-    ├── prononciation.json                    dictionnaire de prononciation + réglages
+    ├── 02_generation_audios.ipynb            génère tous les audios du catalogue (Colab)
+    ├── prononciation.json                    dictionnaire de prononciation, centres, réglages
     ├── catalogue_messages.xlsx               les 16 messages (français, éwé, éwé pour la voix)
-    └── audio/                                fichiers audio générés
+    └── audio/
+        └── messages/                         99 audios (.ogg WhatsApp + .wav) + index_messages.json
 ```
 
 Le plan détaillé, avec le calendrier et les cases à cocher, est dans `Plan_prototype_repartition_taches.pdf`.
