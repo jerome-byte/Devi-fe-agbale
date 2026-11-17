@@ -89,3 +89,14 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 ```
 
 Le plan détaillé, avec le calendrier et les cases à cocher, est dans `Plan_prototype_repartition_taches.pdf`.
+
+## Livrables de Gerson (référent médical) : qui les reçoit, où les mettre
+
+| Livrable de Gerson | Pour qui | Pour quoi faire | Où dans le projet |
+|---|---|---|---|
+| **Calendrier vaccinal du Togo** : vaccins, doses, âges | **Cherif** (Blaise en copie) | Calculer les dates de rendez-vous de chaque enfant et déclencher les rappels J-2, veille, jour J et rendez-vous manqué | `donnees_sante/calendrier_pev.csv` |
+| **Tables OMS poids pour l'âge** (garçons, filles) | **Cherif** et **Blaise** | Cherif calcule le z-score et l'alerte « croissance ». Blaise trace la courbe dans l'espace agent | `donnees_sante/oms_poids_age_garcons.csv` et `donnees_sante/oms_poids_age_filles.csv` |
+| **Règle de stagnation** et seuils d'alerte | **Cherif** | Décider quand on envoie le message `croissance` et quand on alerte l'agent | `donnees_sante/regles_croissance.md` |
+| **Vérification des calculs** (20 nov.) et **relecture santé du PDF** (21 nov.) | **Jérôme** | S'assurer que l'application ne donne pas de fausse date ou de fausse alerte, et que le dossier est juste médicalement | Pas de fichier : un retour écrit à Jérôme et à Cherif |
+
+Gerson dépose ses fichiers dans `donnees_sante/` du dépôt git (ou les envoie à Jérôme, qui les dépose) et prévient Cherif.
