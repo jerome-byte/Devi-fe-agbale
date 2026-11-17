@@ -23,25 +23,28 @@ Parcours de démonstration :
 
 1. **Inscription** de l'enfant par l'agent → QR et calendrier vaccinal créés.
 2. **Message vocal de bienvenue** en éwé sur WhatsApp.
-3. **Avance rapide** : rappel J-2, puis rendez-vous manqué → appel vocal, réponse 1 ou 2.
+3. **Avance rapide** : rappel J-2, puis rendez-vous manqué → vocal WhatsApp avec deux boutons, réponse 1 ou 2.
 4. **Scan au centre de santé** : vaccin prérempli, pesée, courbe OMS.
 5. **Tableau de bord** mis à jour.
 
-Outils : Next.js (PWA) · Supabase · WhatsApp Cloud API · Twilio Voice · Meta MMS (voix éwé et kabiyè) · tables OMS.
+Outils : Next.js (PWA) · Supabase · WhatsApp Cloud API · Meta MMS (voix éwé et kabiyè) · tables OMS.
+
+Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L'**appel vocal automatique** (Twilio Voice ou équivalent), pour les mères sans WhatsApp, est prévu pour la **finale du 10 décembre**.
 
 ## Tâches par membre
 
 ### Jérôme Akota — chef de projet, voix en éwé
 - Générer les messages vocaux éwé avec Meta MMS et les vérifier à l'écoute (18 nov.)
 - Assembler les segments (prénom + vaccin + centre) ; réenregistrer les phrases ratées (19 nov.)
-- Fournir les audios au journal des messages et à l'appel vocal (20 nov.)
+- Fournir les audios au journal des messages et aux messages WhatsApp (20 nov.)
 - Coordonner l'équipe ; rédiger le PDF et envoyer le dépôt officiel (21-22 nov.)
 
 ### Blaise Moune Tchoubou — applications
 - Projet Next.js + Supabase, comptes par rôle, mise en ligne sur Vercel (17 nov.)
 - Écran d'inscription avec QR et carte imprimable (18 nov.)
 - Espace agent : liste priorisée, scan QR, vaccin prérempli, pesée (19 nov.)
-- Envoi WhatsApp (19 nov.), appel vocal 1/2/3 et comptes de démo (20 nov.)
+- Envoi WhatsApp (19 nov.), boutons de réponse 1 / 2 et comptes de démo (20 nov.)
+- Appel vocal automatique (pour la finale)
 
 ### Cherif Tenga — moteur de règles, données, tableau de bord
 - Modèle de données (17 nov.) et environ 300 enfants fictifs (18 nov.)
@@ -57,13 +60,16 @@ Outils : Next.js (PWA) · Supabase · WhatsApp Cloud API · Twilio Voice · Meta
 ## Organisation du dossier
 
 ```
-ɖevi ƒe agbalẽ_Hack4Children_2026/
+ɖevi_ƒe_agbalẽ_Hack4Children_2026/
 ├── README.md                                 ce fichier
 ├── ɖevi ƒe agbalẽ_Hack4Children_2026.pdf     dossier de candidature
 ├── Plan_prototype_repartition_taches.docx    plan détaillé (Word)
 ├── Plan_prototype_repartition_taches.pdf     plan détaillé (PDF)
 └── voix/
-    └── 01_test_mms_ewe.ipynb                 test de la synthèse vocale éwé (Colab)
+    ├── 01_test_mms_ewe.ipynb                 réglages de la voix éwé (Colab)
+    ├── prononciation.json                    dictionnaire de prononciation + réglages
+    ├── catalogue_messages.xlsx               les 16 messages (français, éwé, éwé pour la voix)
+    └── audio/                                fichiers audio générés
 ```
 
 Le plan détaillé, avec le calendrier et les cases à cocher, est dans `Plan_prototype_repartition_taches.pdf`.
