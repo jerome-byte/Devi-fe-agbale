@@ -1,7 +1,9 @@
 # ɖevi ƒe agbalẽ — Hack4Children 2026 (UNICEF Togo)
 
 **Le carnet vivant de chaque enfant, de la naissance à 6 ans.**
-
+## mot de passe de la base deonne supabe
+devi-fe-agbale
+ecQm56Aj@devi-fe-agbale
 ## Le projet en bref
 
 Au Togo, le programme Wezou suit la mère et le nouveau-né jusqu'au 42e jour après l'accouchement. Ensuite, plus personne ne suit l'enfant de façon continue : vaccins, croissance, retards de développement, acte de naissance.
