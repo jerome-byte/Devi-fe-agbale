@@ -482,7 +482,7 @@ function Croissance({ enfant, auJour, educ }: { enfant: Enfant; auJour: string; 
           {etat.niveau !== "inconnu" && (
             <p className="mt-3 text-[0.88rem] text-muted">
               {etat.stagnation ? "Stagnation : " : ""}
-              {etat.detail}. Seuils de Gerson : à surveiller sous -2, à orienter sous -3. Courbes taille et IMC à venir.
+              {etat.detail}. Seuils : à surveiller sous -2, à orienter sous -3.
             </p>
           )}
         </CarteCorps>

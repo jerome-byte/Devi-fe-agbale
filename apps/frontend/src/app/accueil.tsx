@@ -105,7 +105,6 @@ const NAV = [
   { href: "#parcours", libelle: "Le parcours" },
   { href: "#espaces", libelle: "Pour qui" },
   { href: "#voix", libelle: "La voix en éwé" },
-  { href: "#equipe", libelle: "L'équipe" },
 ];
 
 function Entete() {
@@ -573,22 +572,19 @@ function Appel() {
 /* --------------------------------------------------------------- pied */
 
 function Pied() {
-  const equipe = [
-    { n: "Jérôme Akota", r: "Chef de projet, voix en éwé" },
-    { n: "Blaise Moune Tchoubou", r: "Applications" },
-    { n: "Cherif Tenga", r: "Données, règles, tableau de bord" },
-    { n: "Gerson Akagbe", r: "Référent médical" },
-  ];
+  const modules = ["Vaccination et rappels", "Croissance et nutrition", "Dépistage précoce", "Acte de naissance", "Annonces vocales"];
+  const acces = ["Espace agent de santé", "Espace garderie", "Tableau de bord de pilotage"];
   return (
-    <footer id="equipe" className="scroll-mt-20 bg-dark-950 text-white/70">
-      <div className="container-site grid gap-12 py-16 md:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1.4fr]">
+    <footer className="bg-dark-950 text-white/70">
+      <div className="container-site grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <Link href="/" className="flex items-center gap-2.5">
             <LogoMarque className="size-10" />
             <span className="font-vitrine text-xl font-bold text-white">ɖevi ƒe agbalẽ</span>
           </Link>
-          <p className="mt-5 max-w-sm text-sm leading-relaxed">Le carnet vivant de chaque enfant, de la naissance à 6 ans. Prototype présenté au Hack4Children 2026, UNICEF Togo.</p>
-          <p className="mt-4 text-xs text-white/45">Données de démonstration, aucune donnée réelle.</p>
+          <p className="mt-5 max-w-sm text-sm leading-relaxed">
+            Le carnet numérique de l&apos;enfant, de la naissance à 6 ans. Rappels vocaux en langue locale, suivi des vaccins et de la croissance, pilotage par zone.
+          </p>
         </div>
         <div>
           <p className="font-vitrine text-lg font-bold text-white">Navigation</p>
@@ -600,20 +596,24 @@ function Pied() {
                 </a>
               </li>
             ))}
-            <li>
-              <Link href="/connexion" className="transition hover:text-white">
-                Ouvrir la démo
-              </Link>
-            </li>
           </ul>
         </div>
         <div>
-          <p className="font-vitrine text-lg font-bold text-white">L&apos;équipe</p>
-          <ul className="mt-5 grid gap-3 text-sm sm:grid-cols-2">
-            {equipe.map((p) => (
-              <li key={p.n}>
-                <span className="block font-semibold text-white">{p.n}</span>
-                <span className="text-white/55">{p.r}</span>
+          <p className="font-vitrine text-lg font-bold text-white">Le carnet</p>
+          <ul className="mt-5 space-y-2.5 text-sm">
+            {modules.map((m) => (
+              <li key={m}>{m}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <p className="font-vitrine text-lg font-bold text-white">Accès</p>
+          <ul className="mt-5 space-y-2.5 text-sm">
+            {acces.map((a) => (
+              <li key={a}>
+                <Link href="/connexion" className="transition hover:text-white">
+                  {a}
+                </Link>
               </li>
             ))}
           </ul>
@@ -621,10 +621,13 @@ function Pied() {
       </div>
       <div className="border-t border-white/10">
         <div className="container-site flex flex-col items-center justify-between gap-3 py-6 text-xs text-white/50 sm:flex-row">
-          <span>Hack4Children 2026 · Lomé, Togo</span>
-          <Link href="/credits" className="transition hover:text-white">
-            Crédits photos
-          </Link>
+          <span>© 2026 ɖevi ƒe agbalẽ · Lomé, Togo</span>
+          <span className="flex items-center gap-5">
+            <span>Données de démonstration</span>
+            <Link href="/credits" className="transition hover:text-white">
+              Crédits photos
+            </Link>
+          </span>
         </div>
       </div>
     </footer>
