@@ -18,11 +18,20 @@ Ce dossier contient tout ce qu'il faut pour les brancher dans l'application et s
 
 | | Blaise (application) | Cherif (base de données, règles, tableau de bord) |
 |---|---|---|
-| **À prendre** | `index_messages.json`, les `.ogg`, la liste des 10 prénoms et des 2 centres | `index_messages.json` (ids, déclencheurs, chemins des audios), les `.ogg` pour l'envoi WhatsApp |
-| **À faire avec** | Proposer le prénom et le centre dans une liste à l'inscription ; jouer l'audio dans le carnet et le téléphone WhatsApp ; afficher le texte `modele_ewe` | Faire correspondre chaque code de message de la base à un `id` du catalogue (tableau plus bas) ; envoyer le bon `.ogg` sur WhatsApp ; lire l'audio dans le journal des messages du tableau de bord |
+| **À prendre** | `index_messages.json`, les `.ogg`, la liste des 10 prénoms et des 2 centres | `index_messages.json` (ids, déclencheurs, chemins des audios) |
+| **À faire avec** | Proposer le prénom et le centre dans une liste à l'inscription ; jouer l'audio dans le carnet ; afficher le texte `modele_ewe` ; **envoyer sur WhatsApp** les messages préparés par la base et enregistrer les réponses « 1 » / « 2 » | Faire correspondre chaque code de message de la base à un `id` du catalogue (tableau plus bas) ; **décider** quel message part, pour quel enfant, quel jour, avec quel `.ogg` (ligne dans la table `messages`) ; lire l'audio dans le journal des messages du tableau de bord |
 | **Où** | `voix/audio/messages/` | `voix/audio/messages/` |
 
 Prendre toujours le chemin donné par le champ `ogg` de `index_messages.json` (ex. `voix/audio/messages/rappel_veille__Ama__be_kpota.ogg`) : ne pas reconstruire le nom du fichier à la main.
+
+## Circuit d'un message (qui fait quoi)
+
+1. **Cherif — la base décide.** Le moteur de règles (`run_rules`) écrit une ligne dans la table `messages` : enfant, code du message, chemin du `.ogg`, statut « à envoyer ».
+2. **Blaise — le backend envoie.** Il lit les messages « à envoyer », envoie le `.ogg` sur WhatsApp (plus les boutons « 1 » / « 2 » pour `manque_3j`), puis passe le statut à « envoyé ».
+3. **Blaise — le backend reçoit la réponse.** Quand la mère touche 1 ou 2, WhatsApp appelle le webhook du backend : il enregistre la réponse dans la base et envoie `reponse_vient` ou `reponse_empechement`.
+4. **Cherif — la base alerte et affiche.** Une réponse « 2 » crée une alerte pour l'agent de santé ; le tableau de bord montre le journal des messages et les réponses.
+
+La clé WhatsApp reste uniquement sur le serveur (jamais dans l'application ni dans git).
 
 ## Comment trouver le bon audio
 

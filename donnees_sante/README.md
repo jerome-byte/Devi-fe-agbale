@@ -20,9 +20,9 @@ Notices détaillées : **`README_Cherif.md`** (base de données, règles, tablea
 
 | | Cherif (base de données, règles, tableau de bord) | Blaise (application) |
 |---|---|---|
-| **Calendrier vaccinal** | Le charger dans la base (sa table `vaccine_schedule`) ; calculer les dates de rendez-vous de chaque enfant ; déclencher `rappel_j2`, `rappel_veille`, `rappel_jour_j`, `manque_3j`, puis l'alerte agent à J+7 | Afficher le carnet (fait / à venir / en retard) ; au scan, proposer les doses dues et non faites |
+| **Calendrier vaccinal** | Le charger dans la base (sa table `vaccine_schedule`) ; calculer les dates de rendez-vous de chaque enfant ; décider quand partent `rappel_j2`, `rappel_veille`, `rappel_jour_j`, `manque_3j` (ligne dans la table `messages`, envoyée sur WhatsApp par le backend de Blaise), puis l'alerte agent à J+7 | Afficher le carnet (fait / à venir / en retard) ; au scan, proposer les doses dues et non faites |
 | **Tables OMS poids** | Les charger dans la base (sa table `who_weight_for_age`, une ligne par sexe et par mois) ; calculer le z-score à chaque pesée | Tracer la courbe : lignes −3, −2, médiane, +2, +3 et les points de l'enfant reliés |
-| **Règles de croissance** | Produire « à surveiller » (z < −2), « à orienter » (z < −3) et la stagnation (au moins 1 mois entre deux mesures, ou chute d'une ligne entière de z) ; envoyer `croissance` et `pesee` | Saisir poids et taille (couché avant 2 ans, debout après) ; afficher le résultat ; afficher « mesure à faire » (chaque mois avant 2 ans, tous les 3 mois après) |
+| **Règles de croissance** | Produire « à surveiller » (z < −2), « à orienter » (z < −3) et la stagnation (au moins 1 mois entre deux mesures, ou chute d'une ligne entière de z) ; décider quand partent `croissance` et `pesee` (même circuit) | Saisir poids et taille (couché avant 2 ans, debout après) ; afficher le résultat ; afficher « mesure à faire » (chaque mois avant 2 ans, tous les 3 mois après) |
 | **Où** | `donnees_sante/` | `donnees_sante/` (copié dans l'application par `scripts/sync-voix.mjs`) |
 
 ## Règles communes aux deux
@@ -31,6 +31,7 @@ Notices détaillées : **`README_Cherif.md`** (base de données, règles, tablea
 - **Mêmes règles de croissance partout**, exactement celles de `regles_croissance.md` (1 mois minimum, une ligne entière de z, seuils −2 et −3).
 - **Inscription d'un enfant déjà né depuis un moment** : permettre de saisir les vaccins déjà faits (avec leur date, d'après le carnet papier). Sinon l'enfant apparaît « en retard » dès son inscription et déclenche des relances par erreur.
 - **Jamais de diagnostic** dans l'application : seulement « normal », « à surveiller » ou « à orienter ».
+- **Envoi WhatsApp** : la base (Cherif) décide quel message part et quand ; le backend (Blaise) l'envoie et enregistre la réponse. Détail dans `voix/README_voix.md`, partie « Circuit d'un message ».
 - **Uniquement des enfants fictifs.**
 
 ## À venir (Gerson)
