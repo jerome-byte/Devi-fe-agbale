@@ -79,6 +79,9 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 ├── ɖevi ƒe agbalẽ_Hack4Children_2026.pdf     dossier de candidature
 ├── Plan_prototype_repartition_taches.docx    plan détaillé (Word)
 ├── Plan_prototype_repartition_taches.pdf     plan détaillé (PDF)
+├── apps/
+│   ├── frontend/                             application Next.js (voir apps/frontend/README.md)
+│   └── backend/                              backend à venir (voir apps/backend/README.md)
 └── voix/
     ├── README_voix.md                        notice voix pour Blaise et Cherif
     ├── 01_test_mms_ewe.ipynb                 réglages de la voix éwé (Colab)
