@@ -1,24 +1,24 @@
-﻿contact,age_libelle,age_valeur,age_unite,vaccin_code,vaccin_nom,dose,maladies,source,statut
-1,Naissance,0,jours,BCG,BCG,unique,Tuberculose,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-1,Naissance,0,jours,VPO,VPO 0,0,Poliomyélite,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-2,6 semaines,6,semaines,PENTA,DTC-HepB-Hib 1,1,"Diphtérie, Tétanos, Coqueluche, Hépatite B, Infections à Hib",PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-2,6 semaines,6,semaines,VPO,VPO 1,1,Poliomyélite,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-2,6 semaines,6,semaines,PNEUMO,Pneumo 1,1,Infections à pneumocoque,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-2,6 semaines,6,semaines,ROTA,Rota 1,1,Diarrhées à rotavirus,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-3,10 semaines,10,semaines,PENTA,DTC-HepB-Hib 2,2,"Diphtérie, Tétanos, Coqueluche, Hépatite B, Infections à Hib",PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-3,10 semaines,10,semaines,VPO,VPO 2,2,Poliomyélite,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-3,10 semaines,10,semaines,PNEUMO,Pneumo 2,2,Infections à pneumocoque,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-3,10 semaines,10,semaines,ROTA,Rota 2,2,Diarrhées à rotavirus,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-4,14 semaines,14,semaines,PENTA,DTC-HepB-Hib 3,3,"Diphtérie, Tétanos, Coqueluche, Hépatite B, Infections à Hib",PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-4,14 semaines,14,semaines,VPO,VPO 3,3,Poliomyélite,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-4,14 semaines,14,semaines,PNEUMO,Pneumo 3,3,Infections à pneumocoque,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-4,14 semaines,14,semaines,VPI,VPI 1,1,Poliomyélite,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-5,5 mois,5,mois,VAP,VAP 1 / R21,1,Paludisme,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-6,6 mois,6,mois,VAP,VAP 2 / R21,2,Paludisme,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-7,7 mois,7,mois,VAP,VAP 3 / R21,3,Paludisme,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-8,9 mois,9,mois,RR,RR 1,1,Rougeole et Rubéole,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-8,9 mois,9,mois,VAA,VAA,unique,Fièvre jaune,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-8,9 mois,9,mois,VPI,VPI 2,2,Poliomyélite,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-9,15 mois,15,mois,RR,RR 2,2,Rougeole et Rubéole,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-9,15 mois,15,mois,MENA,MenA,unique,Méningite à méningocoque A,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
-9,15 mois,15,mois,VAP,VAP 4 / R21,4,Paludisme,PEV .pdf fourni le 17 nov. 2026 (à confirmer par Gerson),à valider
+contact,age_libelle,age_valeur,age_unite,vaccin_code,vaccin_nom,dose,maladies,source,statut
+1,Naissance,0,jours,BCG,BCG,unique,Tuberculose,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+1,Naissance,0,jours,VPO,VPO 0,0,Poliomyélite,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+2,6 semaines,6,semaines,PENTA,DTC-HepB-Hib 1,1,"Diphtérie, Tétanos, Coqueluche, Hépatite B, Infections à Hib","Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+2,6 semaines,6,semaines,VPO,VPO 1,1,Poliomyélite,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+2,6 semaines,6,semaines,PNEUMO,Pneumo 1,1,Infections à pneumocoque,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+2,6 semaines,6,semaines,ROTA,Rota 1,1,Diarrhées à rotavirus,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+3,10 semaines,10,semaines,PENTA,DTC-HepB-Hib 2,2,"Diphtérie, Tétanos, Coqueluche, Hépatite B, Infections à Hib","Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+3,10 semaines,10,semaines,VPO,VPO 2,2,Poliomyélite,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+3,10 semaines,10,semaines,PNEUMO,Pneumo 2,2,Infections à pneumocoque,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+3,10 semaines,10,semaines,ROTA,Rota 2,2,Diarrhées à rotavirus,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+4,14 semaines,14,semaines,PENTA,DTC-HepB-Hib 3,3,"Diphtérie, Tétanos, Coqueluche, Hépatite B, Infections à Hib","Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+4,14 semaines,14,semaines,VPO,VPO 3,3,Poliomyélite,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+4,14 semaines,14,semaines,PNEUMO,Pneumo 3,3,Infections à pneumocoque,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+4,14 semaines,14,semaines,VPI,VPI 1,1,Poliomyélite,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+5,5 mois,5,mois,VAP,VAP 1 / R21,1,Paludisme,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+6,6 mois,6,mois,VAP,VAP 2 / R21,2,Paludisme,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+7,7 mois,7,mois,VAP,VAP 3 / R21,3,Paludisme,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+8,9 mois,9,mois,RR,RR 1,1,Rougeole et Rubéole,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+8,9 mois,9,mois,VAA,VAA,unique,Fièvre jaune,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+8,9 mois,9,mois,VPI,VPI 2,2,Poliomyélite,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+9,15 mois,15,mois,RR,RR 2,2,Rougeole et Rubéole,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+9,15 mois,15,mois,MENA,MenA,unique,Méningite à méningocoque A,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
+9,15 mois,15,mois,VAP,VAP 4 / R21,4,Paludisme,"Ministère de la Santé et de l'Hygiène Publique du Togo, Direction du PEV (confirmé par Gerson le 18 nov. 2026)",validé
