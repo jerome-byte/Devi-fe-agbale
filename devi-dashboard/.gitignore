@@ -1,0 +1,21 @@
+# Dépendances
+/node_modules
+
+# Build Next.js
+/.next
+/out
+/build
+*.tsbuildinfo
+next-env.d.ts
+
+# Variables d'environnement (ne jamais committer de clé)
+.env
+.env.local
+.env.*.local
+
+# Secrets locaux
+supabase_passwoed.txt
+
+# Divers
+.DS_Store
+*.log
