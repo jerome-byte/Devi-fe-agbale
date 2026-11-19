@@ -64,7 +64,7 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 **Fait (Jérôme)**
 - Voix Meta MMS éwé réglée : dictionnaire de prononciation (prénoms, centres), pauses entre les phrases, vitesse 1,0.
 - 16 messages traduits et validés à l'écoute (`voix/catalogue_messages.xlsx`).
-- Tous les audios générés dans `voix/audio/messages/` : **99 audios**, en `.ogg` (WhatsApp) et `.wav` (journal des messages), pour les 10 prénoms du dictionnaire (Kosi, Ama, Yao, Afi, Kodzo, Akosiwa, Komi, Sena, Abla, Mawuli) et les 2 centres (Sylvanus Olympio, Bè-Kpota).
+- Tous les audios générés dans `voix/audio/messages/` : **99 audios**, en `.ogg` (WhatsApp et lecteur du journal) et `.wav` (source), pour les 10 prénoms du dictionnaire (Kosi, Ama, Yao, Afi, Kodzo, Akosiwa, Komi, Sena, Abla, Mawuli) et les 2 centres (Sylvanus Olympio, Bè-Kpota).
 - Ajouter un prénom ou un centre : une ligne dans `voix/prononciation.json`, puis relancer `voix/02_generation_audios.ipynb`.
 - Remise à l'équipe : `voix/audio/messages/index_messages.json` (fichier à lire par l'application) et `voix/README_voix.md` (notice).
 
@@ -81,17 +81,39 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 ├── ɖevi ƒe agbalẽ_Hack4Children_2026.pdf     dossier de candidature
 ├── Plan_prototype_repartition_taches.docx    plan détaillé (Word)
 ├── Plan_prototype_repartition_taches.pdf     plan détaillé (PDF)
-└── voix/
-    ├── README_voix.md                        notice voix pour Blaise et Cherif
-    ├── 01_test_mms_ewe.ipynb                 réglages de la voix éwé (Colab)
-    ├── 02_generation_audios.ipynb            génère tous les audios du catalogue (Colab)
-    ├── prononciation.json                    dictionnaire de prononciation, centres, réglages
-    ├── catalogue_messages.xlsx               les 16 messages (français, éwé, éwé pour la voix)
-    └── audio/
-        └── messages/                         99 audios (.ogg WhatsApp + .wav) + index_messages.json
+├── donnees_sante/                            calendrier PEV, tables OMS, règles de croissance
+├── voix/
+│   ├── README_voix.md                        notice voix pour Blaise et Cherif
+│   ├── prononciation.json                    dictionnaire de prononciation, centres, réglages
+│   ├── catalogue_messages.xlsx               les 16 messages (français, éwé)
+│   └── audio/messages/                       99 audios (.ogg WhatsApp + .wav) + index_messages.json
+├── sql/                                      schéma, vues, moteur de règles, seed
+├── seed/generate_seed.py                     génère les 300 enfants fictifs
+└── devi-dashboard/                           application Next.js du tableau de bord
 ```
 
 Le plan détaillé, avec le calendrier et les cases à cocher, est dans `Plan_prototype_repartition_taches.pdf`.
+
+## Application (tableau de bord)
+
+Le tableau de bord de pilotage est dans **`devi-dashboard/`** (Next.js + Supabase).
+Il ne lit que des vues agrégées : aucune donnée nominative.
+
+```powershell
+cd devi-dashboard
+npm install
+npm run dev        # http://localhost:3000/dashboard
+```
+
+- Notice complète : `devi-dashboard/README.md` (architecture, variables, Supabase, déploiement).
+- Guide d'intégration pour la plateforme : `INTEGRATION_DEV.md` (contrats, RPC, parcours, WhatsApp).
+- Base et données : `npm run db:init` applique le schéma, les vues, le moteur de règles,
+  le seed et les référentiels de `donnees_sante/` (calendrier PEV, tables OMS).
+- Déjà chargé : 23 doses du calendrier, 122 lignes OMS poids, 124 lignes taille,
+  124 lignes IMC, 17 lignes vitamine A / déparasitage, 300 enfants fictifs.
+- Journal des messages : `/journal`, avec les 99 audios éwé copiés dans `devi-dashboard/public/audio/messages/`.
+- Le bandeau « données de démonstration » reste affiché tant que le seed est présent.
+
 
 ## Livrables de Gerson (référent médical) : qui les reçoit, où les mettre
 
