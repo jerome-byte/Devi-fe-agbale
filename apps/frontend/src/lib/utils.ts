@@ -12,7 +12,7 @@ export function nombre(n: number) {
   return new Intl.NumberFormat("fr-FR").format(n);
 }
 
-const TEINTES = ["#0e5c46", "#2e6fd8", "#d9643a", "#c47912", "#7a5af8", "#0e9384", "#db2777", "#23805a"];
+const TEINTES = ["#0b8fd3", "#2653b9", "#d9643a", "#c47912", "#7a5af8", "#0e9384", "#db2777", "#23805a"];
 
 export function couleurDe(texte: string) {
   let h = 0;

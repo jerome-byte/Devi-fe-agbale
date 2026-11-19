@@ -2,30 +2,30 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Palette ɖevi ƒe agbalẽ : vert profond pour la marque, jaune soleil en accent */
+/* Palette ɖevi ƒe agbalẽ, alignée sur U-Events (UNICEF Togo) : cyan UNICEF #00aeef, bleu #2653b9, encre #141414 */
 @theme {
-  --color-primary-50: #edf7f2;
-  --color-primary-100: #d3ecdf;
-  --color-primary-200: #a8d8c0;
-  --color-primary-300: #72bd9a;
-  --color-primary-400: #3f9c74;
-  --color-primary-500: #1f7f58;
-  --color-primary-600: #136a4b;
-  --color-primary-700: #0e5c46;
-  --color-primary-800: #0c4636;
-  --color-primary-900: #0a3329;
-  --color-primary-950: #06221b;
+  --color-primary-50: #e6f7fe;
+  --color-primary-100: #c8eefd;
+  --color-primary-200: #98dff9;
+  --color-primary-300: #5ccbf4;
+  --color-primary-400: #1fb8f1;
+  --color-primary-500: #00aeef;
+  --color-primary-600: #0b8fd3;
+  --color-primary-700: #2653b9;
+  --color-primary-800: #1f4496;
+  --color-primary-900: #1a3878;
+  --color-primary-950: #10244f;
 
-  --color-accent-200: #fdda88;
-  --color-accent-300: #fbc556;
-  --color-accent-400: #f4b23e;
-  --color-accent-500: #e39a1b;
+  --color-accent-200: #ffe58a;
+  --color-accent-300: #ffd236;
+  --color-accent-400: #fbb81a;
+  --color-accent-500: #f99c00;
 
-  --color-dark-950: #101714;
-  --color-dark-900: #16201b;
-  --color-dark-800: #202b25;
-  --color-dark-700: #2f3a34;
-  --color-dark-600: #46514b;
+  --color-dark-950: #141414;
+  --color-dark-900: #1b1b1b;
+  --color-dark-800: #252525;
+  --color-dark-700: #333333;
+  --color-dark-600: #4a4a47;
 
   --font-sans: var(--font-plex), system-ui, sans-serif;
   --font-heading: var(--font-plex), system-ui, sans-serif;
@@ -77,33 +77,33 @@
  * Tons neutres, le vert est réservé aux actions et à l'état actif.
  */
 :root {
-  --app: #f3f3f1;
+  --app: #fafafa;
   --card: #ffffff;
-  --card-muted: #f7f7f5;
-  --fg: #1c1d1f;
-  --fg-soft: #3b3c3f;
-  --muted: #696a6e;
-  --line: #e3e3e0;
-  --line-strong: #cfcfcb;
-  --ring: #136a4b;
-  --brand-soft: #e8f4ee;
-  --brand-fg: #0e5c46;
+  --card-muted: #f5f5f2;
+  --fg: #141414;
+  --fg-soft: #333333;
+  --muted: #6f6f6a;
+  --line: #e6e6e1;
+  --line-strong: #d9d9d4;
+  --ring: #00aeef;
+  --brand-soft: #e6f7fe;
+  --brand-fg: #2653b9;
 
-  --side: #16201b;
-  --side-fg: #e8ece9;
-  --side-muted: #98a59e;
-  --side-hover: #222d27;
-  --side-active: #136a4b;
-  --side-line: #26312b;
+  --side: #141414;
+  --side-fg: #ececea;
+  --side-muted: #a3a39e;
+  --side-hover: #222222;
+  --side-active: #2653b9;
+  --side-line: #2a2a2a;
 
-  --ok: #1d7a43;
-  --ok-soft: #e8f4ec;
+  --ok: #147a3d;
+  --ok-soft: #e3f6e9;
   --warn: #a35a00;
   --warn-soft: #fbf1e1;
-  --danger: #b4232a;
+  --danger: #a52b22;
   --danger-soft: #fbeaea;
-  --info: #1f62b0;
-  --info-soft: #e9f1fa;
+  --info: #2653b9;
+  --info-soft: #e6f7fe;
   --violet: #5b4bb5;
   --violet-soft: #efedf9;
 
@@ -111,24 +111,24 @@
 }
 
 .dark {
-  --app: #121413;
-  --card: #1a1c1b;
-  --card-muted: #212423;
+  --app: #121212;
+  --card: #1b1b1b;
+  --card-muted: #222222;
   --fg: #ececea;
   --fg-soft: #cbcbc7;
-  --muted: #9b9d99;
-  --line: #2c2f2d;
-  --line-strong: #3b3f3c;
-  --ring: #3f9c74;
-  --brand-soft: #142a21;
-  --brand-fg: #7fcaa4;
+  --muted: #9d9d98;
+  --line: #2d2d2d;
+  --line-strong: #3d3d3d;
+  --ring: #5ccbf4;
+  --brand-soft: #0c2a3a;
+  --brand-fg: #98dff9;
 
-  --side: #0e1110;
+  --side: #0e0e0e;
   --side-fg: #e6e7e5;
-  --side-muted: #8c918e;
-  --side-hover: #1b201d;
-  --side-active: #1f7f58;
-  --side-line: #212623;
+  --side-muted: #8f8f8a;
+  --side-hover: #1c1c1c;
+  --side-active: #2653b9;
+  --side-line: #232323;
 
   --ok: #5cc98a;
   --ok-soft: #15281d;
@@ -136,7 +136,7 @@
   --warn-soft: #2c2215;
   --danger: #f07a7a;
   --danger-soft: #311a1b;
-  --info: #6fb0ec;
+  --info: #7fb2f5;
   --info-soft: #16243a;
   --violet: #a99cf0;
   --violet-soft: #232036;

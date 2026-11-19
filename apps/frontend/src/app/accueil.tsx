@@ -50,14 +50,10 @@ function Etiquette({ children, claire }: { children: ReactNode; claire?: boolean
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest",
+        "inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold uppercase tracking-widest",
         claire ? "bg-white/10 text-primary-200 ring-1 ring-white/15" : "bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300",
       )}
     >
-      <span className="relative flex size-2">
-        <span className="absolute inline-flex size-full animate-ping rounded-full bg-current opacity-50" />
-        <span className="relative inline-flex size-2 rounded-full bg-current" />
-      </span>
       {children}
     </span>
   );
@@ -65,7 +61,7 @@ function Etiquette({ children, claire }: { children: ReactNode; claire?: boolean
 
 function TitreSection({ etiquette, titre, description, claire, centre = true }: { etiquette: string; titre: string; description?: string; claire?: boolean; centre?: boolean }) {
   return (
-    <div className={cn("mb-12 max-w-3xl", centre && "mx-auto text-center")}>
+    <div className={cn("mb-8 max-w-3xl", centre && "mx-auto text-center")}>
       <Apparition y={14}>
         <Etiquette claire={claire}>{etiquette}</Etiquette>
       </Apparition>
@@ -191,8 +187,8 @@ const DIAPOS = [
     focus: { icone: CalendarCheck, libelle: "9 rendez-vous calculés dès l'inscription" },
   },
   {
-    image: "/images/marche-lome.jpg",
-    position: "object-center",
+    image: "/images/garderie.jpg",
+    position: "object-[50%_45%]",
     etiquette: "Garderies des marchés",
     titre: "Un seul code QR, du centre de santé à la garderie",
     texte: "Un scan suffit : le vaccin prévu est prérempli, la pesée trace la courbe OMS, l'éducatrice note l'arrivée de l'enfant.",
@@ -234,8 +230,7 @@ function Hero() {
         <div>
           <AnimatePresence mode="wait">
             <motion.div key={i} exit={{ opacity: 0, y: -20, filter: "blur(6px)" }} transition={{ duration: 0.4 }} className="max-w-3xl">
-              <motion.span initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="inline-flex items-center gap-3 text-xs font-bold uppercase tracking-[0.25em] text-primary-200">
-                <span className="h-px w-10 bg-accent-400" />
+              <motion.span initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="inline-flex items-center text-xs font-bold uppercase tracking-[0.25em] text-primary-200">
                 {d.etiquette}
               </motion.span>
               <motion.h1 initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.1 }} className="mt-5 font-vitrine text-4xl font-bold leading-[1.05] text-white sm:text-5xl lg:text-6xl">
@@ -297,7 +292,7 @@ function Hero() {
           </div>
           <div className="absolute bottom-24 left-0 flex animate-float-slow items-center gap-4 rounded-2xl border border-white/15 bg-dark-950/60 p-3.5 pr-5 text-white shadow-2xl backdrop-blur-xl [animation-delay:-3s]">
             <span className="rounded-lg bg-white p-1.5">
-              <QRCodeSVG value="DV-K7Q3PA" size={56} fgColor="#101714" />
+              <QRCodeSVG value="DV-K7Q3PA" size={56} fgColor="#141414" />
             </span>
             <div>
               <p className="font-vitrine text-xl font-bold leading-none">Kossi</p>
@@ -363,7 +358,7 @@ function Constat() {
     { v: "37 %", l: "de la population connectée à Internet, pour plus de 100 % de cartes SIM", s: "ARCEP, ISOC Togo, 2025" },
   ];
   return (
-    <section id="probleme" className="scroll-mt-20 py-24 lg:py-32">
+    <section id="probleme" className="scroll-mt-20 py-14 lg:py-20">
       <div className="container-site grid items-center gap-14 lg:grid-cols-2">
         <Apparition className="relative">
           <div className="relative aspect-[4/5] overflow-hidden rounded-3xl shadow-2xl shadow-dark-900/15 sm:aspect-[5/4] lg:aspect-[4/5]">
@@ -419,7 +414,7 @@ const ETAPES: { icone: LucideIcon; titre: string; qui: string; texte: string }[]
 
 function Parcours() {
   return (
-    <section id="parcours" className="relative scroll-mt-20 overflow-hidden bg-[#f6f8f7] py-24 lg:py-32 dark:bg-dark-950">
+    <section id="parcours" className="relative scroll-mt-20 overflow-hidden bg-[#f0f0ec] py-14 lg:py-20 dark:bg-dark-950">
       <div aria-hidden className="absolute -right-40 top-20 size-96 animate-blob rounded-full bg-primary-200/40 blur-3xl dark:bg-primary-900/30" />
       <div className="container-site relative">
         <TitreSection etiquette="Le parcours" titre="De la naissance au tableau de bord" description="Cinq moments, un seul dossier. C'est exactement ce que montre la démonstration, en trois minutes." />
@@ -451,13 +446,13 @@ function Parcours() {
 const ESPACES = [
   { icone: Smartphone, titre: "La famille", texte: "Rappels et conseils en vocal sur WhatsApp, dans sa langue. Bientôt aussi par appel, pour les téléphones simples.", image: "/images/telephone-simple.jpg", alt: "Des mains tiennent un téléphone portable simple" },
   { icone: HeartPulse, titre: "L'agent de santé", texte: "La liste des enfants à voir, classée par urgence. Un scan, un geste, et le carnet est à jour.", image: "/images/carte-vaccination.jpg", alt: "Un enfant sourit, sa carte de vaccination posée sur la tête" },
-  { icone: Store, titre: "La garderie du marché", texte: "L'éducatrice note les arrivées, mesure les enfants chaque mois et fait les petits questionnaires de développement.", image: "/images/marche-lome.jpg", alt: "Un marché de Lomé et ses parasols" },
+  { icone: Store, titre: "La garderie du marché", texte: "L'éducatrice note les arrivées, mesure les enfants chaque mois et fait les petits questionnaires de développement.", image: "/images/garderie.jpg", alt: "Des enfants assis sur un tapis de jeu pendant une activité d'éveil" },
   { icone: BarChart3, titre: "Le pilotage", texte: "UNICEF, ministère et districts voient la couverture par quartier et envoient des annonces vocales ciblées.", image: "/images/mere-telephone.jpg", alt: "Une mère consulte son téléphone, entourée d'enfants" },
 ];
 
 function Espaces() {
   return (
-    <section id="espaces" className="scroll-mt-20 py-24 lg:py-32">
+    <section id="espaces" className="scroll-mt-20 py-14 lg:py-20">
       <div className="container-site">
         <TitreSection etiquette="Pour qui" titre="Quatre espaces, un seul carnet" description="Chacun voit ce dont il a besoin, rien de plus. L'éducatrice ne voit pas le dossier médical, le district ne voit aucun nom." />
         <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-4">
@@ -490,7 +485,7 @@ function Espaces() {
 function Voix() {
   const ids = ["bienvenue", "rappel_j2", "manque_3j", "nutrition_1"];
   return (
-    <section id="voix" className="relative scroll-mt-20 overflow-hidden bg-dark-950 py-24 lg:py-32">
+    <section id="voix" className="relative scroll-mt-20 overflow-hidden bg-dark-950 py-14 lg:py-20">
       <div aria-hidden className="bg-grille absolute inset-0 opacity-50" />
       <div aria-hidden className="absolute -left-40 bottom-0 size-96 animate-blob rounded-full bg-primary-600/20 blur-3xl" />
       <div className="container-site relative grid items-center gap-14 lg:grid-cols-2">
@@ -543,7 +538,7 @@ function Voix() {
 
 function Appel() {
   return (
-    <section className="py-24 lg:py-28">
+    <section className="py-14 lg:py-20">
       <div className="container-site">
         <Apparition>
           <div className="relative overflow-hidden rounded-[2rem] bg-primary-700 px-6 py-14 text-center sm:px-12 lg:py-20">

@@ -30,7 +30,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#136a4b",
+  themeColor: "#00aeef",
 };
 
 // applique le thème avant l'affichage pour éviter un flash clair en mode sombre

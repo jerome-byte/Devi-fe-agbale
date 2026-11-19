@@ -9,7 +9,7 @@ const PHOTOS = [
   { f: "mere-bebe.jpg", t: "A woman cuddles her child in northern Ghana", a: "DFID, UK Department for International Development", l: "CC BY-SA 2.0", u: "https://www.flickr.com/photos/14214150@N02/8406177626" },
   { f: "portrait-bebe.jpg", t: "Mother and Child", a: "Julius!", l: "CC BY 2.0", u: "https://www.flickr.com/photo.gne?id=496203321" },
   { f: "carte-vaccination.jpg", t: "Young child after Tetanus vaccination", a: "hdptcar", l: "CC BY 2.0", u: "https://www.flickr.com/photos/8788342@N08/2266882726" },
-  { f: "marche-lome.jpg", t: "The market in full swing", a: "Francisco Anzola", l: "CC BY 2.0", u: "https://www.flickr.com/photos/10345599@N03/33632332578" },
+  { f: "garderie.jpg", t: "Enfants assis sur une natte pendant une activité communautaire", a: "UNICEF Togo, plateforme U-Events", l: "Photo UNICEF Togo", u: "https://u-events-woad.vercel.app/" },
   { f: "telephone-simple.jpg", t: "Mobile phone in hand in Africa", a: "ColaLife", l: "CC BY-SA 2.0", u: "https://www.flickr.com/photos/93857097@N02/8549915019" },
   { f: "mere-telephone.jpg", t: "mother with kids", a: "ICT4D.at", l: "CC BY-SA 2.0", u: "https://www.flickr.com/photo.gne?id=3058524421" },
 ];
@@ -21,7 +21,7 @@ export default function Credits() {
         <Logo />
       </Link>
       <h1 className="mt-10 font-vitrine text-4xl font-bold tracking-tight">Crédits photos</h1>
-      <p className="mt-2 text-muted">Photos sous licence Creative Commons, trouvées via Openverse. Merci à leurs auteurs.</p>
+      <p className="mt-2 text-muted">Photos sous licence Creative Commons trouvées via Openverse, et une photo de UNICEF Togo (plateforme U-Events). Merci à leurs auteurs.</p>
       <ul className="mt-8 grid gap-4 sm:grid-cols-2">
         {PHOTOS.map((p) => (
           <li key={p.f} className="flex gap-4 card p-3">

@@ -35,9 +35,9 @@ export function TelephoneWhatsApp({ enfant, className }: { enfant: Enfant; class
             <ChevronLeft className="size-5 opacity-80" />
             <span className="grid size-9 place-items-center rounded-full bg-[#fbf6ee]">
               <svg viewBox="0 0 64 64" className="size-6">
-                <path d="M14 20c6-3 12-3 18 1v27c-6-4-12-4-18-1z" fill="#0e5c46" />
-                <path d="M50 20c-6-3-12-3-18 1v27c6-4 12-4 18-1z" fill="#136a4b" />
-                <circle cx="32" cy="13" r="5" fill="#f4b23e" />
+                <path d="M14 20c6-3 12-3 18 1v27c-6-4-12-4-18-1z" fill="#00aeef" />
+                <path d="M50 20c-6-3-12-3-18 1v27c6-4 12-4 18-1z" fill="#2653b9" />
+                <circle cx="32" cy="13" r="5" fill="#ffd236" />
               </svg>
             </span>
             <div className="min-w-0 flex-1 leading-tight">
