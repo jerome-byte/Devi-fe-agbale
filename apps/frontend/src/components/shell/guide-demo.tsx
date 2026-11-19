@@ -2,18 +2,27 @@
 
 import { ArrowRight, X } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { MODE_BASE } from "@/lib/base";
 import { useStore } from "@/lib/store";
 import type { Role } from "@/lib/types";
 
 export function GuideDemo({ ouvert, onFermer }: { ouvert: boolean; onFermer: () => void }) {
   const router = useRouter();
   const connecter = useStore((s) => s.connecter);
+  const deconnecter = useStore((s) => s.deconnecter);
+  const roleActuel = useStore((s) => s.session?.role);
   const dernier = useStore((s) => s.dernierInscrit);
   if (!ouvert) return null;
 
   const aller = (role: Role, href: string) => {
-    connecter(role);
     onFermer();
+    if (MODE_BASE && role !== roleActuel) {
+      // Étape d'un autre rôle : connexion avec le compte de ce rôle, puis retour à l'étape.
+      deconnecter();
+      router.push(`/connexion?role=${role}&suite=${encodeURIComponent(href)}`);
+      return;
+    }
+    connecter(role);
     router.push(href);
   };
 

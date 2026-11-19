@@ -3,7 +3,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { ajouterJours, ecartJours, iso } from "./dates";
-import { MODE_BASE, backend, chargerDepuisBase, doseVersBase, fusionnerLocal } from "./base";
+import { MODE_BASE, backend, chargerDepuisBase, doseVersBase, fusionnerLocal, seDeconnecter, sessionActuelle } from "./base";
 import { prochainRdv } from "./pev";
 import { genererDonnees, nouvelId } from "./seed";
 import type { Enfant, MessageEnvoye, Pesee, Role, Session } from "./types";
@@ -43,6 +43,8 @@ type Etat = {
 
 type Actions = {
   connecter: (role: Role) => void;
+  /** Mode base : session ouverte par la page de connexion (Supabase Auth). */
+  ouvrirSession: (session: Session) => void;
   deconnecter: () => void;
   inscrire: (data: NouvelEnfant) => Promise<string>;
   vacciner: (id: string, doses: string[]) => void;
@@ -119,8 +121,24 @@ export const useStore = create<Etat & Actions>()(
         dernierInscrit: null,
         erreur: null,
 
-        connecter: (role) => set({ session: COMPTES_DEMO[role] }),
-        deconnecter: () => set({ session: null }),
+        // Mode local seulement : en mode base, on passe par la page de connexion.
+        connecter: (role) => {
+          if (MODE_BASE) return;
+          set({ session: COMPTES_DEMO[role] });
+        },
+        ouvrirSession: (session) => {
+          set({ session, enfants: [], messages: [], erreur: null });
+          void get().rafraichir();
+        },
+        deconnecter: () => {
+          if (MODE_BASE) {
+            // On efface aussi les données gardées dans le navigateur.
+            set({ session: null, enfants: [], messages: [], dernierInscrit: null });
+            void seDeconnecter();
+            return;
+          }
+          set({ session: null });
+        },
 
         inscrire: async (data) => {
           const auJour = auJourDe(get().decalageJours);
@@ -311,7 +329,18 @@ export const useStore = create<Etat & Actions>()(
       onRehydrateStorage: () => () => {
         const s = useStore.getState();
         if (MODE_BASE) {
-          void s.rafraichir();
+          // La session gardée dans le navigateur ne suffit pas : on vérifie celle de Supabase.
+          void (async () => {
+            const session = await sessionActuelle().catch(() => null);
+            if (session) {
+              useStore.setState({ session });
+              await useStore.getState().rafraichir();
+            } else {
+              useStore.setState({ session: null, enfants: [], messages: [] });
+            }
+            useStore.setState({ hydrate: true });
+          })();
+          return;
         } else if (!s.enfants.length) {
           const { enfants, messages } = genererDonnees();
           useStore.setState({ enfants, messages });

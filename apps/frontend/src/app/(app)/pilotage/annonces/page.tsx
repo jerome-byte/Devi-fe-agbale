@@ -1,10 +1,12 @@
 "use client";
 
 import { CheckCircle2, History, Megaphone, Send, Users } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LecteurAudio } from "@/components/lecteur-audio";
 import { Bouton, Carte, CarteEntete, Champ, EntetePage, Pagination, Selecteur, Tableau, Vide, usePagination } from "@/components/ui";
+import { MODE_BASE } from "@/lib/base";
 import { dateCourte, heure } from "@/lib/dates";
+import { chargerVuesPilotage } from "@/lib/pilotage";
 import { QUARTIERS } from "@/lib/seed";
 import { useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -20,12 +22,32 @@ export default function Annonces() {
   const [cible, setCible] = useState("Tout le district");
   const [envoye, setEnvoye] = useState<string | null>(null);
 
+  // Mode base : le pilotage ne lit pas les dossiers des enfants (règles de sécurité),
+  // seulement le nombre d'enfants par zone, dans la vue agrégée de Cherif.
+  const [zonesBase, setZonesBase] = useState<{ zone: string; enfants: number }[]>([]);
+  useEffect(() => {
+    if (!MODE_BASE) return;
+    let actif = true;
+    chargerVuesPilotage()
+      .then((v) => {
+        if (actif) setZonesBase(v.zones.map((z) => ({ zone: z.zone, enfants: Number(z.children) })).sort((a, b) => a.zone.localeCompare(b.zone)));
+      })
+      .catch(() => undefined);
+    return () => {
+      actif = false;
+    };
+  }, []);
+
   const familles = useMemo(() => {
+    if (MODE_BASE) {
+      if (cible === "Tout le district") return zonesBase.reduce((s, z) => s + z.enfants, 0);
+      return zonesBase.find((z) => z.zone === cible)?.enfants ?? 0;
+    }
     if (cible === "Tout le district") return enfants.length;
     if (cible === CENTRES.be_kpota) return enfants.filter((e) => e.centre === "be_kpota").length;
     if (cible === CENTRES.sylvanus_olympio) return enfants.filter((e) => e.centre === "sylvanus_olympio").length;
     return enfants.filter((e) => e.quartier === cible).length;
-  }, [enfants, cible]);
+  }, [enfants, cible, zonesBase]);
   const historique = messages.filter((m) => m.enfantId === null);
   const pag = usePagination(historique, 10);
 
@@ -72,15 +94,25 @@ export default function Annonces() {
             <Champ label="Zone">
               <Selecteur value={cible} onChange={(e) => setCible(e.target.value)}>
                 <option>Tout le district</option>
-                <optgroup label="Aires de santé">
-                  <option>{CENTRES.be_kpota}</option>
-                  <option>{CENTRES.sylvanus_olympio}</option>
-                </optgroup>
-                <optgroup label="Quartiers">
-                  {[...QUARTIERS.be_kpota, ...QUARTIERS.sylvanus_olympio].map((q) => (
-                    <option key={q}>{q}</option>
-                  ))}
-                </optgroup>
+                {MODE_BASE ? (
+                  <optgroup label="Zones">
+                    {zonesBase.map((z) => (
+                      <option key={z.zone}>{z.zone}</option>
+                    ))}
+                  </optgroup>
+                ) : (
+                  <>
+                    <optgroup label="Aires de santé">
+                      <option>{CENTRES.be_kpota}</option>
+                      <option>{CENTRES.sylvanus_olympio}</option>
+                    </optgroup>
+                    <optgroup label="Quartiers">
+                      {[...QUARTIERS.be_kpota, ...QUARTIERS.sylvanus_olympio].map((q) => (
+                        <option key={q}>{q}</option>
+                      ))}
+                    </optgroup>
+                  </>
+                )}
               </Selecteur>
             </Champ>
             <div className="rounded-md bg-card-muted px-3 py-2.5">

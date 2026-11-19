@@ -1,15 +1,17 @@
 // Accès à la base de Cherif (Supabase) et au backend FastAPI.
 //
-// - Lecture : directement dans Supabase avec la clé publique (lecture seule).
-// - Écriture : toujours par le backend, via la route serveur /api/backend
-//   (le jeton du backend ne quitte jamais le serveur Next).
+// - Connexion : Supabase Auth (e-mail et mot de passe). Le rôle vient de la table profiles.
+// - Lecture : directement dans Supabase, avec la session de l'utilisateur. Les règles de
+//   sécurité de la base (sql/06_securite_roles.sql) ne montrent que ce que son rôle permet.
+// - Écriture : toujours par le backend, via la route serveur /api/backend, qui vérifie la
+//   session avant de relayer (le jeton du backend ne quitte jamais le serveur Next).
 //
 // Sans NEXT_PUBLIC_SUPABASE_URL ni NEXT_PUBLIC_SUPABASE_ANON_KEY, l'application
 // reste en mode local (données fictives dans le navigateur).
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { TOUTES_DOSES } from "./pev";
-import type { CentreId, Enfant, Langue, MessageEnvoye, Reponse, Sexe } from "./types";
+import type { CentreId, Enfant, Langue, MessageEnvoye, Reponse, Role, Session, Sexe } from "./types";
 import { CENTRES } from "./voix";
 
 const URL_SUPABASE = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -19,12 +21,85 @@ export const MODE_BASE = Boolean(URL_SUPABASE && CLE_SUPABASE);
 
 let client: SupabaseClient | null = null;
 function supabase() {
-  if (!client) client = createClient(URL_SUPABASE!, CLE_SUPABASE!, { auth: { persistSession: false } });
+  if (!client) {
+    client = createClient(URL_SUPABASE!, CLE_SUPABASE!, {
+      auth: { persistSession: true, autoRefreshToken: true, storageKey: "devi-fe-agbale-auth" },
+    });
+  }
   return client;
 }
 
-/** Client Supabase en lecture (clé publique), partagé avec le tableau de bord de pilotage. */
+/** Client Supabase (session de l'utilisateur connecté), partagé avec le tableau de bord de pilotage. */
 export const clientSupabase = () => supabase();
+
+// ---------- Connexion ----------
+
+/** Comptes de démonstration créés dans Supabase (Authentication > Users). Le mot de passe est donné au jury à part. */
+export const EMAILS_DEMO: Record<Role, string> = {
+  agent: "agent@example.com",
+  educatrice: "educatrice@example.com",
+  pilotage: "pilotage@example.com",
+};
+
+const FONCTIONS: Record<Role, string> = {
+  agent: "Agent de santé",
+  educatrice: "Éducatrice",
+  pilotage: "District sanitaire du Golfe",
+};
+
+type LigneProfil = {
+  full_name: string | null;
+  role: Role | "admin";
+  health_centers: { name: string } | null;
+  daycares: { name: string } | null;
+};
+
+async function profilDe(userId: string, email: string | undefined): Promise<Session> {
+  const { data, error } = await supabase()
+    .from("profiles")
+    .select("full_name, role, health_centers(name), daycares(name)")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error) throw new Error(`Lecture du profil : ${error.message}`);
+  const p = data as unknown as LigneProfil | null;
+  if (!p) throw new Error("Ce compte n'a pas encore de rôle. Demandez à l'administrateur de l'activer.");
+  // Un administrateur utilise l'interface de pilotage.
+  const role: Role = p.role === "admin" ? "pilotage" : p.role;
+  return {
+    role,
+    nom: p.full_name || email || "Utilisateur",
+    fonction: FONCTIONS[role],
+    lieu: p.health_centers?.name ?? p.daycares?.name ?? "Grand Lomé",
+  };
+}
+
+/** Connexion par e-mail et mot de passe. Renvoie la session de l'application (rôle, nom, lieu). */
+export async function seConnecter(email: string, motDePasse: string): Promise<Session> {
+  const { data, error } = await supabase().auth.signInWithPassword({ email: email.trim(), password: motDePasse });
+  if (error || !data.user) throw new Error("E-mail ou mot de passe incorrect.");
+  try {
+    return await profilDe(data.user.id, data.user.email);
+  } catch (e) {
+    await supabase().auth.signOut();
+    throw e;
+  }
+}
+
+/** Session Supabase encore valide au chargement de la page (null sinon). */
+export async function sessionActuelle(): Promise<Session | null> {
+  const { data } = await supabase().auth.getSession();
+  const u = data.session?.user;
+  if (!u) return null;
+  try {
+    return await profilDe(u.id, u.email);
+  } catch {
+    return null;
+  }
+}
+
+export async function seDeconnecter() {
+  await supabase().auth.signOut();
+}
 
 // ---------- Correspondances base <-> application ----------
 
@@ -211,9 +286,13 @@ export function fusionnerLocal(base: Enfant[], avant: Enfant[]): Enfant[] {
 // ---------- Écriture (backend) ----------
 
 export async function backend<T = unknown>(chemin: string, methode: "POST" | "PATCH", corps?: unknown): Promise<T> {
+  // La route serveur vérifie la session : on lui passe le jeton de l'utilisateur connecté.
+  const { data } = await supabase().auth.getSession();
+  const jeton = data.session?.access_token;
+  if (!jeton) throw new Error("Session expirée : reconnectez-vous.");
   const r = await fetch(`/api/backend/${chemin}`, {
     method: methode,
-    headers: { "content-type": "application/json" },
+    headers: { "content-type": "application/json", authorization: `Bearer ${jeton}` },
     body: corps === undefined ? undefined : JSON.stringify(corps),
   });
   const json = await r.json().catch(() => ({}));

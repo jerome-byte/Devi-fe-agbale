@@ -1,9 +1,39 @@
 // Relais vers le backend FastAPI. Le jeton BACKEND_TOKEN reste côté serveur :
 // le navigateur appelle /api/backend/..., jamais le backend directement.
+//
+// Sécurité : le relais n'accepte que les utilisateurs connectés (session Supabase),
+// et seulement les routes permises par leur rôle (table profiles).
 import { NextResponse, type NextRequest } from "next/server";
 
-// Seules ces routes du backend sont accessibles depuis l'application.
-const AUTORISEES = [/^app\//, /^admin\/demo\//, /^simulation\/reponse$/];
+type Role = "agent" | "educatrice" | "pilotage" | "admin";
+
+// Routes du backend accessibles depuis l'application, et rôles autorisés.
+const AUTORISEES: { motif: RegExp; roles: Role[] }[] = [
+  { motif: /^app\//, roles: ["agent", "educatrice", "admin"] },
+  { motif: /^admin\/demo\//, roles: ["agent", "educatrice", "pilotage", "admin"] },
+  { motif: /^simulation\/reponse$/, roles: ["agent", "educatrice", "pilotage", "admin"] },
+];
+
+/** Vérifie le jeton de session auprès de Supabase et lit le rôle de l'utilisateur. */
+async function roleDe(req: NextRequest): Promise<Role | null> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const cle = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const auth = req.headers.get("authorization");
+  if (!url || !cle || !auth?.startsWith("Bearer ")) return null;
+  const entetes = { apikey: cle, authorization: auth };
+  try {
+    const u = await fetch(`${url}/auth/v1/user`, { headers: entetes, cache: "no-store" });
+    if (!u.ok) return null;
+    const { id } = (await u.json()) as { id?: string };
+    if (!id) return null;
+    const p = await fetch(`${url}/rest/v1/profiles?select=role&id=eq.${encodeURIComponent(id)}`, { headers: entetes, cache: "no-store" });
+    if (!p.ok) return null;
+    const lignes = (await p.json()) as { role?: Role }[];
+    return lignes[0]?.role ?? null;
+  } catch {
+    return null;
+  }
+}
 
 async function relayer(req: NextRequest, { params }: { params: Promise<{ chemin: string[] }> }) {
   const url = process.env.BACKEND_URL;
@@ -12,8 +42,16 @@ async function relayer(req: NextRequest, { params }: { params: Promise<{ chemin:
     return NextResponse.json({ detail: "BACKEND_URL ou BACKEND_TOKEN non configuré" }, { status: 503 });
   }
   const chemin = (await params).chemin.map(encodeURIComponent).join("/");
-  if (!AUTORISEES.some((r) => r.test(chemin))) {
+  const regle = AUTORISEES.find((r) => r.motif.test(chemin));
+  if (!regle) {
     return NextResponse.json({ detail: "route non autorisée" }, { status: 404 });
+  }
+  const role = await roleDe(req);
+  if (!role) {
+    return NextResponse.json({ detail: "connexion requise" }, { status: 401 });
+  }
+  if (!regle.roles.includes(role)) {
+    return NextResponse.json({ detail: "action non permise pour ce compte" }, { status: 403 });
   }
   try {
     const r = await fetch(`${url.replace(/\/$/, "")}/${chemin}`, {

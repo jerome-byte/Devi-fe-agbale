@@ -18,6 +18,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
+import { MODE_BASE } from "@/lib/base";
 import { heure } from "@/lib/dates";
 import { usePrefs, type Theme } from "@/lib/prefs";
 import { COMPTES_DEMO, useStore } from "@/lib/store";
@@ -163,8 +164,15 @@ function MenuCompte() {
   const router = useRouter();
 
   const changer = (r: Role) => {
-    connecter(r);
     setOuvert(false);
+    if (MODE_BASE) {
+      // Avec de vrais comptes, changer de rôle veut dire se reconnecter avec l'autre compte.
+      if (r === session.role) return;
+      deconnecter();
+      router.push(`/connexion?role=${r}&suite=${encodeURIComponent(ACCUEIL[r])}`);
+      return;
+    }
+    connecter(r);
     router.push(ACCUEIL[r]);
   };
 
