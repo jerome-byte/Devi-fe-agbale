@@ -1,29 +1,29 @@
 ﻿fichier,id,prenom,centre,duree_s,texte_lu,alerte
-bienvenue,bienvenue,,,8.4,woèzɔnlo! ŋdi na wò. wotsɔ viò ƒe ŋkɔ ŋlɔ ɖe lãmesẽgbalẽvi la me fifia.,
+bienvenue,bienvenue,,,8.1,woèzɔnlo! ŋdi na wò. woŋlɔ woò vi ƒe ŋkɔ ŋlɔ ɖe lãmesẽgbalẽvi la me fifia,
 rappel_j2,rappel_j2,,,12.8,"le ŋkeke eve si gbɔna me la, mia vi la axɔ ye ƒe abɔta ssi-ssi le dɔyɔƒe. abɔta la, fe aɖeke mele eŋu o",
 manque_3j,manque_3j,,,17.0,"mi mé va do mia vi la ƒe abɔta-lao le eyĩ-ĩɣi si oɖo ne la o. zi ŋu ŋlɔ-ŋlɔ ɖeka la di, ne mi àva dɔyɔƒe. zi ŋu ŋlɔ-ŋlɔ e-ve, ne nu aɖe xe emɔ na mi.",long (> 15 s)
 reponse_vient,reponse_vient,,,4.5,akpe na wò. míele mɔ kpɔm na wò le dɔyɔƒe,
-reponse_empechement,reponse_empechement,,,7.9,akpe na wò. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be miatsɔ ŋkeke bubu,
-acte_naissance__Kosi,acte_naissance,Kosi,,16.2,viwò kɔssi mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Ama,acte_naissance,Ama,,16.5,viwò a-ma mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Yao,acte_naissance,Yao,,16.7,viwò yawo mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Afi,acte_naissance,Afi,,16.2,viwò affi mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Kodzo,acte_naissance,Kodzo,,17.5,viwò kɔdzo mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Akosiwa,acte_naissance,Akosiwa,,17.0,viwò ako-ssi-wa mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Komi,acte_naissance,Komi,,16.7,viwò kɔmi mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Sena,acte_naissance,Sena,,16.7,viwò se-na mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Abla,acte_naissance,Abla,,16.8,viwò abla mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-acte_naissance__Mawuli,acte_naissance,Mawuli,,16.9,viwò mawuli mekpɔ xɔ ye ƒe dzidzigbale haɖe o. enuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
-croissance__Kosi,croissance,Kosi,,10.2,viwò kɔssi mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Ama,croissance,Ama,,10.1,viwò a-ma mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Yao,croissance,Yao,,10.8,viwò yawo mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Afi,croissance,Afi,,10.1,viwò affi mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Kodzo,croissance,Kodzo,,10.2,viwò kɔdzo mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Akosiwa,croissance,Akosiwa,,10.9,viwò ako-ssi-wa mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Komi,croissance,Komi,,10.1,viwò kɔmi mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Sena,croissance,Sena,,10.2,viwò se-na mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Abla,croissance,Abla,,10.0,viwò abla mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
-croissance__Mawuli,croissance,Mawuli,,10.1,viwò mawuli mele tsitsim enumake o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+reponse_empechement,reponse_empechement,,,8.1,míeda akpe na wò. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le kaƒomɔ dzi be miatsɔ ŋkeke bubu,
+acte_naissance__Kosi,acte_naissance,Kosi,,15.8,viwò kɔssi mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Ama,acte_naissance,Ama,,16.0,viwò a-ma mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Yao,acte_naissance,Yao,,16.2,viwò yawo mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Afi,acte_naissance,Afi,,15.8,viwò affi mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Kodzo,acte_naissance,Kodzo,,17.0,viwò kɔdzo mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Akosiwa,acte_naissance,Akosiwa,,16.6,viwò ako-ssi-wa mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Komi,acte_naissance,Komi,,16.3,viwò kɔmi mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Sena,acte_naissance,Sena,,16.2,viwò se-na mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Abla,acte_naissance,Abla,,16.3,viwò abla mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+acte_naissance__Mawuli,acte_naissance,Mawuli,,16.5,viwò mawuli mekpɔ xɔ ye ƒe dzidzigbale haɖe o. nuŋɔŋlɔ la nye femaxee. yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò,long (> 15 s)
+croissance__Kosi,croissance,Kosi,,9.9,viwò kɔssi mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Ama,croissance,Ama,,9.9,viwò a-ma mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Yao,croissance,Yao,,9.8,viwò yawo mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Afi,croissance,Afi,,10.0,viwò affi mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Kodzo,croissance,Kodzo,,10.0,viwò kɔdzo mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Akosiwa,croissance,Akosiwa,,10.4,viwò ako-ssi-wa mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Komi,croissance,Komi,,9.9,viwò kɔmi mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Sena,croissance,Sena,,10.0,viwò se-na mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Abla,croissance,Abla,,9.9,viwò abla mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
+croissance__Mawuli,croissance,Mawuli,,9.9,viwò mawuli mele tsitsim le ɖoɖo nu o. dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.,
 annonce_vaccination,annonce_vaccination,,,10.8,"abɔta ssi-ssi femaxee ƒe ɖoɖo le kɔsiɖa sia me le dɔyɔƒe siwo katã le lomé, na ɖevi siwo xɔ ƒe aɖeke o va ɖo atɔ̃",
 rappel_veille__Kosi__sylvanus_olympio,rappel_veille,Kosi,sylvanus_olympio,11.8,"etsɔ la, mia vi kɔssi axɔ ye ƒe abɔta ssi-ssi le silvanus olimpio ƒe dɔyɔƒe. abɔta la, fe aɖeke mele eŋu o",
 rappel_veille__Kosi__be_kpota,rappel_veille,Kosi,be_kpota,11.1,"etsɔ la, mia vi kɔssi axɔ ye ƒe abɔta ssi-ssi le bè-kpota ƒe dɔyɔƒe. abɔta la, fe aɖeke mele eŋu o",
@@ -75,26 +75,26 @@ pesee__Komi,pesee,Komi,,8.4,ɣeyiɣi su be wa xɔ viwò kɔmi ƒe kpekpeme. yi d
 pesee__Sena,pesee,Sena,,8.4,ɣeyiɣi su be wa xɔ viwò se-na ƒe kpekpeme. yi dɔyɔƒe alo ɖeviwo dzikpɔƒe le ɣleti sia me,
 pesee__Abla,pesee,Abla,,8.7,ɣeyiɣi su be wa xɔ viwò abla ƒe kpekpeme. yi dɔyɔƒe alo ɖeviwo dzikpɔƒe le ɣleti sia me,
 pesee__Mawuli,pesee,Mawuli,,8.6,ɣeyiɣi su be wa xɔ viwò mawuli ƒe kpekpeme. yi dɔyɔƒe alo ɖeviwo dzikpɔƒe le ɣleti sia me,
-nutrition_1,nutrition_1,,,14.8,kwasiɖa sia ƒe aɖaŋuɖoɖo. tsɔ azi tɔtɔ kple tɔmelã ƒuƒui si nètsrɔ̃ la kpe ɖe viwòa ƒe nuɖuɖu si nèɖa la ŋu. esia kpena ɖe eŋu wòatsi nyuie.,
-depistage__Kosi,depistage,Kosi,,9.2,viwò kɔssi xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Ama,depistage,Ama,,9.4,viwò a-ma xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Yao,depistage,Yao,,9.2,viwò yawo xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Afi,depistage,Afi,,9.1,viwò affi xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Kodzo,depistage,Kodzo,,9.3,viwò kɔdzo xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Akosiwa,depistage,Akosiwa,,9.8,viwò ako-ssi-wa xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Komi,depistage,Komi,,9.3,viwò kɔmi xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Sena,depistage,Sena,,9.4,viwò se-na xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Abla,depistage,Abla,,9.1,viwò abla xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-depistage__Mawuli,depistage,Mawuli,,9.2,viwò mawuli xɔ ƒe geɖe. nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
-orientation__Kosi,orientation,Kosi,,14.6,"ne èdi be yeakpe ɖe viwòa kɔssi ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-orientation__Ama,orientation,Ama,,14.6,"ne èdi be yeakpe ɖe viwòa a-ma ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-orientation__Yao,orientation,Yao,,14.5,"ne èdi be yeakpe ɖe viwòa yawo ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-orientation__Afi,orientation,Afi,,14.4,"ne èdi be yeakpe ɖe viwòa affi ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-orientation__Kodzo,orientation,Kodzo,,14.5,"ne èdi be yeakpe ɖe viwòa kɔdzo ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-orientation__Akosiwa,orientation,Akosiwa,,15.0,"ne èdi be yeakpe ɖe viwòa ako-ssi-wa ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",long (> 15 s)
-orientation__Komi,orientation,Komi,,14.3,"ne èdi be yeakpe ɖe viwòa kɔmi ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-orientation__Sena,orientation,Sena,,14.6,"ne èdi be yeakpe ɖe viwòa se-na ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-orientation__Abla,orientation,Abla,,14.4,"ne èdi be yeakpe ɖe viwòa abla ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-orientation__Mawuli,orientation,Mawuli,,14.9,"ne èdi be yeakpe ɖe viwòa mawuli ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaa ana affi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
-annonce_vitamine_a,annonce_vitamine_a,,,8.4,wole vitamin a nam femaxee na ɖevi tso ɣleti aɖeke va ɖo ƒe atɔ̃ le dɔyɔƒe si te ɖe mia gbɔ wu.,
-annonce_journee_sante,annonce_journee_sante,,,11.3,"memleɖagbe la, ɖeviwo ƒe lãmesẽ ŋkeke le mia ƒe dɔyɔƒe si te ɖe mia gbɔ wu. mi va kple viwò ƒe lãmesẽgbalẽvi",
+nutrition_1,nutrition_1,,,14.1,kwasiɖa sia ƒe aɖaŋuɖoɖo. tsɔ azi tɔtɔ kple tɔmelã ƒuƒui si nétsu la kpe ɖe viwòa ƒe nuɖuɖu si nèɖa la ŋu. esia kpena ɖe eŋu wòatsi nyuie.,
+depistage__Kosi,depistage,Kosi,,9.3,viwò kɔssi xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Ama,depistage,Ama,,9.5,viwò a-ma xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Yao,depistage,Yao,,9.3,viwò yawo xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Afi,depistage,Afi,,9.2,viwò affi xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Kodzo,depistage,Kodzo,,9.3,viwò kɔdzo xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Akosiwa,depistage,Akosiwa,,9.9,viwò ako-ssi-wa xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Komi,depistage,Komi,,9.4,viwò kɔmi xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Sena,depistage,Sena,,9.5,viwò se-na xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Abla,depistage,Abla,,9.2,viwò abla xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+depistage__Mawuli,depistage,Mawuli,,9.3,viwò mawuli xɔ ƒe geɖe. nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.,
+orientation__Kosi,orientation,Kosi,,12.3,"ne èdi be yeakpe ɖe viwòa kɔssi ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Ama,orientation,Ama,,12.3,"ne èdi be yeakpe ɖe viwòa a-ma ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Yao,orientation,Yao,,12.3,"ne èdi be yeakpe ɖe viwòa yawo ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Afi,orientation,Afi,,12.2,"ne èdi be yeakpe ɖe viwòa affi ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Kodzo,orientation,Kodzo,,12.2,"ne èdi be yeakpe ɖe viwòa kɔdzo ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Akosiwa,orientation,Akosiwa,,12.8,"ne èdi be yeakpe ɖe viwòa ako-ssi-wa ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Komi,orientation,Komi,,12.1,"ne èdi be yeakpe ɖe viwòa kɔmi ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Sena,orientation,Sena,,12.3,"ne èdi be yeakpe ɖe viwòa se-na ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Abla,orientation,Abla,,12.2,"ne èdi be yeakpe ɖe viwòa abla ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+orientation__Mawuli,orientation,Mawuli,,12.7,"ne èdi be yeakpe ɖe viwòa mawuli ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. dɔdzikpɔlaaafia wo affi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
+annonce_vitamine_a,annonce_vitamine_a,,,9.6,wole nunyiame si nye vitamin a nam femaxee na ɖevi tso ɣleti aɖeke va ɖo ƒe atɔ̃ le dɔyɔƒe si te ɖe mia gbɔ wu.,
+annonce_journee_sante,annonce_journee_sante,,,11.7,"memleɖagbe la, ɖeviwo ƒe lãmesẽ ŋkeke le mia ƒe dɔyɔƒe si te ɖe mia gbɔ wu. mi va kple viwò ƒe lãmesẽgbalẽvi.",

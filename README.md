@@ -1,7 +1,9 @@
 # ɖevi ƒe agbalẽ — Hack4Children 2026 (UNICEF Togo)
 
 **Le carnet vivant de chaque enfant, de la naissance à 6 ans.**
-
+## mot de passe de la base deonne supabase
+devi-fe-agbale
+ecQm56Aj@devi-fe-agbale
 ## Le projet en bref
 
 Au Togo, le programme Wezou suit la mère et le nouveau-né jusqu'au 42e jour après l'accouchement. Ensuite, plus personne ne suit l'enfant de façon continue : vaccins, croissance, retards de développement, acte de naissance.
@@ -66,8 +68,9 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 - Ajouter un prénom ou un centre : une ligne dans `voix/prononciation.json`, puis relancer `voix/02_generation_audios.ipynb`.
 - Remise à l'équipe : `voix/audio/messages/index_messages.json` (fichier à lire par l'application) et `voix/README_voix.md` (notice).
 
-**Reste à faire**
-- Transmettre `voix/README_voix.md` à Blaise et Cherif.
+**à lire**
+-  `voix/README_voix.md`  Blaise et Cherif.
+**reste a ffire**
 - Jérôme : présentation PDF et notes du dépôt (21-22 nov.), puis envoi officiel.
 
 ## Organisation du dossier

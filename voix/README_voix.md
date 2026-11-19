@@ -14,6 +14,25 @@ Ce dossier contient tout ce qu'il faut pour les brancher dans l'application et s
 | `prononciation.json` | Réglages de la voix, prénoms et centres |
 | `02_generation_audios.ipynb` | Régénère tous les audios si un texte change (Colab) |
 
+## Qui prend quoi
+
+| | Blaise (application) | Cherif (base de données, règles, tableau de bord) |
+|---|---|---|
+| **À prendre** | `index_messages.json`, les `.ogg`, la liste des 10 prénoms et des 2 centres | `index_messages.json` (ids, déclencheurs, chemins des audios) |
+| **À faire avec** | Proposer le prénom et le centre dans une liste à l'inscription ; jouer l'audio dans le carnet ; afficher le texte `modele_ewe` ; **envoyer sur WhatsApp** les messages préparés par la base et enregistrer les réponses « 1 » / « 2 » | Faire correspondre chaque code de message de la base à un `id` du catalogue (tableau plus bas) ; **décider** quel message part, pour quel enfant, quel jour, avec quel `.ogg` (ligne dans la table `messages`) ; lire l'audio dans le journal des messages du tableau de bord |
+| **Où** | `voix/audio/messages/` | `voix/audio/messages/` |
+
+Prendre toujours le chemin donné par le champ `ogg` de `index_messages.json` (ex. `voix/audio/messages/rappel_veille__Ama__be_kpota.ogg`) : ne pas reconstruire le nom du fichier à la main.
+
+## Circuit d'un message (qui fait quoi)
+
+1. **Cherif — la base décide.** Le moteur de règles (`run_rules`) écrit une ligne dans la table `messages` : enfant, code du message, chemin du `.ogg`, statut « à envoyer ».
+2. **Blaise — le backend envoie.** Il lit les messages « à envoyer », envoie le `.ogg` sur WhatsApp (plus les boutons « 1 » / « 2 » pour `manque_3j`), puis passe le statut à « envoyé ».
+3. **Blaise — le backend reçoit la réponse.** Quand la mère touche 1 ou 2, WhatsApp appelle le webhook du backend : il enregistre la réponse dans la base et envoie `reponse_vient` ou `reponse_empechement`.
+4. **Cherif — la base alerte et affiche.** Une réponse « 2 » crée une alerte pour l'agent de santé ; le tableau de bord montre le journal des messages et les réponses.
+
+La clé WhatsApp reste uniquement sur le serveur (jamais dans l'application ni dans git).
+
 ## Comment trouver le bon audio
 
 Chaque message a un `id` (ex. `rappel_j2`). Dans `index_messages.json`, `messages[].audios[]` donne les fichiers (chemins depuis la racine du projet).
@@ -52,6 +71,20 @@ Pour ajouter un prénom ou un centre : une ligne dans `prononciation.json`, puis
 | `orientation` | Résultat « à orienter » | WhatsApp vocal |
 | `annonce_vaccination`, `annonce_vitamine_a`, `annonce_journee_sante` | Annonce validée depuis le tableau de bord | WhatsApp vocal |
 
+## Correspondance avec les codes de la base (pour Cherif)
+
+| `template_code` dans la base | `id` dans `index_messages.json` | Variables | Exemple de fichier |
+|---|---|---|---|
+| `WELCOME` | `bienvenue` | aucune | `bienvenue.ogg` |
+| `J-2` | `rappel_j2` | aucune | `rappel_j2.ogg` |
+| `J-1` | `rappel_veille` | prénom + centre | `rappel_veille__Ama__be_kpota.ogg` |
+| `J0` | `rappel_jour_j` | prénom + centre | `rappel_jour_j__Ama__be_kpota.ogg` |
+| `MISSED_3` | `manque_3j` (+ boutons « 1 » / « 2 ») | aucune | `manque_3j.ogg` |
+| `BIRTH_CERT` | `acte_naissance` | prénom | `acte_naissance__Ama.ogg` |
+
+Les autres messages (`pesee`, `croissance`, `nutrition_1`, `depistage`, `orientation`, annonces) gardent leur `id` du catalogue s'ils sont ajoutés dans la base.
+Pour le prototype, **tous** les messages partent sur **WhatsApp** (canal `whatsapp`, y compris `MISSED_3`). L'appel vocal est réservé à la finale.
+
 ## Boutons de réponse (`manque_3j`)
 
 Le vocal dit « touche **1** si tu viens, **2** si tu as un empêchement ».
@@ -66,3 +99,11 @@ Les deux boutons WhatsApp doivent donc porter **exactement « 1 » et « 2 »** 
 - **Envoi WhatsApp** : téléverser le `.ogg` (endpoint médias de l'API Cloud), puis envoyer un message de type `audio` avec l'id du média. Pour `manque_3j`, l'audio puis un message `interactive` à boutons « 1 » / « 2 ».
 - **Ne jamais modifier un audio à la main** : changer le texte dans `catalogue_messages.xlsx`, puis relancer `02_generation_audios.ipynb`.
 - Contact voix : **Jérôme**.
+
+## Licence de la voix (à citer)
+
+Les audios sont générés avec **Meta MMS-TTS** (modèle `facebook/mms-tts-ewe`), sous licence **CC BY-NC 4.0** : usage non commercial, et l'auteur doit être cité.
+
+- **Blaise** : ajouter sur la page crédits de l'application la ligne « Voix en éwé : Meta MMS-TTS (facebook/mms-tts-ewe), licence CC BY-NC 4.0 ».
+- **Jérôme** : la même ligne dans le PDF de présentation.
+
