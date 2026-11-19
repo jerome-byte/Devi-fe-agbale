@@ -81,11 +81,22 @@ if (!baseUrl && !supabaseUrl) {
   process.exit(1);
 }
 
-const motDePasse =
-  process.env.SUPABASE_DB_PASSWORD ??
-  (existsSync("supabase_passwoed.txt")
-    ? readFileSync("supabase_passwoed.txt", "utf8").trim()
-    : null);
+const motDePasseFichier = existsSync("supabase_passwoed.txt")
+  ? readFileSync("supabase_passwoed.txt", "utf8").trim()
+  : null;
+
+// Tolérance : si le fichier contient un libellé devant le mot de passe
+// (ex. « mon-projet mon-mot-de-passe »), on garde le dernier mot.
+let motDePasseFichierNormalise = motDePasseFichier;
+if (motDePasseFichier && /\s/.test(motDePasseFichier)) {
+  const mots = motDePasseFichier.split(/\s+/);
+  motDePasseFichierNormalise = mots[mots.length - 1];
+  console.warn(
+    "supabase_passwoed.txt contient plusieurs mots : seul le dernier est utilisé comme mot de passe."
+  );
+}
+
+const motDePasse = process.env.SUPABASE_DB_PASSWORD ?? motDePasseFichierNormalise;
 
 let ref = null;
 if (!baseUrl) {
