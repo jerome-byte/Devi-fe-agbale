@@ -16,6 +16,9 @@ next-env.d.ts
 # Secrets locaux
 supabase_passwoed.txt
 
+# Copie générée des audios (source : ../voix/audio/messages)
+/public/audio/messages/
+
 # Divers
 .DS_Store
 *.log

@@ -61,6 +61,7 @@ Ouvrir <http://localhost:3000> : la racine redirige vers `/dashboard`.
 | `npm run db:sql -- <fichier>` | exécute un fichier SQL sur Supabase (voir plus bas) |
 | `npm run db:init` | applique `01`, `02`, `04`, le seed `03`, puis charge les référentiels de `donnees_sante/` |
 | `npm run db:reference` | recharge seulement le calendrier PEV et les tables OMS |
+| `npm run audio:sync` | copie les 99 `.ogg` dans `public/` et régénère `lib/catalogue.json` |
 
 ### Variables d'environnement
 
@@ -83,11 +84,17 @@ app/
 ├── layout.tsx              racine HTML, police, métadonnées, CSS global
 ├── page.tsx                redirige / vers /dashboard
 ├── globals.css             jetons de couleur, focus, styles d'impression
-└── dashboard/
-    ├── page.tsx            état, chargement des données, composition de l'écran
-    └── components.tsx      composants de présentation (aucune requête réseau)
+├── dashboard/
+│   ├── page.tsx            état, chargement des données, composition de l'écran
+│   └── components.tsx      composants de présentation (aucune requête réseau)
+└── journal/
+    ├── layout.tsx          métadonnées de l'onglet
+    └── page.tsx            journal des messages et lecteur audio
 lib/
-└── dashboard.ts            client Supabase et lecture des vues
+├── dashboard.ts            client Supabase et lecture des vues
+├── audio-catalog.ts        correspondance template → audio, prénoms et centres
+└── catalogue.json          catalogue audio généré depuis voix/
+public/audio/messages/      99 .ogg servis à /journal
 ```
 
 ### Flux de données
@@ -291,7 +298,27 @@ d'abord les enfants `is_demo` : il est rejouable sans doublon.
 
 ---
 
-## 6. Design system
+## 6. Journal des messages
+
+Page `/journal` : les vocaux du parcours, écoutables sans téléphone.
+
+- Les 99 `.ogg` sont copiés dans `public/audio/messages/` par `npm run audio:sync`
+  (2,8 Mo). Le même script régénère `lib/catalogue.json` depuis
+  `voix/audio/messages/index_messages.json`, avec des chemins `/audio/messages/...`.
+- `lib/audio-catalog.ts` fait la correspondance `template_code` → `id` du catalogue,
+  normalise les prénoms (`Kossi` → `Kosi`) et les centres (`Bè-Kpota` → `be_kpota`),
+  puis choisit la variante audio.
+- La liste vient de la vue `v_message_log` (60 derniers messages). Les lignes dont
+  le prénom ou le centre n'a pas d'audio affichent « audio non disponible » : le
+  catalogue ne couvre que 10 prénoms et 2 centres.
+- La section « Parcours de Kossi » montre les six messages clés avec les variantes
+  `Kosi` / `Bè-Kpota`, indépendamment des données.
+
+Limite connue : le moteur `run_rules` écrit encore des chemins `.mp3` dans
+`messages.audio_url`. Le journal ne les utilise pas, mais il faudra aligner le
+moteur sur le catalogue dans une prochaine passe.
+
+## 7. Design system
 
 Le style reprend les codes d'un rapport de situation institutionnel : hairlines,
 angles droits, aucune ombre, un seul accent graphique.
@@ -320,7 +347,7 @@ permettre une sortie PDF propre.
 
 ---
 
-## 7. Vérifications
+## 8. Vérifications
 
 ```powershell
 npm run lint
@@ -332,7 +359,7 @@ un navigateur à 1440 px, 834 px et 390 px de large, sans débordement horizonta
 
 ---
 
-## 8. Déploiement sur Vercel
+## 9. Déploiement sur Vercel
 
 1. Importer le dépôt GitHub, choisir le dossier racine `devi-dashboard`.
 2. Framework détecté : Next.js. Build : `npm run build`.
@@ -343,7 +370,7 @@ un navigateur à 1440 px, 834 px et 390 px de large, sans débordement horizonta
 
 ---
 
-## 9. Dépannage
+## 10. Dépannage
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
@@ -356,13 +383,11 @@ un navigateur à 1440 px, 834 px et 390 px de large, sans débordement horizonta
 
 ---
 
-## 10. Limites connues
+## 11. Limites connues
 
 - `who_weight_for_age` est vide : les z-scores du seed viennent de médianes
   approchées, en attendant les tables LMS officielles.
-- Les `messages.audio_url` suivent la convention `audio/<langue>/<modèle>_C<contact>.mp3`,
-  alors que les fichiers livrés sont nommés `bienvenue.ogg`, `manque_3j.ogg`,
-  `acte_naissance__<Prénom>.ogg`. Le futur journal des messages aura besoin d'une
-  table de correspondance.
+- Le journal résout les audios via le catalogue, mais `run_rules` écrit encore des
+  chemins `.mp3` dans `messages.audio_url` : à aligner sur le catalogue.
 - Le journal des messages, les boutons d'avance rapide et l'affichage détaillé du
   score de risque restent à brancher sur l'interface.

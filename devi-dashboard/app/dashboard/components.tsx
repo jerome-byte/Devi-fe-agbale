@@ -2,6 +2,7 @@
 // Présentation du tableau de bord. Aucune requête ici : les données agrégées
 // arrivent de lib/dashboard.ts, déjà filtrées par les vues v_*.
 
+import Link from "next/link";
 import type {
   AlertSummary,
   DashboardData,
@@ -65,6 +66,12 @@ export function PageHeader({
           Couverture vaccinale, croissance et alertes par zone. Données agrégées
           et anonymisées pour le pilotage du programme.
         </p>
+        <Link
+          href="/journal"
+          className="mt-3 inline-block text-sm font-bold text-deep underline-offset-4 hover:underline"
+        >
+          Journal des messages
+        </Link>
       </div>
 
       <div className="ml-auto flex w-full items-end justify-between gap-5 sm:w-auto sm:justify-end">

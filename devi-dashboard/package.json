@@ -3,12 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "node scripts/sync-audio.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/sync-audio.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
     "db:sql": "node scripts/apply-sql.mjs",
     "db:reference": "node scripts/load-reference.mjs",
+    "audio:sync": "node scripts/sync-audio.mjs",
     "db:init": "node scripts/apply-sql.mjs ../sql/01_schema.sql ../sql/02_views.sql ../sql/04_rules.sql ../sql/03_seed_demo.sql && node scripts/load-reference.mjs"
   },
   "dependencies": {

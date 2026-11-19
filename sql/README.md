@@ -52,6 +52,7 @@ fichier.
 ## Tableau de bord
 
 - `lib/dashboard.ts` lit les vues `v_*` ; `app/dashboard/page.tsx` compose l'écran.
+- `v_message_log` alimente l'écran `/journal` (vue de démonstration, prénoms fictifs).
 - Variables : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
 - Le rôle pilotage ne lit que les vues agrégées (voir les `grant` en bas de `02_views.sql`).
 

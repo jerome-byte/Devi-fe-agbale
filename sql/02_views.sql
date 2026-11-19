@@ -195,6 +195,17 @@ select 'poids_age'::text as indicateur,
        sd3neg, sd2neg, sd1neg, sd0, sd1, sd2, sd3
 from who_weight_for_age;
 
+-- Journal des messages : vue de démonstration (prénoms fictifs), utilisée par
+-- l'écran /journal pour retrouver l'audio correspondant à chaque message.
+create or replace view v_message_log as
+select m.id, m.child_id, c.first_name, c.center_id, hc.name as center_name,
+       z.name as zone, m.template_code, m.channel, m.status, m.language,
+       m.scheduled_for, m.sent_at, m.response_key, m.is_simulated
+from messages m
+join children c on c.id = m.child_id
+left join health_centers hc on hc.id = c.center_id
+left join zones z on z.id = c.zone_id;
+
 -- Droits : le rôle pilotage lit uniquement les vues agrégées.
 -- Sur un projet Supabase neuf, les rôles anon et authenticated doivent pouvoir
 -- lire les vues pour que l'application fonctionne avec la clé publishable.
@@ -203,7 +214,7 @@ declare
   vues text := 'v_kpis, v_zone_summary, v_coverage_by_zone, v_penta_dropout,
                 v_birth_cert, v_message_engagement, v_alerts_summary,
                 v_growth_by_zone, v_coverage_trend, v_demo_banner,
-                calendrier_vaccinal, oms_reference';
+                calendrier_vaccinal, oms_reference, v_message_log';
 begin
   if exists (select 1 from pg_roles where rolname = 'anon') then
     execute format('grant select on %s to anon', vues);
