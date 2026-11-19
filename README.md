@@ -108,7 +108,8 @@ npm run dev        # http://localhost:3000/dashboard
 - Notice complète : `devi-dashboard/README.md` (architecture, variables, Supabase, déploiement).
 - Base et données : `npm run db:init` applique le schéma, les vues, le moteur de règles,
   le seed et les référentiels de `donnees_sante/` (calendrier PEV, tables OMS).
-- Déjà chargé : 23 doses du calendrier, 122 lignes OMS poids pour l'âge, 300 enfants fictifs.
+- Déjà chargé : 23 doses du calendrier, 122 lignes OMS poids, 124 lignes taille,
+  124 lignes IMC, 17 lignes vitamine A / déparasitage, 300 enfants fictifs.
 - Journal des messages : `/journal`, avec les 99 audios éwé copiés dans `devi-dashboard/public/audio/messages/`.
 - Le bandeau « données de démonstration » reste affiché tant que le seed est présent.
 

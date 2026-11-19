@@ -108,8 +108,38 @@ const dossier = resolve("..", "donnees_sante");
 const fichierCalendrier = resolve(dossier, "calendrier_pev.csv");
 const fichierFilles = resolve(dossier, "oms_poids_age_filles.csv");
 const fichierGarcons = resolve(dossier, "oms_poids_age_garcons.csv");
+const fichierVitamine = resolve(dossier, "calendrier_vitamineA_deparasitage.csv");
+const fichiersTaille = {
+  "0-2": {
+    F: resolve(dossier, "oms_taille_age_0_2ans_filles.csv"),
+    M: resolve(dossier, "oms_taille_age_0_2ans_garcons.csv"),
+  },
+  "2-5": {
+    F: resolve(dossier, "oms_taille_age_2_5ans_filles.csv"),
+    M: resolve(dossier, "oms_taille_age_2_5ans_garcons.csv"),
+  },
+};
+const fichiersImc = {
+  "0-2": {
+    F: resolve(dossier, "oms_imc_age_0_2ans_filles.csv"),
+    M: resolve(dossier, "oms_imc_age_0_2ans_garcons.csv"),
+  },
+  "2-5": {
+    F: resolve(dossier, "oms_imc_age_2_5ans_filles.csv"),
+    M: resolve(dossier, "oms_imc_age_2_5ans_garcons.csv"),
+  },
+};
 
-for (const fichier of [fichierCalendrier, fichierFilles, fichierGarcons]) {
+const tousLesFichiers = [
+  fichierCalendrier,
+  fichierFilles,
+  fichierGarcons,
+  fichierVitamine,
+  ...Object.values(fichiersTaille).flatMap((s) => Object.values(s)),
+  ...Object.values(fichiersImc).flatMap((s) => Object.values(s)),
+];
+
+for (const fichier of tousLesFichiers) {
   if (!existsSync(fichier)) {
     console.error(`Fichier introuvable : ${fichier}`);
     process.exit(1);
@@ -211,10 +241,69 @@ async function chargerOms(fichier, sexe) {
 await chargerOms(fichierFilles, "F");
 await chargerOms(fichierGarcons, "M");
 
+// Taille et IMC : deux bandes, même format de CSV.
+async function chargerOmsBande(table, fichier, sexe, band) {
+  const rows = parseCsv(readFileSync(fichier, "utf8"));
+  await client.query("begin");
+  for (const row of rows) {
+    await client.query(
+      `insert into ${table}
+         (sex, band, age_months, l, m, s, sd3neg, sd2neg, sd1neg, sd0, sd1, sd2, sd3)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+       on conflict (sex, band, age_months) do update
+         set l = excluded.l, m = excluded.m, s = excluded.s,
+             sd3neg = excluded.sd3neg, sd2neg = excluded.sd2neg,
+             sd1neg = excluded.sd1neg, sd0 = excluded.sd0,
+             sd1 = excluded.sd1, sd2 = excluded.sd2, sd3 = excluded.sd3`,
+      [
+        sexe,
+        band,
+        nombre(row.Month),
+        nombre(row.L),
+        nombre(row.M),
+        nombre(row.S),
+        nombre(row.SD3neg),
+        nombre(row.SD2neg),
+        nombre(row.SD1neg),
+        nombre(row.SD0),
+        nombre(row.SD1),
+        nombre(row.SD2),
+        nombre(row.SD3),
+      ]
+    );
+  }
+  await client.query("commit");
+  console.log(`OMS ${table} ${sexe} ${band} : ${rows.length} lignes`);
+}
+
+for (const [band, parSexe] of Object.entries(fichiersTaille)) {
+  await chargerOmsBande("who_height_for_age", parSexe.F, "F", band);
+  await chargerOmsBande("who_height_for_age", parSexe.M, "M", band);
+}
+for (const [band, parSexe] of Object.entries(fichiersImc)) {
+  await chargerOmsBande("who_bmi_for_age", parSexe.F, "F", band);
+  await chargerOmsBande("who_bmi_for_age", parSexe.M, "M", band);
+}
+
+// Vitamine A et déparasitage.
+const vitamines = parseCsv(readFileSync(fichierVitamine, "utf8"));
+await client.query("begin");
+for (const row of vitamines) {
+  await client.query(
+    `insert into vitamin_a_schedule (produit, age_mois, dose, lieu)
+     values ($1,$2,$3,$4)
+     on conflict (produit, age_mois) do update
+       set dose = excluded.dose, lieu = excluded.lieu`,
+    [row.produit, nombre(row.age_mois), row.dose, row.lieu]
+  );
+}
+await client.query("commit");
+console.log(`Vitamine A / déparasitage : ${vitamines.length} lignes`);
+
 // ---------- 3. Recalcul des z-scores existants -----------------------
 const recalcul = await client.query(`
   update weigh_ins w
-     set z_score = round((power(w.weight_kg / r.m, r.l) - 1) / (r.l * r.s), 2)
+     set z_score = round(lms_z(w.weight_kg, r.l, r.m, r.s), 2)
     from children c, who_weight_for_age r
    where c.id = w.child_id
      and r.sex = c.sex
@@ -222,17 +311,52 @@ const recalcul = await client.query(`
      and w.weight_kg > 0
      and r.m > 0
      and round(w.age_months) between 0 and 60`);
-console.log(`Pesées recalculées avec les tables OMS : ${recalcul.rowCount}`);
+console.log(`Poids : ${recalcul.rowCount} pesées recalculées`);
+
+const tailles = await client.query(`
+  update weigh_ins w
+     set height_z = round(lms_z(w.height_cm, r.l, r.m, r.s), 2)
+    from children c, who_height_for_age r
+   where c.id = w.child_id
+     and w.height_cm is not null
+     and r.sex = c.sex
+     and r.band = case when w.age_months < 24 then '0-2' else '2-5' end
+     and r.age_months = round(w.age_months)::int`);
+console.log(`Taille : ${tailles.rowCount} mesures recalculées`);
+
+const imcs = await client.query(`
+  update weigh_ins
+     set bmi = round(weight_kg / power(height_cm / 100.0, 2), 1)
+   where height_cm is not null and height_cm > 0`);
+console.log(`IMC calculé sur ${imcs.rowCount} mesures`);
+
+const imcZ = await client.query(`
+  update weigh_ins w
+     set bmi_z = round(lms_z(w.bmi, r.l, r.m, r.s), 2)
+    from children c, who_bmi_for_age r
+   where c.id = w.child_id
+     and w.bmi is not null
+     and r.sex = c.sex
+     and r.band = case when w.age_months < 24 then '0-2' else '2-5' end
+     and r.age_months = round(w.age_months)::int`);
+console.log(`IMC : ${imcZ.rowCount} z-scores recalculés`);
 
 // ---------- 4. Statut OMS et tendance des pesées existantes ----------
 const statuts = await client.query(`
   update weigh_ins
      set status = case
-       when z_score is null then null
-       when z_score < -3 then 'a_orienter'
-       when z_score < -2 then 'a_surveiller'
-       else 'normal' end
-   where z_score is not null`);
+           when z_score < -3 or height_z < -3 or bmi_z < -3 then 'a_orienter'
+           when z_score < -2 or height_z < -2 or bmi_z < -2 or bmi_z > 2 then 'a_surveiller'
+           when z_score is not null or height_z is not null or bmi_z is not null then 'normal'
+           else null end,
+         status_indicator = case
+           when z_score < -3 then 'poids'
+           when height_z < -3 then 'taille'
+           when bmi_z < -3 then 'imc'
+           when z_score < -2 then 'poids'
+           when height_z < -2 then 'taille'
+           when bmi_z < -2 or bmi_z > 2 then 'imc'
+           else null end`);
 console.log(`Statuts OMS recalculés : ${statuts.rowCount}`);
 
 const tendances = await client.query(`

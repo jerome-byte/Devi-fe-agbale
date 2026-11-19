@@ -33,10 +33,16 @@ fichier.
 | `donnees_sante/calendrier_pev.csv` | `vaccine_schedule` | `calendrier_vaccinal` |
 | `donnees_sante/oms_poids_age_filles.csv` | `who_weight_for_age` | `oms_reference` |
 | `donnees_sante/oms_poids_age_garcons.csv` | `who_weight_for_age` | `oms_reference` |
+| `donnees_sante/oms_taille_age_*.csv` (4) | `who_height_for_age` | `oms_reference` |
+| `donnees_sante/oms_imc_age_*.csv` (4) | `who_bmi_for_age` | `oms_reference` |
+| `donnees_sante/calendrier_vitamineA_deparasitage.csv` | `vitamin_a_schedule` | table directe |
 
 - 23 doses, 9 contacts, de la naissance à 15 mois.
 - Codes officiels : `BCG`, `VPO`, `PENTA`, `PNEUMO`, `ROTA`, `VPI`, `VAP`, `RR`, `VAA`, `MENA`.
-- Tables OMS : 61 mois par sexe, avec `L`, `M`, `S` et les écarts-types `SD3neg` à `SD3`.
+- Tables OMS : poids (61 mois), taille et IMC (0-24 et 24-60 mois), par sexe,
+  avec `L`, `M`, `S` et les écarts-types `SD3neg` à `SD3`. La vue `oms_reference`
+  réunit les trois indicateurs et indique la bande (`0-2`, `2-5`, `0-5`).
+- Vitamine A (9 contacts) et déparasitage (8 contacts) : `vitamin_a_schedule`.
 - Les vues `calendrier_vaccinal` et `oms_reference` exposent les noms et colonnes
   attendus par les notices de `donnees_sante/` (lecture seule).
 
@@ -44,7 +50,12 @@ fichier.
 
 - Production : `select * from run_rules();` (pg_cron toutes les heures, ou appel serveur). Idempotent.
 - Un enfant inscrit (hors démo) reçoit son calendrier vaccinal automatiquement (déclencheur).
-- Une pesée insérée reçoit son z-score (méthode LMS), son statut OMS (`normal`, `a_surveiller` si z < −2, `a_orienter` si z < −3) et sa tendance (stagnation si poids identique ou en baisse après un mois, ou chute d'une ligne de z).
+- Une pesée insérée reçoit son z-score poids (LMS) ; si la taille est saisie, le
+  z-score taille et l'IMC (poids / taille²) avec son z-score. Les seuils −2 / −3
+  s'appliquent aux trois indicateurs, l'IMC > +2 vaut « à surveiller ». Le statut
+  retenu est le plus grave, avec `status_indicator` (`poids`, `taille`, `imc`).
+  La tendance suit la règle de Gerson (un mois minimum, poids identique ou en
+  baisse, ou une ligne de z).
 - Boutons de démo (à appeler via `supabase.rpc`) :
   `demo_fast_forward(child_id, 'J-2' | 'J-1' | 'J0' | 'MISSED_3' | 'MISSED_7')`
   `demo_reset_child(child_id)` remet l'enfant à zéro entre deux répétitions.
@@ -65,8 +76,8 @@ abandonnée : le chemin réel vient du champ `ogg` du catalogue.
 
 ## À valider ou compléter
 
-- Tables OMS taille pour l'âge et IMC pour l'âge (8 fichiers), calendrier vitamine A
-  et déparasitage : à fournir par Gerson.
-- Vérification des calculs par Gerson sur 3 enfants de test (20 nov.).
+- Vérification des calculs par Gerson sur 3 enfants de test (20 nov.), avec poids
+  **et taille** pour couvrir les trois indicateurs.
+- Rappels vitamine A et déparasitage : calendrier chargé, messages à brancher.
 - Régénérer le seed juste avant les captures et la démo :
   `python seed/generate_seed.py` puis `npm run db:init`.

@@ -154,6 +154,9 @@ dans le SQL Editor (le seed `03` est trop volumineux pour l'éditeur web).
 | `zones`, `health_centers`, `daycares` | découpage géographique |
 | `vaccine_schedule` | calendrier PEV du Togo (23 doses, 9 contacts), métadonnées du CSV validé |
 | `who_weight_for_age` | tables OMS poids pour l'âge (61 mois × 2 sexes, LMS + écarts-types) |
+| `who_height_for_age` | tables OMS taille pour l'âge (0-24 et 24-60 mois, 2 sexes) |
+| `who_bmi_for_age` | tables OMS IMC pour l'âge (mêmes bandes) |
+| `vitamin_a_schedule` | calendrier vitamine A et déparasitage (17 lignes) |
 | `children` | carnet de l'enfant, `qr_token` sans donnée personnelle |
 | `guardians` | responsable légal, langue, canal préféré |
 | `appointments` | rendez-vous vaccinaux, statut `planned` / `done` / `missed` |
@@ -166,24 +169,29 @@ Les codes vaccins sont ceux du calendrier validé par Gerson : `BCG`, `VPO`,
 `PENTA`, `PNEUMO`, `ROTA`, `VPI`, `VAP`, `RR`, `VAA`, `MENA`. Les libellés longs
 restent dans `label_fr`.
 
-État des référentiels : 23 doses chargées, 122 lignes OMS (61 mois × 2 sexes),
-3 769 pesées recalculées avec la méthode LMS et 3 788 statuts recalculés.
+État des référentiels : 23 doses, 122 lignes OMS poids, 124 lignes taille, 124 lignes
+IMC, 17 lignes vitamine A / déparasitage. 3 769 pesées et 3 788 statuts recalculés.
 
 ### Règles de croissance
 
 Appliquées par le déclencheur `trg_weigh_in_compute` à chaque pesée, et
-recalculées sur l'historique par `npm run db:reference` :
+recalculées sur l'historique par `npm run db:reference`. Les seuils s'appliquent
+aux **trois indicateurs** (poids, taille, IMC) et le statut retenu est le plus
+grave :
 
 | Situation | Statut / alerte |
 |---|---|
-| z-score ≥ −2 | `normal` |
-| z-score < −2 | `a_surveiller`, alerte `growth_surveiller` |
-| z-score < −3 | `a_orienter`, alerte `growth_orient` prioritaire |
+| z-score ≥ −2 et ≤ +2 | `normal` |
+| z-score < −2 (poids, taille ou IMC) | `a_surveiller`, alerte `growth_surveiller` |
+| z-score < −3 (poids, taille ou IMC) | `a_orienter`, alerte `growth_orient` prioritaire |
+| IMC > +2 (surpoids) | `a_surveiller`, alerte `growth_surveiller` |
 | poids identique ou en baisse après au moins un mois, ou chute d'au moins une ligne de z | tendance `stagnation` ou `chute`, alerte `growth_stagnation` |
 
 Le z-score est calculé avec les colonnes `L`, `M`, `S` de la table OMS du sexe et
-de l'âge en mois révolus. L'application n'affiche jamais de diagnostic : seulement
-« à surveiller » ou « à orienter ».
+de l'âge en mois révolus. Taille et IMC utilisent la bande 0-2 avant 24 mois et
+2-5 à partir de 24 mois. `weigh_ins.status_indicator` indique l'indicateur en
+cause (`poids`, `taille` ou `imc`). L'application n'affiche jamais de diagnostic :
+seulement « à surveiller » ou « à orienter ».
 
 ### Vues lues par le tableau de bord
 
@@ -199,7 +207,7 @@ de l'âge en mois révolus. L'application n'affiche jamais de diagnostic : seule
 | `v_coverage_trend` | couverture mensuelle sur 12 mois |
 | `v_alerts_summary` | alertes par zone et par type |
 | `calendrier_vaccinal` | vue de compatibilité : calendrier avec les colonnes des notices (`contact`, `age_libelle`, `vaccin_nom`, `dose`…) |
-| `oms_reference` | vue de compatibilité : poids pour l'âge avec les écarts-types `sd3neg` à `sd3` |
+| `oms_reference` | vue de compatibilité : les trois indicateurs (`poids_age`, `taille_age`, `imc_age`), LMS et écarts-types, avec la bande |
 | `v_message_log` | journal des messages (prénom fictif, centre, template, statut, dates, réponse) |
 
 Toutes les vues sont recalculées à chaque lecture : avec 300 enfants, la latence
@@ -415,8 +423,8 @@ Les deux commandes passent sur la version courante. Le tableau de bord a été
 contrôlé dans un navigateur à 1440 px, 834 px et 390 px de large, sans
 débordement horizontal. Le journal a été vérifié dans le navigateur (rendu,
 lecteurs, absence d'erreur) : `/journal` répond en 200, un fichier `.ogg` répond
-en `200 audio/ogg`, 60 messages s'affichent dont 24 avec audio, et les six
-lecteurs du parcours sont présents.
+en `200 audio/ogg`, 60 messages s'affichent et les six lecteurs du parcours sont
+présents.
 
 ---
 
@@ -457,6 +465,12 @@ doit donc être présent dans le dépôt (c'est le cas). Si vous déployez uniqu
 - **Tables OMS taille et IMC** : seules les tables de poids pour l'âge sont
   chargées. Les 8 fichiers taille/IMC et le calendrier vitamine A sont attendus
   pour la finale ; `weigh_ins` n'a pas encore de colonne `height_cm`.
+- **Taille et IMC** : les tables sont chargées et le calcul est actif, mais le
+  seed ne contient pas de taille. Les indicateurs taille/IMC s'appliqueront aux
+  mesures saisies dans l'application ; la vérification Gerson du 20 novembre doit
+  inclure des tailles.
+- **Vitamine A et déparasitage** : le calendrier est chargé, mais les rappels
+  correspondants ne sont pas encore produits par `run_rules`.
 - **Couverture audio** : 10 prénoms et 2 centres seulement. Les messages dont le
   prénom ou le centre n'est pas couvert affichent « audio non disponible ».
 - **Moteur de messages** : `run_rules` écrit encore des chemins `.mp3` dans

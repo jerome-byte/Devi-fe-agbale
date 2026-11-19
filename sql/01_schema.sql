@@ -64,6 +64,28 @@ create table if not exists who_weight_for_age (
   primary key (sex, age_months)
 );
 
+-- Taille pour l'âge : deux bandes (0-24 mois couché, 24-60 mois debout).
+create table if not exists who_height_for_age (
+  sex        char(1) check (sex in ('M','F')),
+  band       text not null check (band in ('0-2','2-5')),
+  age_months int  not null,
+  l numeric, m numeric, s numeric,
+  sd3neg numeric, sd2neg numeric, sd1neg numeric, sd0 numeric,
+  sd1 numeric, sd2 numeric, sd3 numeric,
+  primary key (sex, band, age_months)
+);
+
+-- IMC pour l'âge : mêmes bandes.
+create table if not exists who_bmi_for_age (
+  sex        char(1) check (sex in ('M','F')),
+  band       text not null check (band in ('0-2','2-5')),
+  age_months int  not null,
+  l numeric, m numeric, s numeric,
+  sd3neg numeric, sd2neg numeric, sd1neg numeric, sd0 numeric,
+  sd1 numeric, sd2 numeric, sd3 numeric,
+  primary key (sex, band, age_months)
+);
+
 -- ========== ACTEURS ================================================
 -- profiles est relié à auth.users sur Supabase. En local sans Supabase,
 -- retirer la clause "references auth.users(id)".
@@ -125,10 +147,15 @@ create table if not exists weigh_ins (
   child_id    uuid not null references children(id) on delete cascade,
   measured_at date not null,
   weight_kg   numeric not null,
+  height_cm   numeric,
   age_months  numeric,
   z_score     numeric,
+  height_z    numeric,
+  bmi         numeric,
+  bmi_z       numeric,
   trend       text check (trend in ('ok','stagnation','chute')),
   status      text check (status in ('normal','a_surveiller','a_orienter')),
+  status_indicator text,
   recorded_by uuid references profiles(id)
 );
 create index if not exists idx_weigh_child on weigh_ins(child_id, measured_at);
@@ -204,6 +231,11 @@ alter table vaccine_schedule
   add column if not exists status text;
 
 alter table weigh_ins add column if not exists status text;
+alter table weigh_ins add column if not exists height_cm numeric;
+alter table weigh_ins add column if not exists height_z numeric;
+alter table weigh_ins add column if not exists bmi numeric;
+alter table weigh_ins add column if not exists bmi_z numeric;
+alter table weigh_ins add column if not exists status_indicator text;
 
 alter table alerts drop constraint if exists alerts_type_check;
 alter table alerts add constraint alerts_type_check check (type in
@@ -220,6 +252,26 @@ update vaccine_schedule s set vaccine_code = 'VAP'
  where s.vaccine_code = 'R21'
    and not exists (select 1 from vaccine_schedule x
                     where x.vaccine_code = 'VAP' and x.dose = s.dose);
+
+-- Calendrier vitamine A et déparasitage (Gerson, 19 nov.).
+create table if not exists vitamin_a_schedule (
+  produit  text not null check (produit in ('vitamine_a','deparasitage')),
+  age_mois int  not null,
+  dose     text not null,
+  lieu     text,
+  primary key (produit, age_mois)
+);
+
+-- Z-score OMS (méthode LMS), utilisé par le déclencheur des pesées.
+create or replace function lms_z(measure numeric, l numeric, m numeric, s numeric)
+returns numeric
+language sql immutable as $$
+  select case
+    when measure is null or m is null or m = 0 or s is null then null
+    when l = 0 then ln(measure / m) / s
+    else (power(measure / m, l) - 1) / (l * s)
+  end;
+$$;
 
 -- ========== CALENDRIER PEV OFFICIEL (source : PEV Togo) ==============
 -- Mois convertis en jours (x 30,4375) : 5 m = 152, 6 m = 183, 7 m = 213, 9 m = 274, 15 m = 457.

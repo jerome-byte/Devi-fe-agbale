@@ -152,6 +152,25 @@ begin
     returning 1)
   select count(*) into v_n from ins;
   rule := 'alertes croissance'; n := v_n; return next;
+
+  -- R7 : statut OMS (poids, taille ou IMC) -> alerte à l'agent
+  with ins as (
+    insert into alerts (child_id, type, target_role, center_id)
+    select l.child_id,
+           case when l.status = 'a_orienter' then 'growth_orient' else 'growth_surveiller' end,
+           'agent', c.center_id
+    from v_last_weigh_in l join children c on c.id = l.child_id
+    where l.status in ('a_surveiller','a_orienter')
+      and l.measured_at >= p_as_of - 45
+      and (p_child_id is null or l.child_id = p_child_id)
+      and not exists (
+        select 1 from alerts x
+         where x.child_id = l.child_id
+           and x.type = case when l.status = 'a_orienter' then 'growth_orient' else 'growth_surveiller' end
+           and x.status in ('open','acknowledged'))
+    returning 1)
+  select count(*) into v_n from ins;
+  rule := 'alertes statut croissance'; n := v_n; return next;
 end $$;
 
 -- ---------- 3. Pesée : z-score et tendance calculés à l'insertion ------
@@ -167,15 +186,54 @@ begin
   select * into r from who_weight_for_age
    where sex = c.sex and age_months = round(v_age)::int;
   if found and new.z_score is null then
-    new.z_score := round(case when r.l = 0 then ln(new.weight_kg / r.m) / r.s
-                              else (power(new.weight_kg / r.m, r.l) - 1) / (r.l * r.s) end, 2);
+    new.z_score := round(lms_z(new.weight_kg, r.l, r.m, r.s), 2);
   end if;
-  -- Statut OMS : à orienter (z < -3), à surveiller (z < -2), sinon normal.
+
+  -- Taille et IMC (si la taille est saisie) : bande 0-2 avant 24 mois, 2-5 après.
+  if new.height_cm is not null and new.height_cm > 0 then
+    select * into r from who_height_for_age
+     where sex = c.sex
+       and band = case when v_age < 24 then '0-2' else '2-5' end
+       and age_months = round(v_age)::int;
+    if found and new.height_z is null then
+      new.height_z := round(lms_z(new.height_cm, r.l, r.m, r.s), 2);
+    end if;
+
+    new.bmi := round(new.weight_kg / power(new.height_cm / 100.0, 2), 1);
+    select * into r from who_bmi_for_age
+     where sex = c.sex
+       and band = case when v_age < 24 then '0-2' else '2-5' end
+       and age_months = round(v_age)::int;
+    if found and new.bmi_z is null then
+      new.bmi_z := round(lms_z(new.bmi, r.l, r.m, r.s), 2);
+    end if;
+  end if;
+
+  -- Statut : le plus grave des trois indicateurs ; IMC > +2 = surpoids à surveiller.
+  new.status := 'normal';
+  new.status_indicator := null;
   if new.z_score is not null then
-    new.status := case
-      when new.z_score < -3 then 'a_orienter'
-      when new.z_score < -2 then 'a_surveiller'
-      else 'normal' end;
+    if new.z_score < -3 then
+      new.status := 'a_orienter'; new.status_indicator := 'poids';
+    elsif new.z_score < -2 then
+      new.status := 'a_surveiller'; new.status_indicator := 'poids';
+    end if;
+  end if;
+  if new.height_z is not null then
+    if new.height_z < -3 then
+      new.status := 'a_orienter'; new.status_indicator := 'taille';
+    elsif new.height_z < -2 and new.status <> 'a_orienter' then
+      new.status := 'a_surveiller';
+      new.status_indicator := coalesce(new.status_indicator, 'taille');
+    end if;
+  end if;
+  if new.bmi_z is not null then
+    if new.bmi_z < -3 then
+      new.status := 'a_orienter'; new.status_indicator := 'imc';
+    elsif (new.bmi_z < -2 or new.bmi_z > 2) and new.status <> 'a_orienter' then
+      new.status := 'a_surveiller';
+      new.status_indicator := coalesce(new.status_indicator, 'imc');
+    end if;
   end if;
 
   -- Stagnation (règle de Gerson) : dernière mesure à au moins un mois,

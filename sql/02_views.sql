@@ -108,7 +108,8 @@ group by z.id, z.name, a.type;
 -- Dernière pesée par enfant (base des indicateurs de croissance)
 create or replace view v_last_weigh_in as
 select distinct on (w.child_id) w.child_id, w.measured_at, w.age_months,
-       w.weight_kg, w.z_score, w.trend, w.status
+       w.weight_kg, w.z_score, w.trend, w.status,
+       w.height_cm, w.height_z, w.bmi, w.bmi_z, w.status_indicator
 from weigh_ins w
 order by w.child_id, w.measured_at desc;
 
@@ -192,8 +193,17 @@ select 'poids_age'::text as indicateur,
        sex               as sexe,
        age_months        as mois,
        l, m, s,
-       sd3neg, sd2neg, sd1neg, sd0, sd1, sd2, sd3
-from who_weight_for_age;
+       sd3neg, sd2neg, sd1neg, sd0, sd1, sd2, sd3,
+       '0-5'::text       as bande
+from who_weight_for_age
+union all
+select 'taille_age', sex, age_months, l, m, s,
+       sd3neg, sd2neg, sd1neg, sd0, sd1, sd2, sd3, band
+from who_height_for_age
+union all
+select 'imc_age', sex, age_months, l, m, s,
+       sd3neg, sd2neg, sd1neg, sd0, sd1, sd2, sd3, band
+from who_bmi_for_age;
 
 -- Journal des messages : vue de démonstration (prénoms fictifs), utilisée par
 -- l'écran /journal pour retrouver l'audio correspondant à chaque message.
