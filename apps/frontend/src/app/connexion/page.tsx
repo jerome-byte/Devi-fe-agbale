@@ -1,13 +1,13 @@
 "use client";
 
-import { ArrowLeft, BarChart3, ChevronRight, HeartPulse, Info, LockKeyhole, Store } from "lucide-react";
+import { ArrowLeft, BarChart3, ChevronRight, Eye, EyeOff, HeartPulse, Info, LockKeyhole, Store } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState, type FormEvent } from "react";
 import { LogoMarque } from "@/components/logo";
 import { ACCUEIL, LIBELLE_ROLE } from "@/components/shell/nav";
-import { EMAILS_DEMO, MODE_BASE, seConnecter } from "@/lib/base";
+import { EMAILS_DEMO, MODE_BASE, seConnecter, seDeconnecter } from "@/lib/base";
 import { COMPTES_DEMO, useStore } from "@/lib/store";
 import type { Role } from "@/lib/types";
 
@@ -17,24 +17,50 @@ const ROLES: { role: Role; icone: typeof HeartPulse; texte: string }[] = [
   { role: "pilotage", icone: BarChart3, texte: "Couverture, abandons, actes manquants et annonces vocales." },
 ];
 
-/** Mode base : vraie connexion (Supabase Auth). Le rôle vient du compte, pas d'un bouton. */
-function FormulaireConnexion() {
+/** Lieux des comptes de test dans la base (profiles), affichés sur les cartes. */
+const LIEUX_BASE: Record<Role, string> = {
+  agent: "Centre de santé de Bè-Kpota",
+  educatrice: "Garderie du marché de Hanoukopé",
+  pilotage: "District sanitaire du Golfe",
+};
+
+/**
+ * Mode base : même écran que la démo (choix de l'espace), puis connexion
+ * par e-mail et mot de passe pour l'espace choisi (Supabase Auth).
+ */
+function ConnexionParEspace() {
   const ouvrirSession = useStore((s) => s.ouvrirSession);
   const router = useRouter();
   const params = useSearchParams();
   const roleDemande = params.get("role") as Role | null;
   const suite = params.get("suite");
-  const [email, setEmail] = useState(roleDemande && EMAILS_DEMO[roleDemande] ? EMAILS_DEMO[roleDemande] : "");
+  const [choisi, setChoisi] = useState<Role | null>(roleDemande && EMAILS_DEMO[roleDemande] ? roleDemande : null);
+  const [email, setEmail] = useState(choisi ? EMAILS_DEMO[choisi] : "");
   const [motDePasse, setMotDePasse] = useState("");
+  const [visible, setVisible] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
   const [envoi, setEnvoi] = useState(false);
 
+  const choisir = (r: Role | null) => {
+    setChoisi(r);
+    setEmail(r ? EMAILS_DEMO[r] : "");
+    setMotDePasse("");
+    setVisible(false);
+    setErreur(null);
+  };
+
   const valider = async (e: FormEvent) => {
     e.preventDefault();
+    if (!choisi) return;
     setErreur(null);
     setEnvoi(true);
     try {
       const session = await seConnecter(email, motDePasse);
+      if (session.role !== choisi) {
+        // Le compte ne correspond pas à l'espace choisi : on ne l'ouvre pas.
+        await seDeconnecter();
+        throw new Error(`Ce compte n'est pas un compte « ${LIBELLE_ROLE[choisi]} ».`);
+      }
       ouvrirSession(session);
       router.push(suite && suite.startsWith("/") ? suite : ACCUEIL[session.role]);
     } catch (err) {
@@ -43,50 +69,99 @@ function FormulaireConnexion() {
     }
   };
 
+  if (!choisi) {
+    return (
+      <>
+        <h1 className="text-2xl font-semibold">Choisir un compte de démonstration</h1>
+        <p className="mt-1 text-muted">Chaque compte voit uniquement ce dont il a besoin. Une connexion est demandée pour ouvrir chaque espace.</p>
+
+        <ul className="mt-6 divide-y divide-line overflow-hidden rounded-lg border border-line">
+          {ROLES.map((r) => {
+            const c = COMPTES_DEMO[r.role];
+            return (
+              <li key={r.role}>
+                <button onClick={() => choisir(r.role)} className="group flex w-full items-center gap-4 px-4 py-3.5 text-left transition-colors hover:bg-card-muted">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-md bg-brand-soft text-brand-fg">
+                    <r.icone size={19} />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block font-semibold">{LIBELLE_ROLE[r.role]}</span>
+                    <span className="block text-[0.85rem] text-muted">
+                      {c.nom} · {LIEUX_BASE[r.role]}
+                    </span>
+                    <span className="mt-0.5 block text-[0.85rem] text-fg-soft">{r.texte}</span>
+                  </span>
+                  <ChevronRight size={18} className="shrink-0 text-muted transition group-hover:translate-x-0.5 group-hover:text-brand-fg" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+
+        <p className="mt-5 flex items-start gap-2 text-[0.85rem] text-muted">
+          <Info size={15} className="mt-0.5 shrink-0" />
+          Enfants, mères et numéros sont fictifs. Le mot de passe des comptes de test figure dans les notes du dépôt.
+        </p>
+      </>
+    );
+  }
+
+  const r = ROLES.find((x) => x.role === choisi)!;
+  const c = COMPTES_DEMO[choisi];
   return (
     <>
-      <h1 className="text-2xl font-semibold">Se connecter</h1>
-      <p className="mt-1 text-muted">Chaque compte voit uniquement ce dont il a besoin : l&apos;espace s&apos;ouvre selon votre rôle.</p>
+      <button type="button" onClick={() => choisir(null)} className="mb-5 inline-flex w-fit items-center gap-1.5 text-[0.88rem] text-muted hover:text-fg">
+        <ArrowLeft size={15} /> Choisir un autre compte
+      </button>
 
-      <form onSubmit={valider} className="mt-6 space-y-4">
+      <div className="flex items-center gap-4 rounded-lg border border-line px-4 py-3.5">
+        <span className="grid size-10 shrink-0 place-items-center rounded-md bg-brand-soft text-brand-fg">
+          <r.icone size={19} />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-semibold">{LIBELLE_ROLE[choisi]}</span>
+          <span className="block text-[0.85rem] text-muted">
+            {c.nom} · {LIEUX_BASE[choisi]}
+          </span>
+        </span>
+      </div>
+
+      <h1 className="mt-6 text-2xl font-semibold">Connexion</h1>
+      <p className="mt-1 text-muted">Entrez le mot de passe de l&apos;espace {LIBELLE_ROLE[choisi].toLowerCase()}.</p>
+
+      <form onSubmit={valider} className="mt-5 space-y-4">
         <label className="block">
           <span className="label">Adresse e-mail</span>
           <input type="email" required autoComplete="username" value={email} onChange={(e) => setEmail(e.target.value)} className="input" />
         </label>
         <label className="block">
           <span className="label">Mot de passe</span>
-          <input type="password" required autoComplete="current-password" value={motDePasse} onChange={(e) => setMotDePasse(e.target.value)} className="input" />
+          <span className="relative block">
+            <input
+              type={visible ? "text" : "password"}
+              required
+              autoFocus
+              autoComplete="current-password"
+              value={motDePasse}
+              onChange={(e) => setMotDePasse(e.target.value)}
+              className="input pr-11"
+            />
+            <button
+              type="button"
+              onClick={() => setVisible((v) => !v)}
+              className="absolute right-1.5 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-md text-muted hover:bg-card-muted hover:text-fg"
+              aria-label={visible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              title={visible ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            >
+              {visible ? <EyeOff size={17} /> : <Eye size={17} />}
+            </button>
+          </span>
         </label>
         {erreur && <p className="rounded-md border border-danger/20 bg-danger-soft px-3 py-2 text-[0.88rem] text-danger">{erreur}</p>}
         <button type="submit" disabled={envoi} className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-primary-600 font-semibold text-white transition hover:bg-primary-700 disabled:opacity-60">
           <LockKeyhole size={17} /> {envoi ? "Connexion…" : "Se connecter"}
         </button>
       </form>
-
-      <div className="mt-6 rounded-lg border border-line">
-        <p className="border-b border-line px-4 py-2.5 text-[0.85rem] font-medium">Comptes de test (jury)</p>
-        <ul className="divide-y divide-line">
-          {ROLES.map((r) => (
-            <li key={r.role}>
-              <button type="button" onClick={() => setEmail(EMAILS_DEMO[r.role])} className="group flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-card-muted">
-                <span className="grid size-8 shrink-0 place-items-center rounded-md bg-brand-soft text-brand-fg">
-                  <r.icone size={16} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-[0.9rem] font-medium">{LIBELLE_ROLE[r.role]}</span>
-                  <span className="block truncate text-[0.82rem] text-muted">{EMAILS_DEMO[r.role]}</span>
-                </span>
-                <ChevronRight size={16} className="shrink-0 text-muted group-hover:text-brand-fg" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <p className="mt-5 flex items-start gap-2 text-[0.85rem] text-muted">
-        <Info size={15} className="mt-0.5 shrink-0" />
-        Le mot de passe des comptes de test figure dans les notes du dépôt. Enfants, mères et numéros sont fictifs.
-      </p>
     </>
   );
 }
@@ -128,7 +203,7 @@ export default function Connexion() {
           </div>
           {MODE_BASE ? (
             <Suspense fallback={null}>
-              <FormulaireConnexion />
+              <ConnexionParEspace />
             </Suspense>
           ) : (
           <>
