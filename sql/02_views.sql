@@ -216,6 +216,27 @@ join children c on c.id = m.child_id
 left join health_centers hc on hc.id = c.center_id
 left join zones z on z.id = c.zone_id;
 
+-- Liste des alertes (écran /alertes) : une ligne par alerte, avec l'enfant fictif.
+create or replace view v_alerts_list as
+select a.id, a.child_id, c.first_name, c.zone_id, z.name as zone,
+       c.center_id, hc.name as center_name,
+       a.type, a.status, a.target_role, a.created_at, a.resolved_at
+from alerts a
+join children c on c.id = a.child_id
+left join zones z on z.id = c.zone_id
+left join health_centers hc on hc.id = c.center_id;
+
+-- Enfant de démonstration utilisé par les commandes d'avance rapide.
+create or replace view v_demo_child as
+select c.id, c.first_name, c.birth_date, c.center_id, hc.name as center_name,
+       z.name as zone
+from children c
+left join health_centers hc on hc.id = c.center_id
+left join zones z on z.id = c.zone_id
+where c.is_demo
+order by (c.first_name = 'Kossi') desc, c.created_at
+limit 1;
+
 -- Droits : le rôle pilotage lit uniquement les vues agrégées.
 -- Sur un projet Supabase neuf, les rôles anon et authenticated doivent pouvoir
 -- lire les vues pour que l'application fonctionne avec la clé publishable.
@@ -224,7 +245,8 @@ declare
   vues text := 'v_kpis, v_zone_summary, v_coverage_by_zone, v_penta_dropout,
                 v_birth_cert, v_message_engagement, v_alerts_summary,
                 v_growth_by_zone, v_coverage_trend, v_demo_banner,
-                calendrier_vaccinal, oms_reference, v_message_log';
+                calendrier_vaccinal, oms_reference, v_message_log,
+                v_alerts_list, v_demo_child';
 begin
   if exists (select 1 from pg_roles where rolname = 'anon') then
     execute format('grant select on %s to anon', vues);

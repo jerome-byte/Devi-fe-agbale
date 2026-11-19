@@ -15,7 +15,8 @@ Cette commande applique, dans l'ordre :
 2. `02_views.sql` : vues du tableau de bord et vues de compatibilité
 3. `04_rules.sql` : moteur de règles, déclencheurs, boutons de démo
 4. `03_seed_demo.sql` : 300 enfants fictifs
-5. `scripts/load-reference.mjs` : référentiels de `donnees_sante/` et recalcul des z-scores
+5. `05_demo.sql` : enfant de démonstration (Kossi, Bè-Kpota, vaccins et pesées du scénario)
+6. `scripts/load-reference.mjs` : référentiels de `donnees_sante/` et recalcul des z-scores
 
 `npm run db:reference` recharge seulement les référentiels (calendrier et tables OMS)
 sans toucher aux enfants.
@@ -59,6 +60,11 @@ fichier.
 - Boutons de démo (à appeler via `supabase.rpc`) :
   `demo_fast_forward(child_id, 'J-2' | 'J-1' | 'J0' | 'MISSED_3' | 'MISSED_7')`
   `demo_reset_child(child_id)` remet l'enfant à zéro entre deux répétitions.
+- Actions d'alerte : `ack_alert(alert_id)` (open → acknowledged),
+  `resolve_alert(alert_id)` (→ resolved, avec `resolved_at`).
+- Ces fonctions sont `security definer` et exécutables par `anon` et
+  `authenticated` pour le prototype. En production, les restreindre et déplacer
+  `run_rules` côté serveur.
 
 ## Tableau de bord
 

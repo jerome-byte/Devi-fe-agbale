@@ -27,6 +27,10 @@ Le rôle « pilotage » ne lit **que des vues agrégées** : aucune donnée nomi
 L'écran se rafraîchit toutes les 30 secondes et le bouton **Actualiser** force
 une relecture immédiate.
 
+Quatre écrans partagent la même base : `/dashboard` (pilotage), `/alertes`
+(actions sur les alertes), `/regles` (règles et calendrier) et `/journal`
+(lecteurs audio).
+
 ---
 
 ## 2. Stack
@@ -89,7 +93,12 @@ app/
 ├── globals.css             jetons de couleur, focus, styles d'impression
 ├── dashboard/
 │   ├── page.tsx            état, chargement des données, composition de l'écran
-│   └── components.tsx      composants de présentation (aucune requête réseau)
+│   ├── components.tsx      composants de présentation (aucune requête réseau)
+│   └── demo-panel.tsx      commandes de démonstration (RPC)
+├── alertes/
+│   └── page.tsx            prise en charge et résolution des alertes
+├── regles/
+│   └── page.tsx            règles du moteur et calendrier PEV
 └── journal/
     ├── layout.tsx          métadonnées de l'onglet
     └── page.tsx            journal des messages et lecteur audio
@@ -141,7 +150,8 @@ démonstration. Tout le SQL vit dans `../sql/` (à la racine du dépôt).
 | 2 | `sql/02_views.sql` | vues `v_*` du tableau de bord |
 | 3 | `sql/04_rules.sql` | moteur de règles, déclencheurs, boutons de démo |
 | 4 | `sql/03_seed_demo.sql` | 300 enfants fictifs et leur suivi |
-| 5 | `scripts/load-reference.mjs` | calendrier PEV et tables OMS depuis `donnees_sante/`, recalcul des z-scores |
+| 5 | `sql/05_demo.sql` | enfant de démonstration Kossi à Bè-Kpota, vaccins et pesées du scénario |
+| 6 | `scripts/load-reference.mjs` | calendrier PEV et tables OMS depuis `donnees_sante/`, recalcul des z-scores |
 
 Le plus simple : `npm run db:init`, qui applique les quatre fichiers puis charge
 les référentiels de `donnees_sante/`. Sinon, exécuter les fichiers dans cet ordre
@@ -383,7 +393,45 @@ binaires ne sont pas dupliqués dans le dépôt.
   `messages.audio_url`. Le journal ne les utilise pas ; il faudra aligner le
   moteur sur le catalogue dans une prochaine passe.
 
-## 7. Design system
+## 7. Écrans d'action
+
+| Écran | Rôle |
+|---|---|
+| `/dashboard` | pilotage agrégé et commandes de démonstration |
+| `/alertes` | liste des alertes, prise en charge et résolution |
+| `/regles` | règles du moteur, seuils, calendrier PEV |
+| `/journal` | lecteurs audio des messages |
+
+### Commandes de démonstration
+
+Le panneau en haut du dashboard lit `v_demo_child` (Kossi, Bè-Kpota) et appelle :
+
+- `run_rules()` : exécute le moteur et affiche le détail par règle ;
+- `demo_fast_forward(p_child_id, p_event)` : `J-2`, `J-1`, `J0`, `MISSED_3`,
+  `MISSED_7` ;
+- `demo_reset_child(p_child_id)` : efface messages et alertes, remet les
+  rendez-vous manqués à `planned`.
+
+Après chaque action, les indicateurs du dashboard sont rechargés.
+
+### Alertes
+
+`v_alerts_list` fournit une ligne par alerte (enfant fictif, centre, type,
+statut, date). Les boutons appellent `ack_alert(p_id)` (open → acknowledged) et
+`resolve_alert(p_id)` (→ resolved). Filtre : ouvertes, en cours, toutes.
+
+### Règles
+
+La page `/regles` documente les rappels vaccinaux, les seuils de croissance
+(poids, taille, IMC, IMC > +2), la vitamine A, le déparasitage et le calendrier
+PEV lu depuis `calendrier_vaccinal`.
+
+> Les fonctions `run_rules` et `demo_*` sont `security definer` et exécutables
+> par la clé publishable pour le prototype. En production, les restreindre aux
+> comptes authentifiés et déplacer le moteur côté serveur. Le contrat complet
+> pour la plateforme est dans `../INTEGRATION_DEV.md`.
+
+## 8. Design system
 
 Le style reprend les codes d'un rapport de situation institutionnel : hairlines,
 angles droits, aucune ombre, un seul accent graphique.
@@ -412,7 +460,7 @@ permettre une sortie PDF propre.
 
 ---
 
-## 8. Vérifications
+## 9. Vérifications
 
 ```powershell
 npm run lint
@@ -424,11 +472,12 @@ contrôlé dans un navigateur à 1440 px, 834 px et 390 px de large, sans
 débordement horizontal. Le journal a été vérifié dans le navigateur (rendu,
 lecteurs, absence d'erreur) : `/journal` répond en 200, un fichier `.ogg` répond
 en `200 audio/ogg`, 60 messages s'affichent et les six lecteurs du parcours sont
-présents.
+présents. Les actions ont été testées : exécution du moteur, avance rapide J-2,
+passage d'une alerte en « en cours », affichage du calendrier sur `/regles`.
 
 ---
 
-## 9. Déploiement sur Vercel
+## 10. Déploiement sur Vercel
 
 1. Importer le dépôt GitHub, choisir le dossier racine `devi-dashboard`.
 2. Framework détecté : Next.js. Build : `npm run build`.
@@ -444,7 +493,7 @@ doit donc être présent dans le dépôt (c'est le cas). Si vous déployez uniqu
 
 ---
 
-## 10. Dépannage
+## 11. Dépannage
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|
@@ -460,7 +509,7 @@ doit donc être présent dans le dépôt (c'est le cas). Si vous déployez uniqu
 
 ---
 
-## 11. Limites connues
+## 12. Limites connues
 
 - **Tables OMS taille et IMC** : seules les tables de poids pour l'âge sont
   chargées. Les 8 fichiers taille/IMC et le calendrier vitamine A sont attendus

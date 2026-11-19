@@ -12,7 +12,7 @@
     "db:sql": "node scripts/apply-sql.mjs",
     "db:reference": "node scripts/load-reference.mjs",
     "audio:sync": "node scripts/sync-audio.mjs",
-    "db:init": "node scripts/apply-sql.mjs ../sql/01_schema.sql ../sql/02_views.sql ../sql/04_rules.sql ../sql/03_seed_demo.sql && node scripts/load-reference.mjs"
+    "db:init": "node scripts/apply-sql.mjs ../sql/01_schema.sql ../sql/02_views.sql ../sql/04_rules.sql ../sql/03_seed_demo.sql ../sql/05_demo.sql && node scripts/load-reference.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",

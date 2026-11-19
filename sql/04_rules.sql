@@ -9,7 +9,7 @@ set search_path = public, extensions;
 -- ---------- 1. Calendrier vaccinal créé à l'inscription ---------------
 -- (les enfants is_demo reçoivent leurs rendez-vous du seed)
 create or replace function trg_generate_appointments() returns trigger
-language plpgsql as $$
+language plpgsql security definer set search_path = public, extensions as $$
 begin
   if not new.is_demo then
     insert into appointments (child_id, schedule_id, due_date)
@@ -34,7 +34,7 @@ create or replace function run_rules(
   p_simulated boolean default false,
   p_lookback_days int default 60      -- relances/alertes seulement sur les rendez-vous récents
 ) returns table(rule text, n int)
-language plpgsql as $$
+language plpgsql security definer set search_path = public, extensions as $$
 declare
   v_n int;
   v_off int;
@@ -176,7 +176,7 @@ end $$;
 -- ---------- 3. Pesée : z-score et tendance calculés à l'insertion ------
 -- Utilise who_weight_for_age si la table est chargée (méthode LMS), sinon laisse z_score vide.
 create or replace function trg_weigh_in_compute() returns trigger
-language plpgsql as $$
+language plpgsql security definer set search_path = public, extensions as $$
 declare
   c record; r record; prev record; v_age numeric;
 begin
@@ -263,7 +263,7 @@ create trigger weigh_ins_compute before insert on weigh_ins
 -- Cible le prochain rendez-vous de l'enfant (planifié ou manqué) et simule la date voulue.
 create or replace function demo_fast_forward(p_child_id uuid, p_event text)
 returns table(simulated_date date, rule text, n int)
-language plpgsql as $$
+language plpgsql security definer set search_path = public, extensions as $$
 declare
   v_due date; v_as_of date;
 begin
@@ -285,8 +285,46 @@ end $$;
 
 -- Annuler la simulation d'un enfant (remettre la démo à zéro entre deux répétitions)
 create or replace function demo_reset_child(p_child_id uuid) returns void
-language sql as $$
-  delete from messages where child_id = p_child_id and is_simulated;
+language sql security definer set search_path = public, extensions as $$
+  delete from messages where child_id = p_child_id;
   delete from alerts   where child_id = p_child_id;
-  update appointments set status = 'planned', done_at = null where child_id = p_child_id;
+  update appointments set status = 'planned', done_at = null
+   where child_id = p_child_id and status = 'missed';
 $$;
+
+-- ---------- 5. Actions du tableau de bord ----------------------------
+-- Prendre en charge / résoudre une alerte (écran /alertes).
+create or replace function ack_alert(p_id uuid)
+returns setof alerts
+language sql security definer set search_path = public, extensions as $$
+  update alerts set status = 'acknowledged'
+   where id = p_id and status = 'open'
+  returning *;
+$$;
+
+create or replace function resolve_alert(p_id uuid)
+returns setof alerts
+language sql security definer set search_path = public, extensions as $$
+  update alerts set status = 'resolved', resolved_at = now()
+   where id = p_id and status in ('open','acknowledged')
+  returning *;
+$$;
+
+-- Droits : commandes de démonstration appelées par le tableau de bord.
+do $$
+begin
+  if exists (select 1 from pg_roles where rolname = 'anon') then
+    grant execute on function run_rules(date, uuid, boolean, integer) to anon;
+    grant execute on function demo_fast_forward(uuid, text) to anon;
+    grant execute on function demo_reset_child(uuid) to anon;
+    grant execute on function ack_alert(uuid) to anon;
+    grant execute on function resolve_alert(uuid) to anon;
+  end if;
+  if exists (select 1 from pg_roles where rolname = 'authenticated') then
+    grant execute on function run_rules(date, uuid, boolean, integer) to authenticated;
+    grant execute on function demo_fast_forward(uuid, text) to authenticated;
+    grant execute on function demo_reset_child(uuid) to authenticated;
+    grant execute on function ack_alert(uuid) to authenticated;
+    grant execute on function resolve_alert(uuid) to authenticated;
+  end if;
+end $$;

@@ -106,6 +106,7 @@ npm run dev        # http://localhost:3000/dashboard
 ```
 
 - Notice complète : `devi-dashboard/README.md` (architecture, variables, Supabase, déploiement).
+- Guide d'intégration pour la plateforme : `INTEGRATION_DEV.md` (contrats, RPC, parcours, WhatsApp).
 - Base et données : `npm run db:init` applique le schéma, les vues, le moteur de règles,
   le seed et les référentiels de `donnees_sante/` (calendrier PEV, tables OMS).
 - Déjà chargé : 23 doses du calendrier, 122 lignes OMS poids, 124 lignes taille,

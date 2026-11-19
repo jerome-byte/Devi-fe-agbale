@@ -29,7 +29,7 @@ const LEVEL: Record<Level, { color: string; label: string }> = {
   "en difficulté": { color: "var(--color-bad)", label: "En difficulté" },
 };
 
-const ALERT_LABELS: Record<string, string> = {
+export const ALERT_LABELS: Record<string, string> = {
   missed_7d: "Vaccin manqué depuis 7 jours",
   growth_stagnation: "Croissance qui stagne ou chute",
   growth_surveiller: "Croissance à surveiller",
@@ -66,12 +66,20 @@ export function PageHeader({
           Couverture vaccinale, croissance et alertes par zone. Données agrégées
           et anonymisées pour le pilotage du programme.
         </p>
-        <Link
-          href="/journal"
-          className="mt-3 inline-block text-sm font-bold text-deep underline-offset-4 hover:underline"
+        <nav
+          aria-label="Navigation"
+          className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm font-bold text-deep"
         >
-          Journal des messages
-        </Link>
+          <Link href="/alertes" className="underline-offset-4 hover:underline">
+            Alertes
+          </Link>
+          <Link href="/regles" className="underline-offset-4 hover:underline">
+            Règles
+          </Link>
+          <Link href="/journal" className="underline-offset-4 hover:underline">
+            Journal des messages
+          </Link>
+        </nav>
       </div>
 
       <div className="ml-auto flex w-full items-end justify-between gap-5 sm:w-auto sm:justify-end">

@@ -19,6 +19,7 @@ import {
   ZoneRanking,
   type KpiItem,
 } from "./components";
+import { DemoPanel } from "./demo-panel";
 
 export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -92,6 +93,7 @@ export default function DashboardPage() {
         )}
 
         <main className="mt-6 space-y-6">
+          <DemoPanel onDone={() => void load()} />
           {error && <ErrorPanel message={error} onRetry={refresh} />}
           {!data && !error && <DashboardSkeleton />}
 
