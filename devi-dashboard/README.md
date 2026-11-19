@@ -4,6 +4,8 @@ Application Next.js du **tableau de bord de pilotage** du programme ɖevi ƒe ag
 (Hack4Children 2026, UNICEF Togo). Elle affiche des indicateurs agrégés par zone
 pour l'UNICEF, le ministère et les districts : couverture vaccinale, abandons,
 actes de naissance, écoute des messages vocaux, croissance et alertes.
+Un second écran, le **journal des messages**, permet d'écouter chaque vocal du
+parcours sans téléphone.
 
 Le rôle « pilotage » ne lit **que des vues agrégées** : aucune donnée nominative
 (prénom, téléphone, QR) ne transite par cette application.
@@ -20,6 +22,7 @@ Le rôle « pilotage » ne lit **que des vues agrégées** : aucune donnée nomi
 | Alertes ouvertes | répartition par type | `v_alerts_summary` |
 | Où agir en priorité | tableau zones × quatre signaux | `v_penta_dropout`, `v_birth_cert`, `v_message_engagement`, `v_growth_by_zone` |
 | Évolution sur 12 mois | courbe mensuelle | `v_coverage_trend` |
+| Journal des messages | six vocaux du parcours et 60 derniers messages avec lecteur | `v_message_log` et catalogue audio |
 
 L'écran se rafraîchit toutes les 30 secondes et le bouton **Actualiser** force
 une relecture immédiate.
@@ -164,7 +167,23 @@ Les codes vaccins sont ceux du calendrier validé par Gerson : `BCG`, `VPO`,
 restent dans `label_fr`.
 
 État des référentiels : 23 doses chargées, 122 lignes OMS (61 mois × 2 sexes),
-3 769 pesées recalculées avec la méthode LMS.
+3 769 pesées recalculées avec la méthode LMS et 3 788 statuts recalculés.
+
+### Règles de croissance
+
+Appliquées par le déclencheur `trg_weigh_in_compute` à chaque pesée, et
+recalculées sur l'historique par `npm run db:reference` :
+
+| Situation | Statut / alerte |
+|---|---|
+| z-score ≥ −2 | `normal` |
+| z-score < −2 | `a_surveiller`, alerte `growth_surveiller` |
+| z-score < −3 | `a_orienter`, alerte `growth_orient` prioritaire |
+| poids identique ou en baisse après au moins un mois, ou chute d'au moins une ligne de z | tendance `stagnation` ou `chute`, alerte `growth_stagnation` |
+
+Le z-score est calculé avec les colonnes `L`, `M`, `S` de la table OMS du sexe et
+de l'âge en mois révolus. L'application n'affiche jamais de diagnostic : seulement
+« à surveiller » ou « à orienter ».
 
 ### Vues lues par le tableau de bord
 
@@ -181,6 +200,7 @@ restent dans `label_fr`.
 | `v_alerts_summary` | alertes par zone et par type |
 | `calendrier_vaccinal` | vue de compatibilité : calendrier avec les colonnes des notices (`contact`, `age_libelle`, `vaccin_nom`, `dose`…) |
 | `oms_reference` | vue de compatibilité : poids pour l'âge avec les écarts-types `sd3neg` à `sd3` |
+| `v_message_log` | journal des messages (prénom fictif, centre, template, statut, dates, réponse) |
 
 Toutes les vues sont recalculées à chaque lecture : avec 300 enfants, la latence
 reste négligeable et les chiffres sont toujours à jour.
@@ -220,22 +240,24 @@ de la durée. En cas d'erreur, le numéro de ligne est affiché et les traitemen
 suivants sont arrêtés. Le seed est rejouable : il supprime d'abord les enfants
 `is_demo` avant de réinsérer.
 
-Si le pooler par défaut n'est pas le bon, ajouter dans `.env.local` :
+Si le pooler par défaut n'est pas le bon, ajouter dans `.env.local` l'hôte
+affiché par le script (exemple pour le projet actuel) :
 
 ```ini
-SUPABASE_POOLER_HOST=aws-1-eu-west-1.pooler.supabase.com
+SUPABASE_POOLER_HOST=aws-1-eu-central-2.pooler.supabase.com
 ```
 
 #### Pourquoi pas la connexion directe
 
 `db.<project-ref>.supabase.co` n'écoute qu'en IPv6 et échoue sur la plupart des
-réseaux locaux. Le pooler IPv4 (`aws-1-eu-west-1.pooler.supabase.com:5432`)
-accepte les scripts multi-instructions et les transactions.
+réseaux locaux. Le pooler IPv4 (`aws-1-<région>.pooler.supabase.com:5432`)
+accepte les scripts multi-instructions et les transactions. Le projet actuel est
+sur `aws-1-eu-central-2`.
 
 #### Avec `psql`, si vous l'avez
 
 ```powershell
-psql "postgresql://postgres.<project-ref>@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" `
+psql "postgresql://postgres.<project-ref>@<pooler-host>:5432/postgres" `
   -f ../sql/03_seed_demo.sql
 ```
 
@@ -267,7 +289,7 @@ courantes, puis affiche celle qui a répondu. S'il ne trouve pas, ajouter dans
 `.env.local` :
 
 ```ini
-SUPABASE_POOLER_HOST=aws-1-eu-west-1.pooler.supabase.com
+SUPABASE_POOLER_HOST=aws-1-eu-central-2.pooler.supabase.com
 ```
 
 `db:init` est rejouable sur une base déjà remplie : les tables utilisent
@@ -285,15 +307,22 @@ python seed/generate_seed.py               # écrit sql/03_seed_demo.sql, as_of 
 python seed/generate_seed.py --n 300 --seed 4 --as-of 2026-11-20
 ```
 
-Puis recharger `sql/03_seed_demo.sql` dans le SQL Editor. Le script supprime
-d'abord les enfants `is_demo` : il est rejouable sans doublon.
+Puis recharger le seed et recalculer les référentiels :
+
+```powershell
+cd devi-dashboard
+npm run db:init
+```
+
+`db:init` supprime d'abord les enfants `is_demo` : il est rejouable sans doublon.
 
 ### Droits
 
-- Les vues sont accessibles en lecture à la clé publishable : `02_views.sql`
-  accorde `select` à `anon` et `authenticated` sur les vues agrégées.
-- Les tables brutes ne doivent pas être exposées au rôle pilotage : garder les
-  politiques RLS activées et les `grant` commentés en bas de `02_views.sql`.
+- `02_views.sql` accorde `select` à `anon` et `authenticated` sur les vues
+  agrégées et sur les vues de compatibilité.
+- L'application ne lit que ces vues. Les tables brutes ne sont pas utilisées par
+  le tableau de bord ; si le projet est partagé au-delà de l'équipe, activer RLS
+  sur les tables sensibles.
 - Le tableau de bord n'effectue aucune écriture.
 
 ---
@@ -302,21 +331,49 @@ d'abord les enfants `is_demo` : il est rejouable sans doublon.
 
 Page `/journal` : les vocaux du parcours, écoutables sans téléphone.
 
-- Les 99 `.ogg` sont copiés dans `public/audio/messages/` par `npm run audio:sync`
-  (2,8 Mo). Le même script régénère `lib/catalogue.json` depuis
-  `voix/audio/messages/index_messages.json`, avec des chemins `/audio/messages/...`.
-- `lib/audio-catalog.ts` fait la correspondance `template_code` → `id` du catalogue,
-  normalise les prénoms (`Kossi` → `Kosi`) et les centres (`Bè-Kpota` → `be_kpota`),
-  puis choisit la variante audio.
-- La liste vient de la vue `v_message_log` (60 derniers messages). Les lignes dont
-  le prénom ou le centre n'a pas d'audio affichent « audio non disponible » : le
-  catalogue ne couvre que 10 prénoms et 2 centres.
-- La section « Parcours de Kossi » montre les six messages clés avec les variantes
-  `Kosi` / `Bè-Kpota`, indépendamment des données.
+### Ce que montre l'écran
 
-Limite connue : le moteur `run_rules` écrit encore des chemins `.mp3` dans
-`messages.audio_url`. Le journal ne les utilise pas, mais il faudra aligner le
-moteur sur le catalogue dans une prochaine passe.
+- **Parcours de Kossi** : les six messages clés (bienvenue, J-2, veille, jour J,
+  rendez-vous manqué, acte de naissance), avec le texte français, le texte éwé,
+  la durée et un lecteur. Cette section est indépendante des données : elle
+  montre toujours les variantes `Kosi` / `Bè-Kpota`.
+- **Journal** : les 60 derniers messages de `v_message_log`, avec la date, le
+  statut, le prénom fictif, le centre, le canal, la réponse 1 / 2 et le lecteur.
+- Filtres : type de message et case « Avec audio ».
+- Une ligne sans variante audio affiche « Audio non disponible pour ce prénom ou
+  ce centre ».
+
+### Comment l'audio est choisi
+
+1. `template_code` de la base → `id` du catalogue (`WELCOME` → `bienvenue`,
+   `MISSED_3` → `manque_3j`, etc., table complète dans `voix/README_voix.md`).
+2. Normalisation du prénom (`Kossi` → `Kosi`, `Kodjo` → `Kodzo`,
+   `Akossiwa` → `Akosiwa`) et du centre (`Bè-Kpota` → `be_kpota`).
+3. Sélection de la variante qui correspond aux variables du message : aucune,
+   prénom seul, ou prénom + centre.
+4. Les textes `{prenom}` et `{centre}` sont remplacés dans les versions française
+   et éwé.
+
+### Mettre à jour les audios
+
+```powershell
+cd devi-dashboard
+npm run audio:sync
+```
+
+Le script copie les 99 `.ogg` dans `public/audio/messages/` (2,8 Mo) et régénère
+`lib/catalogue.json` depuis `voix/audio/messages/index_messages.json`, avec des
+chemins `/audio/messages/...`. Il tourne aussi automatiquement avant `dev` et
+`build` (`predev`, `prebuild`). Le dossier copié est ignoré par git : les
+binaires ne sont pas dupliqués dans le dépôt.
+
+### Limites
+
+- Le catalogue ne couvre que **10 prénoms et 2 centres** : beaucoup de lignes du
+  journal n'ont donc pas d'audio. Le parcours de Kossi, lui, est complet.
+- Le moteur `run_rules` écrit encore des chemins `.mp3` dans
+  `messages.audio_url`. Le journal ne les utilise pas ; il faudra aligner le
+  moteur sur le catalogue dans une prochaine passe.
 
 ## 7. Design system
 
@@ -354,8 +411,12 @@ npm run lint
 npm run build
 ```
 
-Les deux commandes passent sur la version courante. Le rendu a été contrôlé dans
-un navigateur à 1440 px, 834 px et 390 px de large, sans débordement horizontal.
+Les deux commandes passent sur la version courante. Le tableau de bord a été
+contrôlé dans un navigateur à 1440 px, 834 px et 390 px de large, sans
+débordement horizontal. Le journal a été vérifié dans le navigateur (rendu,
+lecteurs, absence d'erreur) : `/journal` répond en 200, un fichier `.ogg` répond
+en `200 audio/ogg`, 60 messages s'affichent dont 24 avec audio, et les six
+lecteurs du parcours sont présents.
 
 ---
 
@@ -368,6 +429,11 @@ un navigateur à 1440 px, 834 px et 390 px de large, sans débordement horizonta
 4. Déployer. Aucune autre configuration n'est nécessaire : la page est générée
    statiquement et lit Supabase côté navigateur.
 
+Le build lance `audio:sync`, qui lit `../voix/audio/messages`. Le dossier `voix/`
+doit donc être présent dans le dépôt (c'est le cas). Si vous déployez uniquement
+`devi-dashboard`, lancez `npm run audio:sync` puis retirez
+`/public/audio/messages/` du `.gitignore` pour versionner la copie.
+
 ---
 
 ## 10. Dépannage
@@ -378,16 +444,28 @@ un navigateur à 1440 px, 834 px et 390 px de large, sans débordement horizonta
 | Page vide ou 404 sur `/` | mauvais dossier de travail | lancer depuis `devi-dashboard`, la racine redirige vers `/dashboard` |
 | `Impossible de charger les indicateurs` | variables absentes ou vues non créées | vérifier `.env.local`, puis `sql/02_views.sql` |
 | `division by zero` dans `v_kpis` | tables vides | recharger `sql/03_seed_demo.sql` |
-| `psql` ne se connecte pas | connexion directe en IPv6 | utiliser le pooler `aws-1-eu-west-1.pooler.supabase.com` |
+| `psql` ne se connecte pas | connexion directe en IPv6 | utiliser le pooler affiché par le script (projet actuel : `aws-1-eu-central-2`) |
 | Les alertes ne bougent pas | moteur de règles non exécuté | `select * from run_rules();` dans le SQL Editor |
+| `relation "v_message_log" does not exist` | vue non créée | `npm run db:sql -- ../sql/02_views.sql` |
+| Audio en 404 dans le journal | copie absente | `npm run audio:sync` |
+| « Audio non disponible » partout | prénom ou centre hors catalogue | le catalogue couvre 10 prénoms et 2 centres |
 
 ---
 
 ## 11. Limites connues
 
-- `who_weight_for_age` est vide : les z-scores du seed viennent de médianes
-  approchées, en attendant les tables LMS officielles.
-- Le journal résout les audios via le catalogue, mais `run_rules` écrit encore des
-  chemins `.mp3` dans `messages.audio_url` : à aligner sur le catalogue.
-- Le journal des messages, les boutons d'avance rapide et l'affichage détaillé du
-  score de risque restent à brancher sur l'interface.
+- **Tables OMS taille et IMC** : seules les tables de poids pour l'âge sont
+  chargées. Les 8 fichiers taille/IMC et le calendrier vitamine A sont attendus
+  pour la finale ; `weigh_ins` n'a pas encore de colonne `height_cm`.
+- **Couverture audio** : 10 prénoms et 2 centres seulement. Les messages dont le
+  prénom ou le centre n'est pas couvert affichent « audio non disponible ».
+- **Moteur de messages** : `run_rules` écrit encore des chemins `.mp3` dans
+  `messages.audio_url` et n'envoie pas encore de message `pesee` mensuel ni de
+  message `croissance` à la famille.
+- **Tableau de bord** : la couverture par vaccin et par dose, les doses en retard
+  par centre, la séparation « à surveiller / à orienter » et les mesures à jour
+  ne sont pas encore affichées.
+- **Vérification Gerson** : les 3 enfants de test du 20 novembre restent à
+  préparer et à envoyer.
+- **Score de risque** : `v_child_risk` existe mais n'est pas détaillé dans
+  l'interface ; les boutons `demo_fast_forward` sont dans la base, pas à l'écran.

@@ -64,7 +64,7 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 **Fait (Jérôme)**
 - Voix Meta MMS éwé réglée : dictionnaire de prononciation (prénoms, centres), pauses entre les phrases, vitesse 1,0.
 - 16 messages traduits et validés à l'écoute (`voix/catalogue_messages.xlsx`).
-- Tous les audios générés dans `voix/audio/messages/` : **99 audios**, en `.ogg` (WhatsApp) et `.wav` (journal des messages), pour les 10 prénoms du dictionnaire (Kosi, Ama, Yao, Afi, Kodzo, Akosiwa, Komi, Sena, Abla, Mawuli) et les 2 centres (Sylvanus Olympio, Bè-Kpota).
+- Tous les audios générés dans `voix/audio/messages/` : **99 audios**, en `.ogg` (WhatsApp et lecteur du journal) et `.wav` (source), pour les 10 prénoms du dictionnaire (Kosi, Ama, Yao, Afi, Kodzo, Akosiwa, Komi, Sena, Abla, Mawuli) et les 2 centres (Sylvanus Olympio, Bè-Kpota).
 - Ajouter un prénom ou un centre : une ligne dans `voix/prononciation.json`, puis relancer `voix/02_generation_audios.ipynb`.
 - Remise à l'équipe : `voix/audio/messages/index_messages.json` (fichier à lire par l'application) et `voix/README_voix.md` (notice).
 
