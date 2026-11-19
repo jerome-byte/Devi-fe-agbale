@@ -59,7 +59,8 @@ Ouvrir <http://localhost:3000> : la racine redirige vers `/dashboard`.
 | `npm run start` | sert le build de production |
 | `npm run lint` | ESLint (config Next + TypeScript) |
 | `npm run db:sql -- <fichier>` | exécute un fichier SQL sur Supabase (voir plus bas) |
-| `npm run db:init` | applique `01`, `02`, `04` puis le seed `03`, dans le bon ordre |
+| `npm run db:init` | applique `01`, `02`, `04`, le seed `03`, puis charge les référentiels de `donnees_sante/` |
+| `npm run db:reference` | recharge seulement le calendrier PEV et les tables OMS |
 
 ### Variables d'environnement
 
@@ -130,23 +131,33 @@ démonstration. Tout le SQL vit dans `../sql/` (à la racine du dépôt).
 | 2 | `sql/02_views.sql` | vues `v_*` du tableau de bord |
 | 3 | `sql/04_rules.sql` | moteur de règles, déclencheurs, boutons de démo |
 | 4 | `sql/03_seed_demo.sql` | 300 enfants fictifs et leur suivi |
+| 5 | `scripts/load-reference.mjs` | calendrier PEV et tables OMS depuis `donnees_sante/`, recalcul des z-scores |
 
-À exécuter dans le **SQL Editor** de Supabase, dans cet ordre. Les vues doivent
-être créées avant le seed, qui insère des lignes dont dépendent les alertes.
+Le plus simple : `npm run db:init`, qui applique les quatre fichiers puis charge
+les référentiels de `donnees_sante/`. Sinon, exécuter les fichiers dans cet ordre
+dans le SQL Editor (le seed `03` est trop volumineux pour l'éditeur web).
 
 ### Tables principales
 
 | Table | Rôle |
 |---|---|
 | `zones`, `health_centers`, `daycares` | découpage géographique |
-| `vaccine_schedule` | calendrier PEV du Togo (23 doses, 9 contacts) |
+| `vaccine_schedule` | calendrier PEV du Togo (23 doses, 9 contacts), métadonnées du CSV validé |
+| `who_weight_for_age` | tables OMS poids pour l'âge (61 mois × 2 sexes, LMS + écarts-types) |
 | `children` | carnet de l'enfant, `qr_token` sans donnée personnelle |
 | `guardians` | responsable légal, langue, canal préféré |
 | `appointments` | rendez-vous vaccinaux, statut `planned` / `done` / `missed` |
-| `weigh_ins` | pesées, z-score et tendance |
+| `weigh_ins` | pesées, z-score, tendance et statut OMS (`normal`, `a_surveiller`, `a_orienter`) |
 | `messages` | journal des messages vocaux et réponses |
 | `alerts` | alertes ouvertes, acquittées ou résolues |
 | `profiles` | comptes par rôle (`agent`, `educatrice`, `pilotage`, `admin`) |
+
+Les codes vaccins sont ceux du calendrier validé par Gerson : `BCG`, `VPO`,
+`PENTA`, `PNEUMO`, `ROTA`, `VPI`, `VAP`, `RR`, `VAA`, `MENA`. Les libellés longs
+restent dans `label_fr`.
+
+État des référentiels : 23 doses chargées, 122 lignes OMS (61 mois × 2 sexes),
+3 769 pesées recalculées avec la méthode LMS.
 
 ### Vues lues par le tableau de bord
 
@@ -161,6 +172,8 @@ démonstration. Tout le SQL vit dans `../sql/` (à la racine du dépôt).
 | `v_growth_by_zone` | stagnation et insuffisance pondérale |
 | `v_coverage_trend` | couverture mensuelle sur 12 mois |
 | `v_alerts_summary` | alertes par zone et par type |
+| `calendrier_vaccinal` | vue de compatibilité : calendrier avec les colonnes des notices (`contact`, `age_libelle`, `vaccin_nom`, `dose`…) |
+| `oms_reference` | vue de compatibilité : poids pour l'âge avec les écarts-types `sd3neg` à `sd3` |
 
 Toutes les vues sont recalculées à chaque lecture : avec 300 enfants, la latence
 reste négligeable et les chiffres sont toujours à jour.

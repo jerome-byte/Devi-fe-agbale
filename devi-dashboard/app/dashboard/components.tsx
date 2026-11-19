@@ -31,6 +31,8 @@ const LEVEL: Record<Level, { color: string; label: string }> = {
 const ALERT_LABELS: Record<string, string> = {
   missed_7d: "Vaccin manqué depuis 7 jours",
   growth_stagnation: "Croissance qui stagne ou chute",
+  growth_surveiller: "Insuffisance pondérale à surveiller",
+  growth_orient: "Insuffisance pondérale à orienter",
   birth_cert_missing: "Acte de naissance manquant",
   screening_due: "Dépistage à faire",
   referral: "Orientation à suivre",

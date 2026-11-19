@@ -81,17 +81,36 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 ├── ɖevi ƒe agbalẽ_Hack4Children_2026.pdf     dossier de candidature
 ├── Plan_prototype_repartition_taches.docx    plan détaillé (Word)
 ├── Plan_prototype_repartition_taches.pdf     plan détaillé (PDF)
-└── voix/
-    ├── README_voix.md                        notice voix pour Blaise et Cherif
-    ├── 01_test_mms_ewe.ipynb                 réglages de la voix éwé (Colab)
-    ├── 02_generation_audios.ipynb            génère tous les audios du catalogue (Colab)
-    ├── prononciation.json                    dictionnaire de prononciation, centres, réglages
-    ├── catalogue_messages.xlsx               les 16 messages (français, éwé, éwé pour la voix)
-    └── audio/
-        └── messages/                         99 audios (.ogg WhatsApp + .wav) + index_messages.json
+├── donnees_sante/                            calendrier PEV, tables OMS, règles de croissance
+├── voix/
+│   ├── README_voix.md                        notice voix pour Blaise et Cherif
+│   ├── prononciation.json                    dictionnaire de prononciation, centres, réglages
+│   ├── catalogue_messages.xlsx               les 16 messages (français, éwé)
+│   └── audio/messages/                       99 audios (.ogg WhatsApp + .wav) + index_messages.json
+├── sql/                                      schéma, vues, moteur de règles, seed
+├── seed/generate_seed.py                     génère les 300 enfants fictifs
+└── devi-dashboard/                           application Next.js du tableau de bord
 ```
 
 Le plan détaillé, avec le calendrier et les cases à cocher, est dans `Plan_prototype_repartition_taches.pdf`.
+
+## Application (tableau de bord)
+
+Le tableau de bord de pilotage est dans **`devi-dashboard/`** (Next.js + Supabase).
+Il ne lit que des vues agrégées : aucune donnée nominative.
+
+```powershell
+cd devi-dashboard
+npm install
+npm run dev        # http://localhost:3000/dashboard
+```
+
+- Notice complète : `devi-dashboard/README.md` (architecture, variables, Supabase, déploiement).
+- Base et données : `npm run db:init` applique le schéma, les vues, le moteur de règles,
+  le seed et les référentiels de `donnees_sante/` (calendrier PEV, tables OMS).
+- Déjà chargé : 23 doses du calendrier, 122 lignes OMS poids pour l'âge, 300 enfants fictifs.
+- Le bandeau « données de démonstration » reste affiché tant que le seed est présent.
+
 
 ## Livrables de Gerson (référent médical) : qui les reçoit, où les mettre
 
