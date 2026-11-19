@@ -16,7 +16,7 @@ declare
 begin
   select id into v_id
     from children
-   where is_demo and first_name in ('Kossi', 'Kosi')
+   where is_demo and first_name in ('Kosi')
    order by created_at
    limit 1;
 
@@ -29,7 +29,7 @@ begin
   end if;
 
   update children
-     set first_name = 'Kossi',
+     set first_name = 'Kosi',
          center_id = 1,
          zone_id = 1,
          birth_date = current_date - 96,

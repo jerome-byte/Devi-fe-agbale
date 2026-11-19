@@ -47,6 +47,20 @@ fichier.
 - Les vues `calendrier_vaccinal` et `oms_reference` exposent les noms et colonnes
   attendus par les notices de `donnees_sante/` (lecture seule).
 
+## Corrections de l'issue (19 nov.)
+
+- Centre **Sylvanus Olympio** ajouté (`health_centers`, id 7).
+- Seed limité aux **10 prénoms du catalogue audio** (Kosi, Ama, Yao, Afi, Kodzo,
+  Akosiwa, Komi, Sena, Abla, Mawuli).
+- Tous les messages partent en **WhatsApp** (`MISSED_3` inclus).
+- **RLS activée** sur toutes les tables (politiques par rôle à écrire avec Blaise).
+- `messages.audio_url` reste **vide** : le backend résout l'audio dans le catalogue.
+- Une **stagnation** met le statut à `a_surveiller` (et non `normal`).
+- `run_rules` produit aussi **pesée**, **croissance**, **vitamine A** et
+  **déparasitage**.
+- 3 enfants de test et rapport : `npm run gerson:check` →
+  `docs/verification_gerson_20nov.md`.
+
 ## Moteur de règles
 
 - Production : `select * from run_rules();` (pg_cron toutes les heures, ou appel serveur). Idempotent.

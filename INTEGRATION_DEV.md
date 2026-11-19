@@ -101,8 +101,9 @@ Toutes les tables sont dans le schéma `public`.
 
 ### RLS et droits
 
-- RLS est **activé** sur les tables métier, **sans politique** : la clé publishable
-  ne lit pas les tables brutes.
+- Le SQL active RLS sur **toutes les tables** (`alter table … enable row level
+  security` dans `01_schema.sql`), **sans politique** : la clé publishable ne lit
+  pas les tables brutes.
 - Les **vues** sont accordées à `anon` et `authenticated` (elles contournent RLS
   car elles appartiennent au propriétaire).
 - Les fonctions du moteur sont `security definer` et exécutables par `anon` et
@@ -142,6 +143,9 @@ Toutes les tables sont dans le schéma `public`.
 | `v_message_log` | journal : `id`, `child_id`, `first_name`, `center_id`, `center_name`, `zone`, `template_code`, `channel`, `status`, `language`, `scheduled_for`, `sent_at`, `response_key`, `is_simulated` |
 | `v_alerts_list` | alertes individuelles : `id`, `child_id`, `first_name`, `zone_id`, `zone`, `center_id`, `center_name`, `type`, `status`, `target_role`, `created_at`, `resolved_at` |
 | `v_demo_child` | enfant de démo : `id`, `first_name`, `birth_date`, `center_id`, `center_name`, `zone` |
+| `v_health_centers` | liste des centres : `id`, `name`, `zone_id`, `zone` (inscription) |
+| `v_zones` | liste des zones : `id`, `name`, `commune`, `prefecture` |
+| `v_daycares` | liste des garderies : `id`, `name`, `zone_id`, `center_id` |
 
 Exemple :
 
@@ -239,6 +243,8 @@ pour BCG / VAA / MENA (affiché « unique » dans le calendrier).
 | `NUTRITION_1` | `nutrition_1` | aucune |
 | `DEPISTAGE` | `depistage` | prénom |
 | `ORIENTATION` | `orientation` | prénom |
+| `VITAMINE_A` | `annonce_vitamine_a` | aucune |
+| `DEPARASITAGE` | pas encore d'audio | aucune |
 
 Statuts d'un message : `scheduled` → `sent` → `delivered` → `listened`, ou
 `failed`. Canaux : `whatsapp` (prototype) et `voice` (finale). `response_key` :
@@ -275,6 +281,8 @@ Statuts : `open`, `acknowledged`, `resolved`.
 - WhatsApp : téléverser le `.ogg` (endpoint médias) puis envoyer un message
   `audio` avec l'id du média. Pour `MISSED_3`, envoyer ensuite un message
   interactif avec les boutons « 1 » et « 2 ».
+- `messages.audio_url` est vide : le backend résout le fichier depuis le
+  catalogue (`template_code` + prénom + centre), pas depuis la base.
 - Licence des voix : Meta MMS-TTS (`facebook/mms-tts-ewe`), CC BY-NC 4.0. La
   mention doit apparaître dans les crédits de la plateforme.
 
@@ -287,6 +295,9 @@ Statuts : `open`, `acknowledged`, `resolved`.
 Champs indispensables : `first_name`, `birth_date`, `sex`, `center_id`,
 `zone_id`, `daycare_id` (optionnel), `has_birth_certificate`, un responsable
 (`guardians`) avec `phone`, `language`, `channel_pref`.
+
+Les listes de centres, zones et garderies se lisent depuis `v_health_centers`,
+`v_zones` et `v_daycares` (les tables sont protégées par RLS).
 
 À l'insertion :
 
@@ -392,10 +403,11 @@ au mode démo (voir section 11).
 ## 9. Circuit WhatsApp (backend)
 
 1. **La base prépare.** `run_rules` insère dans `messages` des lignes
-   `status = 'scheduled'` avec `template_code`, `scheduled_for` et `audio_url`.
+   `status = 'scheduled'` avec `template_code` et `scheduled_for`.
 2. **Le backend envoie.** Toutes les minutes :
    - lire `messages` où `status = 'scheduled'` et `scheduled_for <= now()` ;
-   - téléverser l'audio (chemin catalogue) ;
+   - résoudre l'audio depuis le catalogue (`template_code` + prénom + centre) ;
+   - téléverser l'audio ;
    - envoyer sur WhatsApp ;
    - passer `status = 'sent'`, `sent_at = now()`.
 3. **Le backend reçoit les réponses.** Webhook boutons :
@@ -463,13 +475,13 @@ contacts 1 à 3 déjà faits, deux pesées avec stagnation.
 
 ## 13. Points ouverts
 
-- `run_rules` écrit encore des chemins `.mp3` dans `messages.audio_url` : le
-  backend doit utiliser le catalogue, pas ce champ. À aligner dans une prochaine
-  passe.
-- Les messages `PESEE`, `CROISSANCE`, `NUTRITION_1`, `DEPISTAGE`, `ORIENTATION`,
-  vitamine A et déparasitage ne sont pas encore produits par `run_rules`.
-- Le seed ne contient pas de taille : les indicateurs taille/IMC ne s'exercent que
-  sur les mesures saisies.
+- `messages.audio_url` reste vide : le backend doit résoudre l'audio depuis le
+  catalogue.
+- Le déparasitage n'a pas encore d'audio dédié dans le catalogue.
+- Les rappels J-1 / J0 ne sont disponibles que pour Bè-Kpota et Sylvanus Olympio
+  (les quatre autres centres n'ont pas de variante audio).
+- Le seed principal ne contient pas de taille ; les 3 enfants de test et les
+  mesures saisies dans l'application en ont.
 - Les politiques RLS par rôle restent à écrire pour les écritures agent.
 - Le token QR n'a pas encore de route serveur dédiée.
 - Le score de risque (`v_child_risk`) n'est pas détaillé dans l'interface.

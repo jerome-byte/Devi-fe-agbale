@@ -273,6 +273,29 @@ language sql immutable as $$
   end;
 $$;
 
+-- ========== SÉCURITÉ (RLS) ==========================================
+-- Toutes les tables métier sont protégées. Les vues (appartenant au
+-- propriétaire) restent lisibles par la clé publishable ; les écritures passent
+-- par les RPC (security definer) ou par le serveur (service role).
+-- Les politiques par rôle restent à écrire avec Blaise avant d'ouvrir les
+-- écritures directes aux agents authentifiés.
+alter table zones enable row level security;
+alter table health_centers enable row level security;
+alter table daycares enable row level security;
+alter table vaccine_schedule enable row level security;
+alter table who_weight_for_age enable row level security;
+alter table who_height_for_age enable row level security;
+alter table who_bmi_for_age enable row level security;
+alter table profiles enable row level security;
+alter table children enable row level security;
+alter table guardians enable row level security;
+alter table appointments enable row level security;
+alter table weigh_ins enable row level security;
+alter table messages enable row level security;
+alter table alerts enable row level security;
+alter table audio_segments enable row level security;
+alter table vitamin_a_schedule enable row level security;
+
 -- ========== CALENDRIER PEV OFFICIEL (source : PEV Togo) ==============
 -- Mois convertis en jours (x 30,4375) : 5 m = 152, 6 m = 183, 7 m = 213, 9 m = 274, 15 m = 457.
 insert into vaccine_schedule (id, vaccine_code, dose, label_fr, age_days, contact_no, contact_label) values
