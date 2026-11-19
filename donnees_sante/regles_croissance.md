@@ -1,6 +1,6 @@
 # Règles de croissance — ɖevi ƒe agbalẽ
 
-Validées par **Gerson Akagbe** (référent médical) le 18 novembre 2026.
+Validées par **Gerson Akagbe** (référent médical) le 18 novembre 2026, complétées le 19 novembre.
 Référence : normes de croissance de l'OMS (2006) ; support de Gerson `courbes de croissance.pdf`.
 
 ## Indicateurs suivis
@@ -8,8 +8,8 @@ Référence : normes de croissance de l'OMS (2006) ; support de Gerson `courbes 
 | Indicateur | Mesures nécessaires | Tables OMS (z-scores) |
 |---|---|---|
 | **Poids pour l'âge** | poids | `oms_poids_age_filles.csv`, `oms_poids_age_garcons.csv` (0-5 ans) — **disponibles** |
-| **Taille pour l'âge** | taille (couché avant 2 ans, debout après) | *Length-for-age* 0-2 ans et *Height-for-age* 2-5 ans, filles et garçons — **à télécharger** |
-| **IMC pour l'âge** | poids et taille (IMC = poids en kg / taille en m²) | *BMI-for-age* 0-2 ans et 2-5 ans, filles et garçons — **à télécharger** |
+| **Taille pour l'âge** | taille (couché avant 2 ans, debout après) | `oms_taille_age_0_2ans_filles.csv`, `oms_taille_age_2_5ans_filles.csv` (idem `_garcons`) — **disponibles** |
+| **IMC pour l'âge** | poids et taille (IMC = poids en kg / taille en m²) | `oms_imc_age_0_2ans_filles.csv`, `oms_imc_age_2_5ans_filles.csv` (idem `_garcons`) — **disponibles** |
 
 Calcul du z-score (méthode OMS, colonnes `L`, `M`, `S` de la ligne correspondant à l'âge en mois) :
 **z = ((mesure / M)^L − 1) / (L × S)**
@@ -32,7 +32,10 @@ La pesée/mesure suivante est due à cette échéance : c'est elle qui déclench
 - Écart minimum entre deux mesures pour juger une stagnation : **1 mois**.
 - L'application n'affiche **jamais de diagnostic** : seulement « à surveiller » ou « à orienter ».
 
-## Points à confirmer par Gerson
+## Confirmé par Gerson le 19 novembre
 
-1. Les seuils −2 / −3 s'appliquent-ils aussi à la **taille pour l'âge** (retard de croissance) et à l'**IMC pour l'âge** (maigreur) ?
-2. Pour l'IMC, faut-il aussi alerter en cas de **surpoids** (z-score > +2) ?
+1. Les seuils −2 (« à surveiller ») et −3 (« à orienter ») s'appliquent aux **trois indicateurs** : poids pour l'âge, taille pour l'âge et IMC pour l'âge.
+2. Pour l'**IMC pour l'âge**, alerter aussi au-dessus de **+2** (surpoids) : résultat « à surveiller », alerte à l'agent de santé.
+
+Taille et IMC : table **0-2 ans** avant 24 mois (taille mesurée couché), table **2-5 ans** à partir de 24 mois (debout).
+Le résultat affiché pour l'enfant est le **plus grave** des trois indicateurs.
