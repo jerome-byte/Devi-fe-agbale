@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 
-export const metadata: Metadata = { title: "Crédits photos" };
+export const metadata: Metadata = { title: "Crédits" };
 
 const PHOTOS = [
   { f: "mere-bebe.jpg", t: "A woman cuddles her child in northern Ghana", a: "DFID, UK Department for International Development", l: "CC BY-SA 2.0", u: "https://www.flickr.com/photos/14214150@N02/8406177626" },
@@ -39,6 +39,14 @@ export default function Credits() {
           </li>
         ))}
       </ul>
+      <h2 className="mt-12 font-vitrine text-2xl font-bold tracking-tight">Voix</h2>
+      <p className="mt-2 text-muted">
+        Voix en éwé : Meta MMS-TTS (
+        <a href="https://huggingface.co/facebook/mms-tts-ewe" className="text-brand-fg underline" target="_blank" rel="noreferrer">
+          facebook/mms-tts-ewe
+        </a>
+        ), licence CC BY-NC 4.0.
+      </p>
     </div>
   );
 }

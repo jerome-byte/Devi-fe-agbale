@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarClock, PanelLeftClose, PanelLeftOpen, Plus, ScanLine, X } from "lucide-react";
+import { CalendarClock, CircleAlert, PanelLeftClose, PanelLeftOpen, Plus, ScanLine, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -123,6 +123,22 @@ function ContenuMenu({ replie, onNaviguer, onBasculer }: { replie?: boolean; onN
   );
 }
 
+/** Erreur de la base ou du backend (mode base uniquement). */
+function BandeauErreur() {
+  const erreur = useStore((s) => s.erreur);
+  const effacer = useStore((s) => s.effacerErreur);
+  if (!erreur) return null;
+  return (
+    <div role="alert" className="mb-4 flex items-start gap-2 rounded-md border border-clay-200 bg-clay-50 px-3 py-2 text-[0.9rem] text-clay-800">
+      <CircleAlert size={17} className="mt-0.5 shrink-0" />
+      <p className="flex-1 break-words">{erreur}</p>
+      <button onClick={effacer} aria-label="Fermer" className="rounded p-0.5 hover:bg-clay-100">
+        <X size={16} />
+      </button>
+    </div>
+  );
+}
+
 export function AppShell({ children }: { children: React.ReactNode }) {
   const hydrate = useStore((s) => s.hydrate);
   const session = useStore((s) => s.session);
@@ -191,6 +207,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Topbar onMenu={() => setMobile(true)} onRecherche={() => setPalette(true)} onGuide={() => setGuide(true)} />
         <BandeauSimulation />
         <main id="contenu" className="w-full flex-1 px-4 py-4 sm:px-5 lg:px-6">
+          <BandeauErreur />
           <div key={pathname} className="animate-fade-in">
             {children}
           </div>

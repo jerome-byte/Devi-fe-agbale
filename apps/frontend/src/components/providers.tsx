@@ -3,6 +3,7 @@
 import { MotionConfig } from "motion/react";
 import { useEffect } from "react";
 import { appliquerTheme, usePrefs } from "@/lib/prefs";
+import { MODE_BASE } from "@/lib/base";
 import { useStore } from "@/lib/store";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -11,6 +12,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     useStore.persist.rehydrate();
     usePrefs.persist.rehydrate();
+    if (!MODE_BASE) return;
+    // Les envois et les réponses WhatsApp arrivent par le backend : on relit la base régulièrement.
+    const minuterie = setInterval(() => void useStore.getState().rafraichir(), 15_000);
+    return () => clearInterval(minuterie);
   }, []);
 
   useEffect(() => {

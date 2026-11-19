@@ -55,13 +55,25 @@ src/
     └── store.ts         état de la démo (zustand, sauvegardé dans le navigateur)
 ```
 
-## En attendant le backend
+## Deux modes de données
 
-Toutes les données vivent dans le navigateur (`localStorage`). « Réinitialiser la démo » dans le guide recharge les données fictives. Quand le backend sera prêt (`apps/backend`), il faudra remplacer les actions de `lib/store.ts` par des appels à l'API ou à Supabase ; les composants n'ont pas à changer.
+| Mode | Quand | Données |
+|---|---|---|
+| **Local** | aucune variable Supabase | Enfants fictifs dans le navigateur (`localStorage`). « Réinitialiser la démo » recharge le jeu de données. |
+| **Base** | `NEXT_PUBLIC_SUPABASE_URL` et `NEXT_PUBLIC_SUPABASE_ANON_KEY` définies (voir `.env.example`) | Les tables de Cherif dans Supabase, relues toutes les 15 secondes. |
 
-Données santé (Gerson, validées le 18 nov.) : calendrier PEV, tables OMS poids pour l'âge et règles de `donnees_sante/regles_croissance.md` (à surveiller sous -2, à orienter sous -3, stagnation sur un mois, mesure chaque mois avant 2 ans puis tous les 3 mois). La taille est saisie avec le poids ; les courbes taille et IMC viendront avec les tables annoncées pour le 19 nov.
+En mode base :
 
-Quand le backend de Cherif sera branché, les z-scores et alertes viendront de ses tables (`weigh_ins.z_score`, `alerts`) : le calcul local de `lib/oms.ts` et `lib/regles.ts` ne servira plus qu'en démo hors ligne.
+- **lecture** directe dans Supabase avec la clé publique (`lib/base.ts`) ; seuls les enfants des deux centres qui ont des audios (Bè-Kpota, Sylvanus Olympio) sont affichés ;
+- **écriture** par le backend FastAPI, via la route serveur `app/api/backend/[...chemin]/route.ts` qui ajoute le jeton `BACKEND_TOKEN` : inscription, vaccins, pesées, acte de naissance, boutons de démo, réponse « 1 » / « 2 » du téléphone simulé ;
+- les boutons de démo (J-2, veille, jour J, manqué) envoient de **vrais** messages WhatsApp aux numéros autorisés par le backend ;
+- restent dans le navigateur, faute de table : nom de famille, présences à la garderie, dépistages, annonces de `/pilotage`.
+
+À l'inscription d'un enfant de plus de 14 jours, l'agent coche les vaccins déjà faits d'après le carnet papier. Sans cela, l'enfant apparaîtrait en retard et recevrait des relances par erreur.
+
+Les calculs de référence (dates, z-scores, alertes) sont ceux de la base. `lib/oms.ts` et `lib/regles.ts` appliquent les mêmes règles (`donnees_sante/regles_croissance.md`) pour l'affichage et le mode local.
+
+Déploiement : `apps/docs/`.
 
 ## Crédits
 

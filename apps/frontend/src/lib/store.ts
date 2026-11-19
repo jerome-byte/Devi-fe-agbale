@@ -3,6 +3,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { ajouterJours, ecartJours, iso } from "./dates";
+import { MODE_BASE, backend, chargerDepuisBase, doseVersBase, fusionnerLocal } from "./base";
 import { prochainRdv } from "./pev";
 import { genererDonnees, nouvelId } from "./seed";
 import type { Enfant, MessageEnvoye, Pesee, Role, Session } from "./types";
@@ -16,8 +17,17 @@ export const COMPTES_DEMO: Record<Role, Session> = {
 export type EtapeSimulation = "j2" | "veille" | "jour_j" | "manque_3j" | "manque_7j";
 
 export type NouvelEnfant = Omit<Enfant, "id" | "inscritLe" | "vaccins" | "pesees" | "reponses" | "presences" | "depistages"> & {
-  vaccinsNaissance: boolean;
+  /** Doses déjà faites, avec leur date (carnet papier ou vaccins du jour). */
+  vaccinsFaits: Record<string, string>;
   poidsNaissance?: number;
+};
+
+const EVENEMENTS_BASE: Record<EtapeSimulation, string> = {
+  j2: "J-2",
+  veille: "J-1",
+  jour_j: "J0",
+  manque_3j: "MISSED_3",
+  manque_7j: "MISSED_7",
 };
 
 type Etat = {
@@ -27,12 +37,14 @@ type Etat = {
   messages: MessageEnvoye[];
   decalageJours: number;
   dernierInscrit: string | null;
+  /** Dernière erreur de lecture ou d'écriture dans la base (affichée en bandeau). */
+  erreur: string | null;
 };
 
 type Actions = {
   connecter: (role: Role) => void;
   deconnecter: () => void;
-  inscrire: (data: NouvelEnfant) => string;
+  inscrire: (data: NouvelEnfant) => Promise<string>;
   vacciner: (id: string, doses: string[]) => void;
   peser: (id: string, poidsKg: number, lieu: Pesee["lieu"], tailleCm?: number) => void;
   basculerActe: (id: string, valeur: boolean) => void;
@@ -45,6 +57,8 @@ type Actions = {
   envoyerAnnonce: (messageId: string, cible: string, nbFamilles: number) => void;
   revenirAujourdhui: () => void;
   reinitialiser: () => void;
+  rafraichir: () => Promise<void>;
+  effacerErreur: () => void;
 };
 
 export function maintenant(decalageJours: number) {
@@ -85,6 +99,17 @@ export const useStore = create<Etat & Actions>()(
       const majEnfant = (id: string, f: (e: Enfant) => Enfant) =>
         set((s) => ({ enfants: s.enfants.map((e) => (e.id === id ? f(e) : e)) }));
 
+      /** Mode base : écrit par le backend puis recharge. L'écran a déjà été mis à jour. */
+      const ecrire = (action: () => Promise<unknown>) => {
+        if (!MODE_BASE) return;
+        action()
+          .then(() => get().rafraichir())
+          .catch((e: Error) => {
+            set({ erreur: e.message });
+            void get().rafraichir();
+          });
+      };
+
       return {
         hydrate: false,
         session: null,
@@ -92,20 +117,39 @@ export const useStore = create<Etat & Actions>()(
         messages: [],
         decalageJours: 0,
         dernierInscrit: null,
+        erreur: null,
 
         connecter: (role) => set({ session: COMPTES_DEMO[role] }),
         deconnecter: () => set({ session: null }),
 
-        inscrire: (data) => {
+        inscrire: async (data) => {
           const auJour = auJourDe(get().decalageJours);
+          const { vaccinsFaits, poidsNaissance, ...reste } = data;
+
+          if (MODE_BASE) {
+            // La base crée le calendrier ; le backend envoie le message de bienvenue.
+            const { id } = await backend<{ id: string }>("app/enfants", "POST", {
+              prenom: data.prenom,
+              sexe: data.sexe,
+              naissance: data.naissance,
+              centre: data.centre,
+              tuteur_nom: data.mere.nom,
+              telephone: data.mere.telephone,
+              langue: data.langue,
+              acte_naissance: data.acteNaissance,
+              vaccins_faits: Object.entries(vaccinsFaits).map(([dose, date]) => ({ ...doseVersBase(dose), date })),
+              poids_kg: poidsNaissance,
+            });
+            await get().rafraichir();
+            // Ce que la base ne stocke pas encore (nom de famille, garderie choisie) reste dans l'application.
+            majEnfant(id, (e) => ({ ...e, nom: data.nom, quartier: data.quartier, garderie: data.garderie }));
+            set({ dernierInscrit: id });
+            return id;
+          }
+
           let id = nouvelId();
           while (get().enfants.some((e) => e.id === id)) id = nouvelId();
-          const { vaccinsNaissance, poidsNaissance, ...reste } = data;
-          const vaccins: Record<string, string> = {};
-          if (vaccinsNaissance) {
-            vaccins.BCG_unique = auJour;
-            vaccins.VPO_0 = auJour;
-          }
+          const vaccins: Record<string, string> = { ...vaccinsFaits };
           const e: Enfant = {
             ...reste,
             id,
@@ -130,6 +174,7 @@ export const useStore = create<Etat & Actions>()(
             for (const d of doses) vaccins[d] = auJour;
             return { ...e, vaccins, reponses: e.reponses.map((r) => ({ ...r, traitee: true })) };
           });
+          ecrire(() => backend(`app/enfants/${id}/vaccins`, "POST", { doses: doses.map(doseVersBase), date: auJour }));
         },
 
         peser: (id, poidsKg, lieu, tailleCm) => {
@@ -140,9 +185,13 @@ export const useStore = create<Etat & Actions>()(
               a.date.localeCompare(b.date),
             ),
           }));
+          ecrire(() => backend(`app/enfants/${id}/pesees`, "POST", { date: auJour, poids_kg: poidsKg, taille_cm: tailleCm ?? null }));
         },
 
-        basculerActe: (id, valeur) => majEnfant(id, (e) => ({ ...e, acteNaissance: valeur })),
+        basculerActe: (id, valeur) => {
+          majEnfant(id, (e) => ({ ...e, acteNaissance: valeur }));
+          ecrire(() => backend(`app/enfants/${id}/acte`, "PATCH", { valeur }));
+        },
 
         simuler: (id, etape) => {
           const e = get().enfants.find((x) => x.id === id);
@@ -159,6 +208,11 @@ export const useStore = create<Etat & Actions>()(
           }[etape];
           const decalage = ecartJours(reel, cible);
           set({ decalageJours: decalage });
+          if (MODE_BASE) {
+            // La base décide des messages, le backend les envoie vraiment sur WhatsApp.
+            ecrire(() => backend(`admin/demo/${id}/${EVENEMENTS_BASE[etape]}`, "POST"));
+            return;
+          }
           if (etape === "j2") envoyer("rappel_j2", id);
           if (etape === "veille") envoyer("rappel_veille", id);
           if (etape === "jour_j") envoyer("rappel_jour_j", id);
@@ -172,6 +226,12 @@ export const useStore = create<Etat & Actions>()(
           set((s) => ({
             messages: s.messages.map((x) => (x.id === messageId ? { ...x, statut: "repondu", reponse: choix } : x)),
           }));
+          if (MODE_BASE) {
+            // Comme si la maman touchait le bouton sur son téléphone.
+            const tel = get().enfants.find((e) => e.id === m.enfantId)?.mere.telephone ?? "";
+            ecrire(() => backend("simulation/reponse", "POST", { telephone: tel, cle: Number(choix) }));
+            return;
+          }
           envoyer(choix === "1" ? "reponse_vient" : "reponse_empechement", m.enfantId, {}, 1);
           const auJour = auJourDe(get().decalageJours);
           majEnfant(m.enfantId, (e) => ({
@@ -180,10 +240,14 @@ export const useStore = create<Etat & Actions>()(
           }));
         },
 
-        ecouter: (messageId) =>
+        ecouter: (messageId) => {
+          const m = get().messages.find((x) => x.id === messageId);
+          if (!m || m.statut !== "envoye") return;
           set((s) => ({
-            messages: s.messages.map((x) => (x.id === messageId && x.statut === "envoye" ? { ...x, statut: "ecoute" } : x)),
-          })),
+            messages: s.messages.map((x) => (x.id === messageId ? { ...x, statut: "ecoute" } : x)),
+          }));
+          if (!messageId.startsWith("n")) ecrire(() => backend(`app/messages/${messageId}/ecoute`, "POST"));
+        },
 
         traiterEmpechement: (id) =>
           majEnfant(id, (e) => ({ ...e, reponses: e.reponses.map((r) => ({ ...r, traitee: true })) })),
@@ -206,23 +270,49 @@ export const useStore = create<Etat & Actions>()(
         revenirAujourdhui: () => set({ decalageJours: 0 }),
 
         reinitialiser: () => {
+          if (MODE_BASE) {
+            set({ decalageJours: 0, dernierInscrit: null });
+            void get().rafraichir();
+            return;
+          }
           const { enfants, messages } = genererDonnees();
           set({ enfants, messages, decalageJours: 0, dernierInscrit: null });
         },
+
+        rafraichir: async () => {
+          if (!MODE_BASE) return;
+          try {
+            const base = await chargerDepuisBase();
+            set((s) => ({
+              enfants: fusionnerLocal(base.enfants, s.enfants),
+              // annonces et orientations restent locales (id commençant par « n »)
+              messages: [...base.messages, ...s.messages.filter((m) => m.id.startsWith("n"))].sort((a, b) =>
+                b.date.localeCompare(a.date),
+              ),
+            }));
+          } catch (e) {
+            set({ erreur: (e as Error).message });
+          }
+        },
+
+        effacerErreur: () => set({ erreur: null }),
       };
     },
     {
-      name: "devi-fe-agbale-demo-v3",
+      name: MODE_BASE ? "devi-fe-agbale-base-v1" : "devi-fe-agbale-demo-v3",
       storage: createJSONStorage(() => localStorage),
       skipHydration: true,
       partialize: (s) => {
-        const { hydrate, ...reste } = s;
+        const { hydrate, erreur, ...reste } = s;
         void hydrate;
+        void erreur;
         return reste;
       },
       onRehydrateStorage: () => () => {
         const s = useStore.getState();
-        if (!s.enfants.length) {
+        if (MODE_BASE) {
+          void s.rafraichir();
+        } else if (!s.enfants.length) {
           const { enfants, messages } = genererDonnees();
           useStore.setState({ enfants, messages });
         }

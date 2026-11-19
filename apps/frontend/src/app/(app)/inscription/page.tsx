@@ -24,7 +24,7 @@ import { useMemo, useState } from "react";
 import { TelephoneWhatsApp } from "@/components/telephone-whatsapp";
 import { Bouton, Carte, CarteCorps, CarteEntete, Champ, EntetePage, LienBouton, LigneInfo, Pastille, Selecteur, Tableau } from "@/components/ui";
 import { ajouterJours, dateCourte, ecartJours, libelleAge } from "@/lib/dates";
-import { calendrierEnfant } from "@/lib/pev";
+import { CONTACTS, calendrierEnfant, dateContact } from "@/lib/pev";
 import { GARDERIES, QUARTIERS } from "@/lib/seed";
 import { useAuJour, useEnfant, useStore } from "@/lib/store";
 import type { CentreId, Langue, Sexe } from "@/lib/types";
@@ -59,6 +59,8 @@ type Formulaire = {
   quartier: string;
   acte: boolean | null;
   vaccinsNaissance: boolean;
+  /** Enfant inscrit tard : contacts déjà faits (numéro -> date lue sur le carnet papier). */
+  faits: Record<number, string>;
   garderie: string;
 };
 
@@ -95,11 +97,14 @@ export default function Inscription() {
     quartier: QUARTIERS.be_kpota[0],
     acte: null,
     vaccinsNaissance: true,
+    faits: {},
     garderie: "",
   };
   const [f, setF] = useState<Formulaire>(vide);
   const [etape, setEtape] = useState(0);
   const [inscritId, setInscritId] = useState<string | null>(null);
+  const [envoi, setEnvoi] = useState(false);
+  const [erreur, setErreur] = useState<string | null>(null);
   const maj = <K extends keyof Formulaire>(k: K, v: Formulaire[K]) => setF((x) => ({ ...x, [k]: v }));
 
   const chiffres = f.telephone.replace(/\D/g, "");
@@ -115,8 +120,34 @@ export default function Inscription() {
     setEtape(2);
   };
 
-  const valider = () => {
-    const id = inscrire({
+  // Contacts dont la date est passée : l'agent coche ceux notés sur le carnet papier.
+  const contactsPasses = CONTACTS.filter((c) => dateContact(f.naissance, c) <= auJour);
+  const basculerContact = (numero: number, date: string) =>
+    setF((x) => {
+      const faits = { ...x.faits };
+      if (numero in faits) delete faits[numero];
+      else faits[numero] = date;
+      return { ...x, faits };
+    });
+
+  const vaccinsFaits = () => {
+    const faits: Record<string, string> = {};
+    if (ageJours <= 14) {
+      if (f.vaccinsNaissance) for (const d of CONTACTS[0].doses) faits[d.id] = auJour;
+      return faits;
+    }
+    for (const c of contactsPasses) {
+      const date = f.faits[c.numero];
+      if (date) for (const d of c.doses) faits[d.id] = date;
+    }
+    return faits;
+  };
+
+  const valider = async () => {
+    setEnvoi(true);
+    setErreur(null);
+    try {
+      const id = await inscrire({
       prenom: f.prenom,
       nom: f.nom.trim(),
       sexe: f.sexe!,
@@ -127,11 +158,16 @@ export default function Inscription() {
       quartier: f.quartier,
       garderie: f.garderie || null,
       acteNaissance: !!f.acte,
-      vaccinsNaissance: f.vaccinsNaissance && ageJours <= 14,
+      vaccinsFaits: vaccinsFaits(),
       poidsNaissance: f.poids ? Number(f.poids.replace(",", ".")) : undefined,
-    });
-    setInscritId(id);
-    window.scrollTo({ top: 0 });
+      });
+      setInscritId(id);
+      window.scrollTo({ top: 0 });
+    } catch (e) {
+      setErreur((e as Error).message);
+    } finally {
+      setEnvoi(false);
+    }
   };
 
   if (inscritId)
@@ -341,10 +377,49 @@ export default function Inscription() {
                     </span>
                   </label>
                 )}
+                {ageJours > 14 && contactsPasses.length > 0 && (
+                  <fieldset className="rounded-md border border-line p-3">
+                    <legend className="label px-1">Vaccins déjà faits (carnet papier)</legend>
+                    <p className="mb-2 text-[0.85rem] text-muted">
+                      Cochez les rendez-vous déjà honorés et corrigez la date si besoin. Les autres apparaîtront en retard.
+                    </p>
+                    <ul className="space-y-1.5">
+                      {contactsPasses.map((c) => {
+                        const prevue = dateContact(f.naissance, c);
+                        const fait = c.numero in f.faits;
+                        return (
+                          <li key={c.numero} className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                            <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-[0.9rem]">
+                              <input type="checkbox" checked={fait} onChange={() => basculerContact(c.numero, prevue)} className="size-4 accent-primary-600" />
+                              <span className="font-medium">{c.libelle}</span>
+                              <span className="truncate text-muted">{c.doses.map((d) => d.nom).join(", ")}</span>
+                            </label>
+                            {fait && (
+                              <input
+                                type="date"
+                                aria-label={`Date du contact ${c.libelle}`}
+                                value={f.faits[c.numero]}
+                                min={f.naissance}
+                                max={auJour}
+                                onChange={(e) => e.target.value && setF((x) => ({ ...x, faits: { ...x.faits, [c.numero]: e.target.value } }))}
+                                className="h-8 rounded-md border border-line-strong bg-card px-2 text-[0.85rem]"
+                              />
+                            )}
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  </fieldset>
+                )}
               </>
             )}
           </div>
 
+          {erreur && (
+            <p role="alert" className="mx-4 mb-3 rounded-md bg-clay-50 px-3 py-2 text-[0.88rem] text-clay-800 sm:mx-5">
+              {erreur}
+            </p>
+          )}
           <div className="flex items-center justify-between gap-3 border-t border-line px-4 py-3 sm:px-5">
             <Bouton variante="fantome" icone={ArrowLeft} onClick={() => setEtape(etape - 1)} disabled={etape === 0}>
               Retour
@@ -354,8 +429,8 @@ export default function Inscription() {
                 Continuer
               </Bouton>
             ) : (
-              <Bouton onClick={valider} disabled={!valide.every(Boolean)} icone={UserPlus}>
-                Inscrire {f.prenom || "l'enfant"}
+              <Bouton onClick={valider} disabled={!valide.every(Boolean) || envoi} icone={UserPlus}>
+                {envoi ? "Inscription…" : `Inscrire ${f.prenom || "l'enfant"}`}
               </Bouton>
             )}
           </div>
