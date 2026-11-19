@@ -1,9 +1,6 @@
 # ɖevi ƒe agbalẽ — Hack4Children 2026 (UNICEF Togo)
 
 **Le carnet vivant de chaque enfant, de la naissance à 6 ans.**
-## mot de passe de la base deonne supabase
-devi-fe-agbale
-ecQm56Aj@devi-fe-agbale
 ## Le projet en bref
 
 Au Togo, le programme Wezou suit la mère et le nouveau-né jusqu'au 42e jour après l'accouchement. Ensuite, plus personne ne suit l'enfant de façon continue : vaccins, croissance, retards de développement, acte de naissance.
@@ -81,15 +78,23 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 ├── ɖevi ƒe agbalẽ_Hack4Children_2026.pdf     dossier de candidature
 ├── Plan_prototype_repartition_taches.docx    plan détaillé (Word)
 ├── Plan_prototype_repartition_taches.pdf     plan détaillé (PDF)
-├── donnees_sante/                            calendrier PEV, tables OMS, règles de croissance
-├── voix/
-│   ├── README_voix.md                        notice voix pour Blaise et Cherif
-│   ├── prononciation.json                    dictionnaire de prononciation, centres, réglages
-│   ├── catalogue_messages.xlsx               les 16 messages (français, éwé)
-│   └── audio/messages/                       99 audios (.ogg WhatsApp + .wav) + index_messages.json
-├── sql/                                      schéma, vues, moteur de règles, seed
+├── apps/
+│   ├── frontend/                             application Next.js de l'agent, de la garderie et du pilotage (apps/frontend/README.md)
+│   ├── backend/                              backend FastAPI : envoi WhatsApp et réponses (apps/backend/README.md)
+│   └── docs/                                 guides de mise en ligne (Render, WhatsApp Meta, Vercel)
+├── devi-dashboard/                           application Next.js du tableau de bord (devi-dashboard/README.md)
+├── sql/                                      schéma, vues, moteur de règles, seed (Supabase)
 ├── seed/generate_seed.py                     génère les 300 enfants fictifs
-└── devi-dashboard/                           application Next.js du tableau de bord
+├── INTEGRATION_DEV.md                        guide d'intégration de la base
+├── donnees_sante/                            calendrier PEV, tables OMS, règles de croissance
+└── voix/
+    ├── README_voix.md                        notice voix pour Blaise et Cherif
+    ├── 01_test_mms_ewe.ipynb                 réglages de la voix éwé (Colab)
+    ├── 02_generation_audios.ipynb            génère tous les audios du catalogue (Colab)
+    ├── prononciation.json                    dictionnaire de prononciation, centres, réglages
+    ├── catalogue_messages.xlsx               les 16 messages (français, éwé, éwé pour la voix)
+    └── audio/
+        └── messages/                         99 audios (.ogg WhatsApp + .wav) + index_messages.json
 ```
 
 Le plan détaillé, avec le calendrier et les cases à cocher, est dans `Plan_prototype_repartition_taches.pdf`.
