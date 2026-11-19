@@ -1,4 +1,63 @@
+# =====================================================================
+#  Dépôt ɖevi ƒe agbalẽ : fichiers ignorés
+#  Règle : tout ce qui est secret, généré ou propre à la machine reste ici.
+# =====================================================================
+
+# --- Secrets et variables d'environnement -----------------------------
+.env
+.env.*
+!.env.example
+**/.env.local
+**/.env.*.local
+supabase_passwoed.txt
+**/supabase_passwoed.txt
+
+# --- Node / Next.js ---------------------------------------------------
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+out/
+**/out/
+build/
+**/build/
+.turbo/
+**/.turbo/
+coverage/
+**/coverage/
+.vercel/
+next-env.d.ts
+*.tsbuildinfo
+npm-debug.log*
+
+# --- Python -----------------------------------------------------------
+__pycache__/
+**/__pycache__/
+*.py[cod]
+.venv/
+venv/
+.ipynb_checkpoints/
+**/.ipynb_checkpoints/
+.pytest_cache/
+
+# --- Données régénérables --------------------------------------------
+# Les CSV du seed se recréent avec : python seed/generate_seed.py --csv
+seed/csv/
+# Journaux et fichiers temporaires
+*.log
+*.tmp
+
+# --- Système et éditeurs ---------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# --- Outils locaux ----------------------------------------------------
+.zwork/
+
+# --- Documents internes de Gerson ------------------------------------
 donnees_sante/A_FOURNIR_Gerson.md
 donnees_sante/A_FOURNIR_Gerson.docx
 donnees_sante/~$FOURNIR_Gerson.docx
-.ipynb_checkpoints/

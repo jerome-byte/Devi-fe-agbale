@@ -1,0 +1,24 @@
+# Dépendances
+/node_modules
+
+# Build Next.js
+/.next
+/out
+/build
+*.tsbuildinfo
+next-env.d.ts
+
+# Variables d'environnement (ne jamais committer de clé)
+.env
+.env.local
+.env.*.local
+
+# Secrets locaux
+supabase_passwoed.txt
+
+# Copie générée des audios (source : ../voix/audio/messages)
+/public/audio/messages/
+
+# Divers
+.DS_Store
+*.log
