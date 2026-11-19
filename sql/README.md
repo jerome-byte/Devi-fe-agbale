@@ -1,36 +1,71 @@
 # ɖevi ƒe agbalẽ — données, moteur de règles et tableau de bord (Hack4Children 2026)
 
-## Ordre d'exécution (Supabase, SQL Editor)
-1. `sql/01_schema.sql`   tables
-2. `sql/02_views.sql`    vues du tableau de bord
-3. `sql/04_rules.sql`    moteur de règles, déclencheurs, boutons d'avance rapide
-4. `sql/03_seed_demo.sql` ~300 enfants fictifs (ou `seed/csv/*.csv` si le fichier est trop long :
-   zones → health_centers → daycares → vaccine_schedule → children → guardians →
-   appointments → weigh_ins → messages → alerts)
+## Appliquer le schéma et les données
 
-Régénérer le seed (dates relatives à aujourd'hui, rejouable) :
-`python seed/generate_seed.py --csv`   (options : `--n 300 --seed 4 --as-of AAAA-MM-JJ`)
+### Méthode recommandée : le script du projet
+
+```powershell
+cd devi-dashboard
+npm run db:init
+```
+
+Cette commande applique, dans l'ordre :
+
+1. `01_schema.sql` : tables, calendrier PEV, migrations douces
+2. `02_views.sql` : vues du tableau de bord et vues de compatibilité
+3. `04_rules.sql` : moteur de règles, déclencheurs, boutons de démo
+4. `03_seed_demo.sql` : 300 enfants fictifs
+5. `scripts/load-reference.mjs` : référentiels de `donnees_sante/` et recalcul des z-scores
+
+`npm run db:reference` recharge seulement les référentiels (calendrier et tables OMS)
+sans toucher aux enfants.
+
+### Méthode manuelle (SQL Editor)
+
+Exécuter `01`, `02`, `04` puis `03` dans cet ordre. Le seed fait 1,6 Mo et près de
+12 000 lignes : l'éditeur web le refuse, il faut passer par le script ou découper le
+fichier.
+
+## Référentiels validés par Gerson
+
+| Fichier | Table | Vue de compatibilité |
+|---|---|---|
+| `donnees_sante/calendrier_pev.csv` | `vaccine_schedule` | `calendrier_vaccinal` |
+| `donnees_sante/oms_poids_age_filles.csv` | `who_weight_for_age` | `oms_reference` |
+| `donnees_sante/oms_poids_age_garcons.csv` | `who_weight_for_age` | `oms_reference` |
+
+- 23 doses, 9 contacts, de la naissance à 15 mois.
+- Codes officiels : `BCG`, `VPO`, `PENTA`, `PNEUMO`, `ROTA`, `VPI`, `VAP`, `RR`, `VAA`, `MENA`.
+- Tables OMS : 61 mois par sexe, avec `L`, `M`, `S` et les écarts-types `SD3neg` à `SD3`.
+- Les vues `calendrier_vaccinal` et `oms_reference` exposent les noms et colonnes
+  attendus par les notices de `donnees_sante/` (lecture seule).
 
 ## Moteur de règles
+
 - Production : `select * from run_rules();` (pg_cron toutes les heures, ou appel serveur). Idempotent.
 - Un enfant inscrit (hors démo) reçoit son calendrier vaccinal automatiquement (déclencheur).
-- Une pesée insérée reçoit son z-score (si `who_weight_for_age` est chargée) et sa tendance.
+- Une pesée insérée reçoit son z-score (méthode LMS), son statut OMS (`normal`, `a_surveiller` si z < −2, `a_orienter` si z < −3) et sa tendance (stagnation si poids identique ou en baisse après un mois, ou chute d'une ligne de z).
 - Boutons de démo (à appeler via `supabase.rpc`) :
   `demo_fast_forward(child_id, 'J-2' | 'J-1' | 'J0' | 'MISSED_3' | 'MISSED_7')`
-  `demo_reset_child(child_id)`  → remet l'enfant à zéro entre deux répétitions.
+  `demo_reset_child(child_id)` remet l'enfant à zéro entre deux répétitions.
 
-## Dashboard (Next.js + Tailwind)
-- `app/dashboard.ts` → `lib/dashboard.ts`  ·  `app/page.tsx` → `app/dashboard/page.tsx`
-- Variables : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-- Le rôle « pilotage » ne lit que les vues `v_*` (voir le commentaire `grant` en bas de 02_views.sql).
+## Tableau de bord
 
-## Calendrier vaccinal
-- Calendrier officiel du PEV Togo (23 doses, 9 contacts) dans `01_schema.sql` (table `vaccine_schedule`).
-- Un seul message et une seule alerte par enfant et par contact (pas un par vaccin).
-- Convention audio : `audio/<langue>/<modèle>_C<contact>.mp3`, ex. `audio/ewe/J-2_C2.mp3`, `MISSED_3_C2.mp3`, `WELCOME.mp3`, `BIRTH_CERT.mp3`.
-- Pour le prototype du 22 nov, le parcours de Kossi n'utilise que : `WELCOME`, `J-2_C2`, `MISSED_3_C2`, `BIRTH_CERT`.
+- `lib/dashboard.ts` lit les vues `v_*` ; `app/dashboard/page.tsx` compose l'écran.
+- Variables : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`.
+- Le rôle pilotage ne lit que les vues agrégées (voir les `grant` en bas de `02_views.sql`).
 
-## À remplacer / valider
-- Gerson relit `vaccine_schedule` (âges en jours : mois x 30,4375).
-- Tables OMS LMS (`who_weight_for_age`) : Gerson.
-- Régénérer le seed juste avant les captures et la démo.
+## Audio
+
+Les audios sont dans `voix/audio/messages/` (99 `.ogg` et 99 `.wav`), décrits par
+`index_messages.json`. La correspondance entre `template_code` et `id` du catalogue
+est dans `voix/README_voix.md`. La convention `.mp3` de la première version est
+abandonnée : le chemin réel vient du champ `ogg` du catalogue.
+
+## À valider ou compléter
+
+- Tables OMS taille pour l'âge et IMC pour l'âge (8 fichiers), calendrier vitamine A
+  et déparasitage : à fournir par Gerson.
+- Vérification des calculs par Gerson sur 3 enfants de test (20 nov.).
+- Régénérer le seed juste avant les captures et la démo :
+  `python seed/generate_seed.py` puis `npm run db:init`.

@@ -57,14 +57,14 @@ LANG_W = {"ewe": 0.58, "mina": 0.27, "fr": 0.10, "kabiye": 0.05}
 SCHEDULE = [
     (1, "BCG", 1, "BCG", 0, 1), (2, "VPO", 0, "VPO 0", 0, 1),
     (3, "PENTA", 1, "Penta 1", 42, 2), (4, "VPO", 1, "VPO 1", 42, 2),
-    (5, "PCV", 1, "Pneumo 1", 42, 2), (6, "ROTA", 1, "Rota 1", 42, 2),
+    (5, "PNEUMO", 1, "Pneumo 1", 42, 2), (6, "ROTA", 1, "Rota 1", 42, 2),
     (7, "PENTA", 2, "Penta 2", 70, 3), (8, "VPO", 2, "VPO 2", 70, 3),
-    (9, "PCV", 2, "Pneumo 2", 70, 3), (10, "ROTA", 2, "Rota 2", 70, 3),
+    (9, "PNEUMO", 2, "Pneumo 2", 70, 3), (10, "ROTA", 2, "Rota 2", 70, 3),
     (11, "PENTA", 3, "Penta 3", 98, 4), (12, "VPO", 3, "VPO 3", 98, 4),
-    (13, "PCV", 3, "Pneumo 3", 98, 4), (14, "VPI", 1, "VPI 1", 98, 4),
-    (15, "R21", 1, "R21 1", 152, 5), (16, "R21", 2, "R21 2", 183, 6), (17, "R21", 3, "R21 3", 213, 7),
+    (13, "PNEUMO", 3, "Pneumo 3", 98, 4), (14, "VPI", 1, "VPI 1", 98, 4),
+    (15, "VAP", 1, "VAP 1", 152, 5), (16, "VAP", 2, "VAP 2", 183, 6), (17, "VAP", 3, "VAP 3", 213, 7),
     (18, "RR", 1, "RR 1", 274, 8), (19, "VAA", 1, "VAA", 274, 8), (20, "VPI", 2, "VPI 2", 274, 8),
-    (21, "RR", 2, "RR 2", 457, 9), (22, "MENA", 1, "MenA", 457, 9), (23, "R21", 4, "R21 4", 457, 9),
+    (21, "RR", 2, "RR 2", 457, 9), (22, "MENA", 1, "MenA", 457, 9), (23, "VAP", 4, "VAP 4", 457, 9),
 ]
 # Perte progressive de présence au fil des contacts (indice d'abandon par âge de contact)
 VISIT_DECAY = {0: 0, 42: 1, 70: 2, 98: 3, 152: 4, 183: 4.5, 213: 5, 274: 5.5, 457: 6.5}

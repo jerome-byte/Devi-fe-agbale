@@ -43,6 +43,13 @@ create table if not exists vaccine_schedule (
   age_days   int  not null,          -- âge cible en jours
   contact_no int  not null,          -- contact vaccinal (1 à 9)
   contact_label text,                -- ex. '6 semaines'
+  age_value  int,                    -- âge dans l'unité d'origine (ex. 6)
+  age_unit   text,                   -- 'jours' | 'semaines' | 'mois'
+  short_name text,                   -- nom affiché (ex. 'DTC-HepB-Hib 1')
+  dose_label text,                   -- dose du calendrier PEV ('unique', '0', '1'…)
+  diseases   text,                   -- maladies ciblées
+  source     text,                   -- source officielle du calendrier
+  status     text,                   -- 'validé' | 'à valider'
   grace_days int  not null default 7,
   unique (vaccine_code, dose)
 );
@@ -52,6 +59,8 @@ create table if not exists who_weight_for_age (
   sex        char(1) check (sex in ('M','F')),
   age_months int,
   l numeric, m numeric, s numeric,
+  sd3neg numeric, sd2neg numeric, sd1neg numeric, sd0 numeric,
+  sd1 numeric, sd2 numeric, sd3 numeric,
   primary key (sex, age_months)
 );
 
@@ -119,6 +128,7 @@ create table if not exists weigh_ins (
   age_months  numeric,
   z_score     numeric,
   trend       text check (trend in ('ok','stagnation','chute')),
+  status      text check (status in ('normal','a_surveiller','a_orienter')),
   recorded_by uuid references profiles(id)
 );
 create index if not exists idx_weigh_child on weigh_ins(child_id, measured_at);
@@ -158,7 +168,8 @@ create table if not exists alerts (
   child_id       uuid not null references children(id) on delete cascade,
   appointment_id uuid references appointments(id) on delete cascade,
   type           text not null check (type in
-    ('missed_7d','growth_stagnation','birth_cert_missing','screening_due','referral')),
+    ('missed_7d','growth_stagnation','growth_surveiller','growth_orient',
+     'birth_cert_missing','screening_due','referral')),
   target_role    text check (target_role in ('agent','educatrice','pilotage')),
   center_id      int references health_centers(id),
   status         text not null default 'open' check (status in ('open','acknowledged','resolved')),
@@ -171,6 +182,45 @@ create unique index if not exists uq_alert_open
   where status = 'open';
 create index if not exists idx_alert_status on alerts(status, type);
 
+-- ========== MIGRATION DOUCE =========================================
+-- Colonnes ajoutées après la première version : les "alter" permettent de
+-- rejouer ce fichier sur une base déjà créée.
+alter table who_weight_for_age
+  add column if not exists sd3neg numeric,
+  add column if not exists sd2neg numeric,
+  add column if not exists sd1neg numeric,
+  add column if not exists sd0 numeric,
+  add column if not exists sd1 numeric,
+  add column if not exists sd2 numeric,
+  add column if not exists sd3 numeric;
+
+alter table vaccine_schedule
+  add column if not exists age_value int,
+  add column if not exists age_unit text,
+  add column if not exists short_name text,
+  add column if not exists dose_label text,
+  add column if not exists diseases text,
+  add column if not exists source text,
+  add column if not exists status text;
+
+alter table weigh_ins add column if not exists status text;
+
+alter table alerts drop constraint if exists alerts_type_check;
+alter table alerts add constraint alerts_type_check check (type in
+  ('missed_7d','growth_stagnation','growth_surveiller','growth_orient',
+   'birth_cert_missing','screening_due','referral'));
+
+-- Codes alignés sur le calendrier PEV validé par Gerson (donnees_sante/calendrier_pev.csv).
+update vaccine_schedule s set vaccine_code = 'PNEUMO'
+ where s.vaccine_code = 'PCV'
+   and not exists (select 1 from vaccine_schedule x
+                    where x.vaccine_code = 'PNEUMO' and x.dose = s.dose);
+
+update vaccine_schedule s set vaccine_code = 'VAP'
+ where s.vaccine_code = 'R21'
+   and not exists (select 1 from vaccine_schedule x
+                    where x.vaccine_code = 'VAP' and x.dose = s.dose);
+
 -- ========== CALENDRIER PEV OFFICIEL (source : PEV Togo) ==============
 -- Mois convertis en jours (x 30,4375) : 5 m = 152, 6 m = 183, 7 m = 213, 9 m = 274, 15 m = 457.
 insert into vaccine_schedule (id, vaccine_code, dose, label_fr, age_days, contact_no, contact_label) values
@@ -178,25 +228,25 @@ insert into vaccine_schedule (id, vaccine_code, dose, label_fr, age_days, contac
   (2,  'VPO',   0, 'Polio orale, dose 0',                0,   1, 'Naissance'),
   (3,  'PENTA', 1, 'DTC-HepB-Hib (pentavalent), dose 1', 42,  2, '6 semaines'),
   (4,  'VPO',   1, 'Polio orale, dose 1',                42,  2, '6 semaines'),
-  (5,  'PCV',   1, 'Pneumocoque, dose 1',                42,  2, '6 semaines'),
+  (5,  'PNEUMO', 1, 'Pneumocoque, dose 1',                42,  2, '6 semaines'),
   (6,  'ROTA',  1, 'Rotavirus, dose 1',                  42,  2, '6 semaines'),
   (7,  'PENTA', 2, 'DTC-HepB-Hib (pentavalent), dose 2', 70,  3, '10 semaines'),
   (8,  'VPO',   2, 'Polio orale, dose 2',                70,  3, '10 semaines'),
-  (9,  'PCV',   2, 'Pneumocoque, dose 2',                70,  3, '10 semaines'),
+  (9,  'PNEUMO', 2, 'Pneumocoque, dose 2',                70,  3, '10 semaines'),
   (10, 'ROTA',  2, 'Rotavirus, dose 2',                  70,  3, '10 semaines'),
   (11, 'PENTA', 3, 'DTC-HepB-Hib (pentavalent), dose 3', 98,  4, '14 semaines'),
   (12, 'VPO',   3, 'Polio orale, dose 3',                98,  4, '14 semaines'),
-  (13, 'PCV',   3, 'Pneumocoque, dose 3',                98,  4, '14 semaines'),
+  (13, 'PNEUMO', 3, 'Pneumocoque, dose 3',                98,  4, '14 semaines'),
   (14, 'VPI',   1, 'Polio injectable, dose 1',           98,  4, '14 semaines'),
-  (15, 'R21',   1, 'Paludisme (VAP / R21), dose 1',      152, 5, '5 mois'),
-  (16, 'R21',   2, 'Paludisme (VAP / R21), dose 2',      183, 6, '6 mois'),
-  (17, 'R21',   3, 'Paludisme (VAP / R21), dose 3',      213, 7, '7 mois'),
+  (15, 'VAP',   1, 'Paludisme (VAP / R21), dose 1',      152, 5, '5 mois'),
+  (16, 'VAP',   2, 'Paludisme (VAP / R21), dose 2',      183, 6, '6 mois'),
+  (17, 'VAP',   3, 'Paludisme (VAP / R21), dose 3',      213, 7, '7 mois'),
   (18, 'RR',    1, 'Rougeole-Rubéole, dose 1',           274, 8, '9 mois'),
   (19, 'VAA',   1, 'Fièvre jaune',                       274, 8, '9 mois'),
   (20, 'VPI',   2, 'Polio injectable, dose 2',           274, 8, '9 mois'),
   (21, 'RR',    2, 'Rougeole-Rubéole, dose 2',           457, 9, '15 mois'),
   (22, 'MENA',  1, 'Méningite A',                        457, 9, '15 mois'),
-  (23, 'R21',   4, 'Paludisme (VAP / R21), dose 4',      457, 9, '15 mois')
+  (23, 'VAP',   4, 'Paludisme (VAP / R21), dose 4',      457, 9, '15 mois')
 on conflict (vaccine_code, dose) do update
   set label_fr = excluded.label_fr, age_days = excluded.age_days,
       contact_no = excluded.contact_no, contact_label = excluded.contact_label;

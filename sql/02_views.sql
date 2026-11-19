@@ -108,7 +108,7 @@ group by z.id, z.name, a.type;
 -- Dernière pesée par enfant (base des indicateurs de croissance)
 create or replace view v_last_weigh_in as
 select distinct on (w.child_id) w.child_id, w.measured_at, w.age_months,
-       w.weight_kg, w.z_score, w.trend
+       w.weight_kg, w.z_score, w.trend, w.status
 from weigh_ins w
 order by w.child_id, w.measured_at desc;
 
@@ -119,7 +119,9 @@ select coalesce(z.id, 0) as zone_id, coalesce(z.name, 'Toutes zones') as zone,
        count(*) filter (where l.trend = 'chute')             as chute,
        round(100.0 * count(*) filter (where l.trend <> 'ok') / nullif(count(*), 0), 1) as flagged_pct,
        count(*) filter (where l.z_score < -2)                as underweight,
-       round(100.0 * count(*) filter (where l.z_score < -2) / nullif(count(*), 0), 1) as underweight_pct
+       round(100.0 * count(*) filter (where l.z_score < -2) / nullif(count(*), 0), 1) as underweight_pct,
+       count(*) filter (where l.status = 'a_surveiller')              as a_surveiller,
+       count(*) filter (where l.status = 'a_orienter')                as a_orienter
 from v_last_weigh_in l
 join children c on c.id = l.child_id
 join zones z    on z.id = c.zone_id
@@ -169,6 +171,30 @@ select
   (select flagged_pct from v_growth_by_zone where zone_id = 0)                   as growth_flagged_pct,
   (select count(*) from v_child_risk where risk_score >= 10)                      as high_risk_children;
 
+-- ========== VUES DE COMPATIBILITÉ ====================================
+-- Noms et colonnes attendus par les notices de donnees_sante/ (Blaise) :
+-- lecture seule, calculées depuis les tables internes.
+create or replace view calendrier_vaccinal as
+select s.contact_no                                    as contact,
+       s.contact_label                                 as age_libelle,
+       s.age_value                                     as age_valeur,
+       s.age_unit                                      as age_unite,
+       s.vaccine_code                                  as vaccin_code,
+       coalesce(s.short_name, s.label_fr)              as vaccin_nom,
+       coalesce(s.dose_label, s.dose::text)            as dose,
+       s.diseases                                      as maladies,
+       s.source,
+       s.status                                        as statut
+from vaccine_schedule s;
+
+create or replace view oms_reference as
+select 'poids_age'::text as indicateur,
+       sex               as sexe,
+       age_months        as mois,
+       l, m, s,
+       sd3neg, sd2neg, sd1neg, sd0, sd1, sd2, sd3
+from who_weight_for_age;
+
 -- Droits : le rôle pilotage lit uniquement les vues agrégées.
 -- Sur un projet Supabase neuf, les rôles anon et authenticated doivent pouvoir
 -- lire les vues pour que l'application fonctionne avec la clé publishable.
@@ -176,7 +202,8 @@ do $$
 declare
   vues text := 'v_kpis, v_zone_summary, v_coverage_by_zone, v_penta_dropout,
                 v_birth_cert, v_message_engagement, v_alerts_summary,
-                v_growth_by_zone, v_coverage_trend, v_demo_banner';
+                v_growth_by_zone, v_coverage_trend, v_demo_banner,
+                calendrier_vaccinal, oms_reference';
 begin
   if exists (select 1 from pg_roles where rolname = 'anon') then
     execute format('grant select on %s to anon', vues);

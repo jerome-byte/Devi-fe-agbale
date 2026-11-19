@@ -170,15 +170,27 @@ begin
     new.z_score := round(case when r.l = 0 then ln(new.weight_kg / r.m) / r.s
                               else (power(new.weight_kg / r.m, r.l) - 1) / (r.l * r.s) end, 2);
   end if;
+  -- Statut OMS : à orienter (z < -3), à surveiller (z < -2), sinon normal.
+  if new.z_score is not null then
+    new.status := case
+      when new.z_score < -3 then 'a_orienter'
+      when new.z_score < -2 then 'a_surveiller'
+      else 'normal' end;
+  end if;
+
+  -- Stagnation (règle de Gerson) : dernière mesure à au moins un mois,
+  -- poids identique ou en baisse, ou chute d'au moins une ligne de z-score.
   select weight_kg, z_score into prev from weigh_ins
-   where child_id = new.child_id and measured_at < new.measured_at
+   where child_id = new.child_id
+     and measured_at <= new.measured_at - interval '1 month'
    order by measured_at desc limit 1;
   if new.trend is null then
     new.trend := case
       when prev.weight_kg is null then 'ok'
-      when new.weight_kg < prev.weight_kg * 0.99 then 'chute'
-      when new.weight_kg - prev.weight_kg < 0.02
-        or (new.z_score is not null and prev.z_score is not null and new.z_score - prev.z_score <= -0.5) then 'stagnation'
+      when new.weight_kg < prev.weight_kg then 'chute'
+      when new.weight_kg = prev.weight_kg then 'stagnation'
+      when prev.z_score is not null and new.z_score is not null
+        and prev.z_score - new.z_score >= 1 then 'stagnation'
       else 'ok' end;
   end if;
   return new;
