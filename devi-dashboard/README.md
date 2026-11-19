@@ -58,6 +58,8 @@ Ouvrir <http://localhost:3000> : la racine redirige vers `/dashboard`.
 | `npm run build` | build de production + vérification TypeScript |
 | `npm run start` | sert le build de production |
 | `npm run lint` | ESLint (config Next + TypeScript) |
+| `npm run db:sql -- <fichier>` | exécute un fichier SQL sur Supabase (voir plus bas) |
+| `npm run db:init` | applique `01`, `02`, `04` puis le seed `03`, dans le bon ordre |
 
 ### Variables d'environnement
 
@@ -163,19 +165,94 @@ démonstration. Tout le SQL vit dans `../sql/` (à la racine du dépôt).
 Toutes les vues sont recalculées à chaque lecture : avec 300 enfants, la latence
 reste négligeable et les chiffres sont toujours à jour.
 
-### Connexion
+### Exécuter du SQL sur Supabase
 
-- **Application** : `https://<project-ref>.supabase.co` avec la clé publishable.
-- **SQL Editor** : interface web Supabase, à privilégier pour appliquer un fichier.
-- **Ligne de commande** : la connexion directe `db.<project-ref>.supabase.co` est
-  en IPv6 seul et échoue sur beaucoup de réseaux. Utiliser le pooler IPv4 :
+Trois méthodes, selon la taille du fichier.
+
+| Méthode | Quand l'utiliser | Limite |
+|---|---|---|
+| SQL Editor (interface web) | corrections ponctuelles, petites requêtes | refuse les gros fichiers comme le seed (1,6 Mo, près de 12 000 lignes) |
+| Script du projet (`npm run db:sql`) | `01_schema.sql`, `02_views.sql`, `04_rules.sql`, `03_seed_demo.sql` | aucune limite pratique, tout passe par une connexion directe |
+| `psql` | si PostgreSQL est installé sur la machine | identique, mais nécessite `psql` |
+
+#### Méthode recommandée : le script du projet
+
+Le script lit `.env.local` pour l'URL du projet, récupère le mot de passe dans
+`supabase_passwoed.txt` (ou dans la variable `SUPABASE_DB_PASSWORD`) et se
+connecte au pooler IPv4.
 
 ```powershell
-psql "postgresql://postgres.<project-ref>@aws-1-eu-west-1.pooler.supabase.com:5432/postgres"
+cd devi-dashboard
+
+# 1. Structure et vues
+npm run db:sql -- ../sql/01_schema.sql
+npm run db:sql -- ../sql/02_views.sql
+
+# 2. Moteur de règles
+npm run db:sql -- ../sql/04_rules.sql
+
+# 3. Données de démonstration (le fichier volumineux)
+npm run db:sql -- ../sql/03_seed_demo.sql
 ```
 
-Le mot de passe est celui du projet, conservé localement dans
+Chaque fichier est exécuté tel quel, avec un compte rendu du nombre de lignes et
+de la durée. En cas d'erreur, le numéro de ligne est affiché et les traitements
+suivants sont arrêtés. Le seed est rejouable : il supprime d'abord les enfants
+`is_demo` avant de réinsérer.
+
+Si le pooler par défaut n'est pas le bon, ajouter dans `.env.local` :
+
+```ini
+SUPABASE_POOLER_HOST=aws-1-eu-west-1.pooler.supabase.com
+```
+
+#### Pourquoi pas la connexion directe
+
+`db.<project-ref>.supabase.co` n'écoute qu'en IPv6 et échoue sur la plupart des
+réseaux locaux. Le pooler IPv4 (`aws-1-eu-west-1.pooler.supabase.com:5432`)
+accepte les scripts multi-instructions et les transactions.
+
+#### Avec `psql`, si vous l'avez
+
+```powershell
+psql "postgresql://postgres.<project-ref>@aws-1-eu-west-1.pooler.supabase.com:5432/postgres" `
+  -f ../sql/03_seed_demo.sql
+```
+
+Le mot de passe est demandé à la connexion. Il est conservé localement dans
 `supabase_passwoed.txt` (ignoré par git).
+
+#### Découper le seed pour le SQL Editor
+
+Si vous devez absolument passer par l'interface web, découpez
+`sql/03_seed_demo.sql` en blocs se terminant par un point-virgule, en gardant
+`begin;` dans le premier bloc et `commit;` dans le dernier, et exécutez les blocs
+dans l'ordre. C'est fastidieux ; le script du projet fait la même chose en une
+commande.
+
+### Basculer sur un autre projet Supabase
+
+1. Remplacer dans `.env.local` l'URL et la clé publishable du nouveau projet.
+2. Déposer le mot de passe de la base dans `supabase_passwoed.txt`, ou renseigner
+   `SUPABASE_DB_PASSWORD` dans `.env.local`.
+3. Appliquer tout le schéma d'un coup :
+
+```powershell
+cd devi-dashboard
+npm run db:init
+```
+
+Le script détecte seul la région du pooler en essayant les régions Supabase
+courantes, puis affiche celle qui a répondu. S'il ne trouve pas, ajouter dans
+`.env.local` :
+
+```ini
+SUPABASE_POOLER_HOST=aws-1-eu-west-1.pooler.supabase.com
+```
+
+`db:init` est rejouable sur une base déjà remplie : les tables utilisent
+`if not exists`, les vues sont remplacées, les fonctions et déclencheurs sont
+recréés, et le seed supprime d'abord les enfants `is_demo`.
 
 ### Régénérer les données de démonstration
 
@@ -193,7 +270,8 @@ d'abord les enfants `is_demo` : il est rejouable sans doublon.
 
 ### Droits
 
-- Les vues sont accessibles en lecture à la clé publishable.
+- Les vues sont accessibles en lecture à la clé publishable : `02_views.sql`
+  accorde `select` à `anon` et `authenticated` sur les vues agrégées.
 - Les tables brutes ne doivent pas être exposées au rôle pilotage : garder les
   politiques RLS activées et les `grant` commentés en bas de `02_views.sql`.
 - Le tableau de bord n'effectue aucune écriture.

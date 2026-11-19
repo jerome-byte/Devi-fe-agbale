@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:sql": "node scripts/apply-sql.mjs",
+    "db:init": "node scripts/apply-sql.mjs ../sql/01_schema.sql ../sql/02_views.sql ../sql/04_rules.sql ../sql/03_seed_demo.sql"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.119.0",
@@ -22,6 +24,7 @@
     "@types/react": "^19.3.0",
     "eslint": "^9.39.5",
     "eslint-config-next": "^16.4.6",
+    "pg": "^8.23.1",
     "typescript": "^6.0.3"
   }
 }

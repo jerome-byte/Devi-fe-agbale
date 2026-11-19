@@ -3,6 +3,11 @@
 -- 01_schema.sql : modèle de données (Supabase / PostgreSQL 15+)
 -- À exécuter dans le SQL Editor de Supabase, AVANT 02_views.sql
 -- =====================================================================
+
+-- Supabase installe pgcrypto dans le schéma extensions : on l'ajoute au chemin
+-- de recherche pour que gen_random_bytes soit visible sur tout projet.
+set search_path = public, extensions;
+
 create extension if not exists pgcrypto;
 
 -- ========== RÉFÉRENCES ==============================================

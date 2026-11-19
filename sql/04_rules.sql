@@ -4,6 +4,8 @@
 -- Production : select * from run_rules();   (pg_cron toutes les heures, ou appel serveur)
 -- =====================================================================
 
+set search_path = public, extensions;
+
 -- ---------- 1. Calendrier vaccinal créé à l'inscription ---------------
 -- (les enfants is_demo reçoivent leurs rendez-vous du seed)
 create or replace function trg_generate_appointments() returns trigger

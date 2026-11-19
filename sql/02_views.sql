@@ -4,6 +4,8 @@
 -- Toutes les vues sont recalculées à chaque lecture (300 enfants : instantané).
 -- =====================================================================
 
+set search_path = public, extensions;
+
 -- Bandeau « données de démonstration » (exigé par la checklist de dépôt)
 create or replace view v_demo_banner as
 select count(*) filter (where is_demo)            as demo_children,
@@ -167,7 +169,19 @@ select
   (select flagged_pct from v_growth_by_zone where zone_id = 0)                   as growth_flagged_pct,
   (select count(*) from v_child_risk where risk_score >= 10)                      as high_risk_children;
 
--- Droits : le rôle pilotage lit uniquement les vues agrégées (Supabase).
--- grant select on v_kpis, v_zone_summary, v_coverage_by_zone, v_penta_dropout,
---   v_birth_cert, v_message_engagement, v_alerts_summary, v_growth_by_zone,
---   v_coverage_trend, v_demo_banner to authenticated;
+-- Droits : le rôle pilotage lit uniquement les vues agrégées.
+-- Sur un projet Supabase neuf, les rôles anon et authenticated doivent pouvoir
+-- lire les vues pour que l'application fonctionne avec la clé publishable.
+do $$
+declare
+  vues text := 'v_kpis, v_zone_summary, v_coverage_by_zone, v_penta_dropout,
+                v_birth_cert, v_message_engagement, v_alerts_summary,
+                v_growth_by_zone, v_coverage_trend, v_demo_banner';
+begin
+  if exists (select 1 from pg_roles where rolname = 'anon') then
+    execute format('grant select on %s to anon', vues);
+  end if;
+  if exists (select 1 from pg_roles where rolname = 'authenticated') then
+    execute format('grant select on %s to authenticated', vues);
+  end if;
+end $$;
