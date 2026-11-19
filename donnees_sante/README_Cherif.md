@@ -11,8 +11,7 @@ Les données ont été fournies et validées par **Gerson** (référent médical
 | `oms_poids_age_filles.csv`, `oms_poids_age_garcons.csv` | Tables OMS poids pour l'âge, 0 à 60 mois (61 lignes) | Table `oms_reference` : z-score poids/âge |
 | `regles_croissance.md` | Indicateurs, rythme des mesures, seuils, stagnation, qui alerter | Règles du moteur (à lire en entier) |
 
-**À venir** (Gerson, 19 nov.) : 8 tables OMS taille/âge et IMC/âge, le calendrier vitamine A + déparasitage, 2 confirmations sur les seuils.
-Noms prévus : `oms_taille_age_0_2ans_filles.csv`, `oms_taille_age_2_5ans_filles.csv` (idem `_garcons`), `oms_imc_age_0_2ans_filles.csv`, `oms_imc_age_2_5ans_filles.csv` (idem `_garcons`). Même format que les tables de poids.
+**Reçu le 19 nov.** : 8 tables OMS taille/âge et IMC/âge, même format que les tables de poids : `oms_taille_age_0_2ans_filles.csv`, `oms_taille_age_2_5ans_filles.csv` (idem `_garcons`), `oms_imc_age_0_2ans_filles.csv`, `oms_imc_age_2_5ans_filles.csv` (idem `_garcons`) ; `calendrier_vitamineA_deparasitage.csv` ; confirmations de Gerson (seuils −2 / −3 pour les trois indicateurs, alerte IMC > +2) dans `regles_croissance.md`.
 
 Ne pas utiliser : `calendrier_pev_source.pdf`, `courbes de croissance.pdf`, les fiches `A_FOURNIR_Gerson*` et `reponses_Gerson_18nov.docx` (documents sources et échanges).
 

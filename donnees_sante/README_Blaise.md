@@ -11,7 +11,7 @@ Les calculs (dates, z-scores, alertes) sont faits par **Cherif** : tu affiches s
 | `oms_poids_age_filles.csv`, `oms_poids_age_garcons.csv` (table `oms_reference`) | Courbe de croissance : lignes de référence OMS |
 | `regles_croissance.md` | Ce qu'il faut saisir et à quel rythme ; libellés des alertes |
 
-**À venir** (19 nov.) : tables OMS taille/âge et IMC/âge (même format), calendrier vitamine A + déparasitage.
+**Reçu le 19 nov.** : tables OMS taille/âge et IMC/âge (`oms_taille_age_*`, `oms_imc_age_*`, même format que le poids) et `calendrier_vitamineA_deparasitage.csv`. À ajouter dans `scripts/sync-voix.mjs` comme les tables de poids.
 
 ## 1. Inscription de l'enfant
 
