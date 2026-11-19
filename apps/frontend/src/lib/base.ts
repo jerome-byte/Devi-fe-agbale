@@ -23,6 +23,9 @@ function supabase() {
   return client;
 }
 
+/** Client Supabase en lecture (clé publique), partagé avec le tableau de bord de pilotage. */
+export const clientSupabase = () => supabase();
+
 // ---------- Correspondances base <-> application ----------
 
 // Codes de la base -> id du catalogue audio (voix/README_voix.md)
