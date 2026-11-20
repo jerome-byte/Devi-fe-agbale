@@ -69,6 +69,7 @@ Ouvrir <http://localhost:3000> : la racine redirige vers `/dashboard`.
 | `npm run db:init` | applique `01`, `02`, `04`, le seed `03`, puis charge les référentiels de `donnees_sante/` |
 | `npm run db:reference` | recharge seulement le calendrier PEV et les tables OMS |
 | `npm run audio:sync` | copie les 99 `.ogg` dans `public/` et régénère `lib/catalogue.json` |
+| `npm run gerson:check` | recrée les 3 enfants de test et écrit `docs/verification_gerson_20nov.md` |
 
 ### Variables d'environnement
 
@@ -195,7 +196,7 @@ grave :
 | z-score < −2 (poids, taille ou IMC) | `a_surveiller`, alerte `growth_surveiller` |
 | z-score < −3 (poids, taille ou IMC) | `a_orienter`, alerte `growth_orient` prioritaire |
 | IMC > +2 (surpoids) | `a_surveiller`, alerte `growth_surveiller` |
-| poids identique ou en baisse après au moins un mois, ou chute d'au moins une ligne de z | tendance `stagnation` ou `chute`, alerte `growth_stagnation` |
+| poids identique ou en baisse après au moins un mois, ou chute d'au moins une ligne de z | tendance `stagnation` ou `chute`, statut `a_surveiller`, alerte `growth_stagnation` |
 
 Le z-score est calculé avec les colonnes `L`, `M`, `S` de la table OMS du sexe et
 de l'âge en mois révolus. Taille et IMC utilisent la bande 0-2 avant 24 mois et
@@ -514,21 +515,21 @@ doit donc être présent dans le dépôt (c'est le cas). Si vous déployez uniqu
 - **Tables OMS taille et IMC** : seules les tables de poids pour l'âge sont
   chargées. Les 8 fichiers taille/IMC et le calendrier vitamine A sont attendus
   pour la finale ; `weigh_ins` n'a pas encore de colonne `height_cm`.
-- **Taille et IMC** : les tables sont chargées et le calcul est actif, mais le
-  seed ne contient pas de taille. Les indicateurs taille/IMC s'appliqueront aux
-  mesures saisies dans l'application ; la vérification Gerson du 20 novembre doit
-  inclure des tailles.
-- **Vitamine A et déparasitage** : le calendrier est chargé, mais les rappels
-  correspondants ne sont pas encore produits par `run_rules`.
-- **Couverture audio** : 10 prénoms et 2 centres seulement. Les messages dont le
-  prénom ou le centre n'est pas couvert affichent « audio non disponible ».
-- **Moteur de messages** : `run_rules` écrit encore des chemins `.mp3` dans
-  `messages.audio_url` et n'envoie pas encore de message `pesee` mensuel ni de
-  message `croissance` à la famille.
+- **Taille et IMC** : les tables sont chargées et le calcul est actif. Le seed
+  principal ne contient pas de taille ; les 3 enfants de test et les mesures
+  saisies dans l'application en ont.
+- **Vitamine A et déparasitage** : les messages sont produits aux âges du
+  calendrier. La vitamine A utilise l'annonce existante ; le déparasitage n'a pas
+  encore d'audio dédié (le journal l'affiche sans lecteur).
+- **Couverture audio** : les 10 prénoms du seed ont un audio. Les centres ne sont
+  couverts que pour Bè-Kpota et Sylvanus Olympio : les rappels J-1 / J0 des quatre
+  autres centres n'ont pas de variante.
+- **Sécurité** : RLS est activée sur toutes les tables, sans politique par rôle.
+  Les écritures agent passent par des RPC ou le serveur ; les politiques restent à
+  écrire avec Blaise.
 - **Tableau de bord** : la couverture par vaccin et par dose, les doses en retard
   par centre, la séparation « à surveiller / à orienter » et les mesures à jour
   ne sont pas encore affichées.
-- **Vérification Gerson** : les 3 enfants de test du 20 novembre restent à
-  préparer et à envoyer.
 - **Score de risque** : `v_child_risk` existe mais n'est pas détaillé dans
-  l'interface ; les boutons `demo_fast_forward` sont dans la base, pas à l'écran.
+  l'interface ; les boutons `demo_fast_forward` sont dans la base et dans le
+  panneau de démonstration.

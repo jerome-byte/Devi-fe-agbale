@@ -386,4 +386,12 @@ const tendances = await client.query(`
    where p.id = w.id`);
 console.log(`Tendances recalculées : ${tendances.rowCount}`);
 
+// Une stagnation ou une chute vaut « à surveiller » (règle de Gerson).
+const stagnations = await client.query(`
+  update weigh_ins
+     set status = 'a_surveiller',
+         status_indicator = coalesce(status_indicator, 'poids')
+   where trend in ('stagnation','chute') and status = 'normal'`);
+console.log(`Statuts de stagnation ajustés : ${stagnations.rowCount}`);
+
 await client.end();

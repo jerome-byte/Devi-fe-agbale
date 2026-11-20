@@ -45,12 +45,11 @@ begin
     v_tpl := case v_off when 2 then 'J-2' when 1 then 'J-1' else 'J0' end;
     with ins as (
       insert into messages (child_id, guardian_id, appointment_id, template_code, channel, language,
-                            scheduled_for, sent_at, status, audio_url, is_simulated)
-      select rep.child_id, g.id, rep.id, v_tpl, g.channel_pref, g.language,
+                            scheduled_for, sent_at, status, is_simulated)
+      select rep.child_id, g.id, rep.id, v_tpl, 'whatsapp', g.language,
              p_as_of::timestamptz + interval '8 hours',
              case when p_simulated then now() end,
              case when p_simulated then 'sent' else 'scheduled' end,
-             format('audio/%s/%s_C%s.mp3', g.language, v_tpl, rep.contact_no),
              p_simulated
       from (select distinct on (a.child_id, s.contact_no) a.id, a.child_id, s.contact_no
             from appointments a join vaccine_schedule s on s.id = a.schedule_id
@@ -76,12 +75,11 @@ begin
   -- R3 : relance vocale après un contact manqué (appel avec réponse 1/2/3), 1 par contact
   with ins as (
     insert into messages (child_id, guardian_id, appointment_id, template_code, channel, language,
-                          scheduled_for, sent_at, status, audio_url, is_simulated)
-    select rep.child_id, g.id, rep.id, 'MISSED_3', 'voice', g.language,
+                          scheduled_for, sent_at, status, is_simulated)
+    select rep.child_id, g.id, rep.id, 'MISSED_3', 'whatsapp', g.language,
            (rep.due_date + 3)::timestamptz + interval '10 hours',
            case when p_simulated then now() end,
            case when p_simulated then 'sent' else 'scheduled' end,
-           format('audio/%s/MISSED_3_C%s.mp3', g.language, rep.contact_no),
            p_simulated
     from (select distinct on (a.child_id, s.contact_no) a.id, a.child_id, a.due_date, s.contact_no
           from appointments a join vaccine_schedule s on s.id = a.schedule_id
@@ -93,7 +91,7 @@ begin
     on conflict (appointment_id, template_code, channel) do nothing
     returning 1)
   select count(*) into v_n from ins;
-  rule := 'relance vocale MISSED_3'; n := v_n; return next;
+  rule := 'relance WhatsApp MISSED_3'; n := v_n; return next;
 
   -- R4 : contact manqué depuis 7 jours -> UNE alerte agent de santé (+ mère relais)
   with ins as (
@@ -115,11 +113,11 @@ begin
   -- R5 : acte de naissance manquant -> message + alerte
   with ins as (
     insert into messages (child_id, guardian_id, template_code, channel, language,
-                          scheduled_for, sent_at, status, audio_url, is_simulated)
-    select c.id, g.id, 'BIRTH_CERT', g.channel_pref, g.language, p_as_of::timestamptz + interval '9 hours',
+                          scheduled_for, sent_at, status, is_simulated)
+    select c.id, g.id, 'BIRTH_CERT', 'whatsapp', g.language, p_as_of::timestamptz + interval '9 hours',
            case when p_simulated then now() end,
            case when p_simulated then 'sent' else 'scheduled' end,
-           format('audio/%s/BIRTH_CERT.mp3', g.language), p_simulated
+           p_simulated
     from children c join guardians g on g.child_id = c.id and g.is_primary
     where not c.has_birth_certificate
       and (p_child_id is null or c.id = p_child_id)
@@ -168,9 +166,118 @@ begin
          where x.child_id = l.child_id
            and x.type = case when l.status = 'a_orienter' then 'growth_orient' else 'growth_surveiller' end
            and x.status in ('open','acknowledged'))
+      and not exists (
+        select 1 from alerts x
+         where x.child_id = l.child_id and x.type = 'growth_stagnation'
+           and x.status in ('open','acknowledged'))
     returning 1)
   select count(*) into v_n from ins;
   rule := 'alertes statut croissance'; n := v_n; return next;
+
+  -- R8 : pesée due (mensuelle avant 2 ans, trimestrielle ensuite)
+  with ins as (
+    insert into messages (child_id, guardian_id, template_code, channel, language,
+                          scheduled_for, sent_at, status, is_simulated)
+    select c.id, g.id, 'PESEE', 'whatsapp', g.language,
+           p_as_of::timestamptz + interval '9 hours',
+           case when p_simulated then now() end,
+           case when p_simulated then 'sent' else 'scheduled' end,
+           p_simulated
+    from children c
+    join guardians g on g.child_id = c.id and g.is_primary
+    left join lateral (
+      select max(w.measured_at) as dernier from weigh_ins w where w.child_id = c.id
+    ) lw on true
+    where (p_child_id is null or c.id = p_child_id)
+      and (
+        lw.dernier is null
+        or (c.birth_date > p_as_of - interval '24 months'
+            and lw.dernier <= p_as_of - interval '1 month')
+        or (c.birth_date <= p_as_of - interval '24 months'
+            and lw.dernier <= p_as_of - interval '3 months')
+      )
+      and not exists (
+        select 1 from messages m
+         where m.child_id = c.id and m.template_code = 'PESEE'
+           and m.scheduled_for >= date_trunc('month', p_as_of::timestamptz))
+    returning 1)
+  select count(*) into v_n from ins;
+  rule := 'messages pesée'; n := v_n; return next;
+
+  -- R9 : message croissance (statut à surveiller/orienter ou stagnation)
+  with ins as (
+    insert into messages (child_id, guardian_id, template_code, channel, language,
+                          scheduled_for, sent_at, status, is_simulated)
+    select c.id, g.id, 'CROISSANCE', 'whatsapp', g.language,
+           p_as_of::timestamptz + interval '9 hours',
+           case when p_simulated then now() end,
+           case when p_simulated then 'sent' else 'scheduled' end,
+           p_simulated
+    from v_last_weigh_in l
+    join children c on c.id = l.child_id
+    join guardians g on g.child_id = c.id and g.is_primary
+    where (l.status in ('a_surveiller','a_orienter') or l.trend <> 'ok')
+      and l.measured_at >= p_as_of - 45
+      and (p_child_id is null or c.id = p_child_id)
+      and not exists (
+        select 1 from messages m
+         where m.child_id = c.id and m.template_code = 'CROISSANCE'
+           and m.scheduled_for >= date_trunc('month', p_as_of::timestamptz))
+    returning 1)
+  select count(*) into v_n from ins;
+  rule := 'messages croissance'; n := v_n; return next;
+
+  -- R10 : vitamine A aux âges du calendrier (6, 12, … 54 mois)
+  with ins as (
+    insert into messages (child_id, guardian_id, template_code, channel, language,
+                          scheduled_for, sent_at, status, is_simulated)
+    select c.id, g.id, 'VITAMINE_A', 'whatsapp', g.language,
+           p_as_of::timestamptz + interval '9 hours',
+           case when p_simulated then now() end,
+           case when p_simulated then 'sent' else 'scheduled' end,
+           p_simulated
+    from children c
+    join guardians g on g.child_id = c.id and g.is_primary
+    join vitamin_a_schedule v
+      on v.produit = 'vitamine_a'
+     and v.age_mois = (
+       extract(year from age(p_as_of, c.birth_date)) * 12
+       + extract(month from age(p_as_of, c.birth_date))
+     )::int
+    where (p_child_id is null or c.id = p_child_id)
+      and not exists (
+        select 1 from messages m
+         where m.child_id = c.id and m.template_code = 'VITAMINE_A'
+           and m.scheduled_for >= date_trunc('month', p_as_of::timestamptz))
+    returning 1)
+  select count(*) into v_n from ins;
+  rule := 'messages vitamine A'; n := v_n; return next;
+
+  -- R11 : déparasitage aux âges du calendrier (12, 18, … 54 mois)
+  with ins as (
+    insert into messages (child_id, guardian_id, template_code, channel, language,
+                          scheduled_for, sent_at, status, is_simulated)
+    select c.id, g.id, 'DEPARASITAGE', 'whatsapp', g.language,
+           p_as_of::timestamptz + interval '9 hours',
+           case when p_simulated then now() end,
+           case when p_simulated then 'sent' else 'scheduled' end,
+           p_simulated
+    from children c
+    join guardians g on g.child_id = c.id and g.is_primary
+    join vitamin_a_schedule v
+      on v.produit = 'deparasitage'
+     and v.age_mois = (
+       extract(year from age(p_as_of, c.birth_date)) * 12
+       + extract(month from age(p_as_of, c.birth_date))
+     )::int
+    where (p_child_id is null or c.id = p_child_id)
+      and not exists (
+        select 1 from messages m
+         where m.child_id = c.id and m.template_code = 'DEPARASITAGE'
+           and m.scheduled_for >= date_trunc('month', p_as_of::timestamptz))
+    returning 1)
+  select count(*) into v_n from ins;
+  rule := 'messages déparasitage'; n := v_n; return next;
 end $$;
 
 -- ---------- 3. Pesée : z-score et tendance calculés à l'insertion ------
@@ -250,6 +357,13 @@ begin
       when prev.z_score is not null and new.z_score is not null
         and prev.z_score - new.z_score >= 1 then 'stagnation'
       else 'ok' end;
+  end if;
+
+  -- Une stagnation ou une chute est aussi « à surveiller » (règle de Gerson).
+  if new.trend in ('stagnation', 'chute')
+     and coalesce(new.status, 'normal') = 'normal' then
+    new.status := 'a_surveiller';
+    new.status_indicator := coalesce(new.status_indicator, 'poids');
   end if;
   return new;
 end $$;

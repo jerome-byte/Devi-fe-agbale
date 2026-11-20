@@ -188,6 +188,21 @@ select s.contact_no                                    as contact,
        s.status                                        as statut
 from vaccine_schedule s;
 
+create or replace view calendrier_vitamine_a as
+select produit, age_mois, dose, lieu
+from vitamin_a_schedule;
+
+-- Listes de référence pour l'inscription (RLS active sur les tables).
+create or replace view v_zones as
+select id, name, commune, prefecture from zones;
+
+create or replace view v_health_centers as
+select hc.id, hc.name, hc.zone_id, z.name as zone
+from health_centers hc left join zones z on z.id = hc.zone_id;
+
+create or replace view v_daycares as
+select id, name, zone_id, center_id from daycares;
+
 create or replace view oms_reference as
 select 'poids_age'::text as indicateur,
        sex               as sexe,
@@ -234,7 +249,7 @@ from children c
 left join health_centers hc on hc.id = c.center_id
 left join zones z on z.id = c.zone_id
 where c.is_demo
-order by (c.first_name = 'Kossi') desc, c.created_at
+order by (c.first_name = 'Kosi') desc, c.created_at
 limit 1;
 
 -- Droits : le rôle pilotage lit uniquement les vues agrégées.
@@ -246,7 +261,8 @@ declare
                 v_birth_cert, v_message_engagement, v_alerts_summary,
                 v_growth_by_zone, v_coverage_trend, v_demo_banner,
                 calendrier_vaccinal, oms_reference, v_message_log,
-                v_alerts_list, v_demo_child';
+                v_alerts_list, v_demo_child, calendrier_vitamine_a,
+                v_zones, v_health_centers, v_daycares';
 begin
   if exists (select 1 from pg_roles where rolname = 'anon') then
     execute format('grant select on %s to anon', vues);

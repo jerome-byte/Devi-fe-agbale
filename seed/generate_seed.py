@@ -77,10 +77,9 @@ AGES_M = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 24, 36, 48, 60, 72]
 MED_M = [3.3, 4.5, 5.6, 6.4, 7.0, 7.5, 7.9, 8.3, 8.6, 8.9, 9.2, 9.4, 9.6, 10.9, 12.2, 14.3, 16.3, 18.3, 20.5]
 MED_F = [3.2, 4.2, 5.1, 5.8, 6.4, 6.9, 7.3, 7.6, 7.9, 8.2, 8.5, 8.7, 8.9, 10.2, 11.5, 13.9, 16.1, 18.2, 20.2]
 
-NAMES_M = ["Kossi", "Kofi", "Yao", "Koffi", "Komlan", "Kodjo", "Kwami", "Edem", "Mawuli", "Sena",
-           "Yawo", "Ayité", "Dodji", "Elom", "Kokou", "Sename", "Selom", "Kwasi", "Folly", "Mawuena"]
-NAMES_F = ["Afi", "Ama", "Akossiwa", "Abla", "Adjo", "Akouvi", "Ayélé", "Efua", "Eyram", "Mawusi",
-           "Dzifa", "Enyonam", "Esi", "Sika", "Yawa", "Akoua", "Mawuko", "Délali", "Aku", "Ablavi"]
+# Seuls les prénoms couverts par le catalogue audio (voix/README_voix.md).
+NAMES_M = ["Kosi", "Yao", "Kodzo", "Komi", "Mawuli"]
+NAMES_F = ["Ama", "Afi", "Akosiwa", "Abla", "Sena"]
 GUARDIAN_PREFIX = ["Maman", "Mme", "Papa", "Mamie", "Tante"]
 
 # ----------------------------------------------------------------------
@@ -139,6 +138,9 @@ def generate(n, seed, as_of):
     for z in ZONES:
         tables["zones"].append(dict(id=z[0], name=z[1], commune=z[2], prefecture="Golfe"))
         tables["health_centers"].append(dict(id=z[0], name=z[3], zone_id=z[0], lat=None, lng=None))
+    # Centre supplémentaire demandé par l'application (audio Sylvanus Olympio).
+    tables["health_centers"].append(dict(
+        id=7, name="Centre Hospitalier Sylvanus Olympio", zone_id=1, lat=None, lng=None))
     for d in DAYCARES:
         tables["daycares"].append(dict(id=d[0], name=d[1], zone_id=d[2], center_id=d[2]))
 
@@ -182,7 +184,7 @@ def generate(n, seed, as_of):
 
         # --- responsable de l'enfant ---------------------------------
         lang = pick_weighted(rng, list(LANG_W), list(LANG_W.values()))
-        chan = "voice" if rng.random() < 0.22 else "whatsapp"
+        chan = "whatsapp"  # prototype : tout part sur WhatsApp
         guardian_id = det_uuid(rng)
         phone = "+22800" + "".join(str(rng.randint(0, 9)) for _ in range(6))
         tables["guardians"].append(dict(
@@ -302,7 +304,7 @@ def generate(n, seed, as_of):
                 id=det_uuid(rng), child_id=child_id, guardian_id=guardian_id,
                 appointment_id=appt["id"] if appt else None, template_code=template,
                 channel=channel, language=lang, scheduled_for=sched, sent_at=sent_at,
-                status=status, audio_url=f"audio/{lang}/{tpl_key}.mp3",
+                status=status, audio_url=None,  # rempli par le backend depuis le catalogue
                 response_key=key, responded_at=responded, is_simulated=False))
 
         if age_days <= 90:
@@ -322,7 +324,7 @@ def generate(n, seed, as_of):
             late = appt["status"] == "missed" or (
                 appt["status"] == "done" and appt["done_at"] and (appt["done_at"] - due).days >= GRACE)
             if late and due + dt.timedelta(days=GRACE) <= as_of:
-                add_msg("MISSED_3", appt, dt.datetime.combine(due + dt.timedelta(days=GRACE), dt.time(10, 0)), "voice")
+                add_msg("MISSED_3", appt, dt.datetime.combine(due + dt.timedelta(days=GRACE), dt.time(10, 0)), chan)
             if appt["status"] == "missed" and (as_of - due).days >= ALERT_DAYS:
                 tables["alerts"].append(dict(
                     id=det_uuid(rng), child_id=child_id, appointment_id=appt["id"], type="missed_7d",

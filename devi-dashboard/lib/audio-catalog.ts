@@ -45,6 +45,7 @@ const TEMPLATE_TO_ID: Record<string, string> = {
   NUTRITION_1: "nutrition_1",
   DEPISTAGE: "depistage",
   ORIENTATION: "orientation",
+  VITAMINE_A: "annonce_vitamine_a",
 };
 
 export const MESSAGE_LABELS: Record<string, string> = {
@@ -59,6 +60,8 @@ export const MESSAGE_LABELS: Record<string, string> = {
   NUTRITION_1: "Conseil nutrition",
   DEPISTAGE: "Dépistage",
   ORIENTATION: "Orientation",
+  VITAMINE_A: "Vitamine A",
+  DEPARASITAGE: "Déparasitage",
 };
 
 export type ResolvedAudio = {
