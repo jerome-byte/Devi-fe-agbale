@@ -43,7 +43,7 @@ export const NAV: SectionNav[] = [
   {
     titre: "Familles",
     liens: [
-      { href: "/messages", libelle: "Messages", icone: MessageCircle, roles: ["agent", "pilotage"], compteur: "reponses", motsCles: "vocal whatsapp audio éwé" },
+      { href: "/messages", libelle: "Messages", icone: MessageCircle, roles: ["agent"], compteur: "reponses", motsCles: "vocal whatsapp audio éwé" },
       { href: "/pilotage/annonces", libelle: "Annonces vocales", icone: Megaphone, roles: ["pilotage"], motsCles: "campagne vitamine" },
     ],
   },

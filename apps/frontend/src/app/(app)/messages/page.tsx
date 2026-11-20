@@ -2,7 +2,7 @@
 
 import { CheckCheck, Headphones, Megaphone, MessageCircle, Reply, SearchX } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { LecteurAudio } from "@/components/lecteur-audio";
 import { Carte, EntetePage, Indicateur, Onglets, Pagination, Pastille, Recherche, Selecteur, Tableau, Vide, usePagination, type Ton } from "@/components/ui";
 import { dateCourte, heure } from "@/lib/dates";
@@ -32,6 +32,11 @@ export default function Messages() {
   const router = useRouter();
   const params = useSearchParams();
   const anonyme = session.role === "pilotage";
+
+  // Le pilotage n'a pas de journal : ses chiffres sur les messages sont dans son tableau de bord.
+  useEffect(() => {
+    if (anonyme) router.replace("/pilotage");
+  }, [anonyme, router]);
   const [filtre, setFiltre] = useState<Filtre>((params.get("filtre") as Filtre) ?? "tous");
   const [q, setQ] = useState("");
   const [statut, setStatut] = useState("");
