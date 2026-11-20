@@ -7,7 +7,8 @@ et dans quel ordre.
 
 À lire avec :
 
-- `devi-dashboard/README.md` : l'application de pilotage (écrans, design, scripts).
+- `apps/frontend/README.md` : l'application (agent, éducatrice, pilotage).
+- `scripts/README.md` : les scripts de la base (schéma, seed, référentiels).
 - `sql/README.md` : l'ordre d'application du SQL et les référentiels.
 - `voix/README_voix.md` : le catalogue audio et le circuit WhatsApp.
 - `donnees_sante/README_Cherif.md` : les règles médicales et les calculs.
@@ -17,13 +18,12 @@ et dans quel ordre.
 ## 1. Architecture
 
 ```
-┌─────────────────────┐        ┌──────────────────────┐
-│ Plateforme (agent,  │        │ Dashboard (pilotage, │
-│ éducatrice)         │        │ journal, alertes)    │
-│ pages déjà prêtes   │        │ devi-dashboard/      │
-└─────────┬───────────┘        └──────────┬───────────┘
-          │  supabase-js (clé publishable)│
-          ▼                               ▼
+┌──────────────────────────────────────────────────────┐
+│ Application apps/frontend : agent, éducatrice et     │
+│ pilotage (tableau de bord, journal, alertes)          │
+└─────────┬────────────────────────────────────────────┘
+          │  supabase-js (session de l'utilisateur, RLS)
+          ▼
 ┌──────────────────────────────────────────────────────┐
 │ Supabase : Postgres + vues + fonctions RPC           │
 │  tables (RLS) · vues agrégées · run_rules · alertes  │
@@ -269,7 +269,7 @@ Statuts : `open`, `acknowledged`, `resolved`.
 
 ## 7. Audio
 
-- Source : `voix/audio/messages/*.ogg` (WhatsApp) et `*.wav` (lecture).
+- Source : `voix/audio/messages/*.ogg` (WhatsApp et lecture dans l'application).
 - Catalogue : `voix/audio/messages/index_messages.json`, avec pour chaque message
   la liste des variantes (`prenom`, `centre`, `ogg`, `wav`, `duree_s`).
 - L'application copie les `.ogg` dans `public/audio/messages/` via
@@ -441,7 +441,7 @@ Le backend utilise la clé service role. Aucune clé WhatsApp dans le navigateur
 
 1. **Supabase** : appliquer `sql/01_schema.sql`, `02_views.sql`, `04_rules.sql`,
    `03_seed_demo.sql`, `05_demo.sql`, puis `npm run db:reference`.
-   En une commande : `cd devi-dashboard && npm run db:init`.
+   En une commande : `cd scripts && npm run db:init`, puis rejouer `06` et `07`.
 2. **Plateforme** : renseigner `NEXT_PUBLIC_SUPABASE_URL` et la clé publishable.
 3. **Serveur** : ajouter `SUPABASE_SERVICE_ROLE_KEY` (jamais dans le client).
 4. **WhatsApp** : variables du fournisseur côté serveur uniquement.

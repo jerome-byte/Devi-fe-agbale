@@ -1,5 +1,5 @@
 {
-  "version": "2026-11-17",
+  "version": "2026-11-19",
   "langue": "ewe",
   "format_whatsapp": "audio/ogg; codecs=opus",
   "prenoms_disponibles": {
@@ -30,7 +30,7 @@
       "destinataire": "Famille",
       "canal": "WhatsApp vocal",
       "texte_fr": "Bienvenue. Votre enfant est maintenant inscrit dans le carnet ɖevi ƒe agbalẽ.",
-      "modele_ewe": "Woèzɔnlo! Ŋdi na wò. Wotsɔ viò ƒe ŋkɔ ŋlɔ ɖe lãmesẽgbalẽvi la me fifia",
+      "modele_ewe": "Woèzɔnlo! Ŋdi na wò. Woŋlɔ woò vi ƒe ŋkɔ ŋlɔ ɖe lãmesẽgbalẽvi la me fifia",
       "variables": [],
       "boutons": [],
       "audios": [
@@ -39,8 +39,7 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/bienvenue.ogg",
-          "wav": "voix/audio/messages/bienvenue.wav",
-          "duree_s": 8.4
+          "duree_s": 8.1
         }
       ]
     },
@@ -61,7 +60,6 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/rappel_j2.ogg",
-          "wav": "voix/audio/messages/rappel_j2.wav",
           "duree_s": 12.8
         }
       ]
@@ -94,7 +92,6 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/manque_3j.ogg",
-          "wav": "voix/audio/messages/manque_3j.wav",
           "duree_s": 17
         }
       ]
@@ -116,7 +113,6 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/reponse_vient.ogg",
-          "wav": "voix/audio/messages/reponse_vient.wav",
           "duree_s": 4.5
         }
       ]
@@ -129,7 +125,7 @@
       "destinataire": "Famille",
       "canal": "WhatsApp vocal (confirmation)",
       "texte_fr": "Merci. L'agent de santé vous rappellera pour choisir un autre jour.",
-      "modele_ewe": "Míeda akpe na wò. Dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be miatsɔ ŋkeke bubu",
+      "modele_ewe": "Míeda akpe na wò. Dɔyɔƒe ƒe dɔwɔla la ayɔ wò le kaƒomɔ dzi be miatsɔ ŋkeke bubu",
       "variables": [],
       "boutons": [],
       "audios": [
@@ -138,8 +134,7 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/reponse_empechement.ogg",
-          "wav": "voix/audio/messages/reponse_empechement.wav",
-          "duree_s": 7.9
+          "duree_s": 8.1
         }
       ]
     },
@@ -151,7 +146,7 @@
       "destinataire": "Famille",
       "canal": "WhatsApp vocal",
       "texte_fr": "Votre enfant {prenom} n'a pas encore d'acte de naissance. La déclaration est gratuite. Allez au bureau d'état civil le plus proche. L'agent de santé peut vous aider.",
-      "modele_ewe": "viwò {prenom} mekpɔ xɔ ye ƒe dzidzigbale haɖe o. eNuŋɔŋlɔ la nye femaxee. Yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. Dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò",
+      "modele_ewe": "viwò {prenom} mekpɔ xɔ ye ƒe dzidzigbale haɖe o. Nuŋɔŋlɔ la nye femaxee. Yi dukɔmevinyenye ƒe dɔwɔƒe si te ɖe ŋuwò la me. Dɔyɔƒe ƒe dɔwɔla la ate ŋu akpe ɖe ŋuwò",
       "variables": [
         "prenom"
       ],
@@ -165,8 +160,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Kosi.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Kosi.wav",
-          "duree_s": 16.2
+          "duree_s": 15.8
         },
         {
           "prenom": "Ama",
@@ -175,8 +169,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Ama.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Ama.wav",
-          "duree_s": 16.5
+          "duree_s": 16
         },
         {
           "prenom": "Yao",
@@ -185,8 +178,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Yao.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Yao.wav",
-          "duree_s": 16.7
+          "duree_s": 16.2
         },
         {
           "prenom": "Afi",
@@ -195,8 +187,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Afi.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Afi.wav",
-          "duree_s": 16.2
+          "duree_s": 15.8
         },
         {
           "prenom": "Kodzo",
@@ -206,8 +197,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Kodzo.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Kodzo.wav",
-          "duree_s": 17.5
+          "duree_s": 17
         },
         {
           "prenom": "Akosiwa",
@@ -217,8 +207,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Akosiwa.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Akosiwa.wav",
-          "duree_s": 17
+          "duree_s": 16.6
         },
         {
           "prenom": "Komi",
@@ -227,8 +216,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Komi.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Komi.wav",
-          "duree_s": 16.7
+          "duree_s": 16.3
         },
         {
           "prenom": "Sena",
@@ -237,8 +225,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Sena.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Sena.wav",
-          "duree_s": 16.7
+          "duree_s": 16.2
         },
         {
           "prenom": "Abla",
@@ -247,8 +234,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Abla.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Abla.wav",
-          "duree_s": 16.8
+          "duree_s": 16.3
         },
         {
           "prenom": "Mawuli",
@@ -257,8 +243,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/acte_naissance__Mawuli.ogg",
-          "wav": "voix/audio/messages/acte_naissance__Mawuli.wav",
-          "duree_s": 16.9
+          "duree_s": 16.5
         }
       ]
     },
@@ -270,7 +255,7 @@
       "destinataire": "Famille",
       "canal": "WhatsApp vocal",
       "texte_fr": "Votre enfant {prenom} grandit moins vite que prévu. L'agent de santé va vous appeler pour vous conseiller.",
-      "modele_ewe": "viwò {prenom} mele tsitsim enumake o. Dɔyɔƒe ƒe dɔwɔla la ayɔ wò le telefɔn dzi be wòaɖo aɖaŋu na wò.",
+      "modele_ewe": "viwò {prenom} mele tsitsim le ɖoɖo nu o. Dɔyɔƒe ƒe dɔwɔla la ayɔ wò le kaƒomɔ dzi be wòaɖo aɖaŋu na wò.",
       "variables": [
         "prenom"
       ],
@@ -284,8 +269,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Kosi.ogg",
-          "wav": "voix/audio/messages/croissance__Kosi.wav",
-          "duree_s": 10.2
+          "duree_s": 9.9
         },
         {
           "prenom": "Ama",
@@ -294,8 +278,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Ama.ogg",
-          "wav": "voix/audio/messages/croissance__Ama.wav",
-          "duree_s": 10.1
+          "duree_s": 9.9
         },
         {
           "prenom": "Yao",
@@ -304,8 +287,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Yao.ogg",
-          "wav": "voix/audio/messages/croissance__Yao.wav",
-          "duree_s": 10.8
+          "duree_s": 9.8
         },
         {
           "prenom": "Afi",
@@ -314,8 +296,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Afi.ogg",
-          "wav": "voix/audio/messages/croissance__Afi.wav",
-          "duree_s": 10.1
+          "duree_s": 10
         },
         {
           "prenom": "Kodzo",
@@ -325,8 +306,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Kodzo.ogg",
-          "wav": "voix/audio/messages/croissance__Kodzo.wav",
-          "duree_s": 10.2
+          "duree_s": 10
         },
         {
           "prenom": "Akosiwa",
@@ -336,8 +316,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Akosiwa.ogg",
-          "wav": "voix/audio/messages/croissance__Akosiwa.wav",
-          "duree_s": 10.9
+          "duree_s": 10.4
         },
         {
           "prenom": "Komi",
@@ -346,8 +325,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Komi.ogg",
-          "wav": "voix/audio/messages/croissance__Komi.wav",
-          "duree_s": 10.1
+          "duree_s": 9.9
         },
         {
           "prenom": "Sena",
@@ -356,8 +334,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Sena.ogg",
-          "wav": "voix/audio/messages/croissance__Sena.wav",
-          "duree_s": 10.2
+          "duree_s": 10
         },
         {
           "prenom": "Abla",
@@ -366,8 +343,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Abla.ogg",
-          "wav": "voix/audio/messages/croissance__Abla.wav",
-          "duree_s": 10
+          "duree_s": 9.9
         },
         {
           "prenom": "Mawuli",
@@ -376,8 +352,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/croissance__Mawuli.ogg",
-          "wav": "voix/audio/messages/croissance__Mawuli.wav",
-          "duree_s": 10.1
+          "duree_s": 9.9
         }
       ]
     },
@@ -398,7 +373,6 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/annonce_vaccination.ogg",
-          "wav": "voix/audio/messages/annonce_vaccination.wav",
           "duree_s": 10.8
         }
       ]
@@ -426,7 +400,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Kosi__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Kosi__sylvanus_olympio.wav",
           "duree_s": 11.8
         },
         {
@@ -437,7 +410,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Kosi__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Kosi__be_kpota.wav",
           "duree_s": 11.1
         },
         {
@@ -447,7 +419,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Ama__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Ama__sylvanus_olympio.wav",
           "duree_s": 11.8
         },
         {
@@ -457,7 +428,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Ama__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Ama__be_kpota.wav",
           "duree_s": 10.8
         },
         {
@@ -467,7 +437,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Yao__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Yao__sylvanus_olympio.wav",
           "duree_s": 11.6
         },
         {
@@ -477,7 +446,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Yao__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Yao__be_kpota.wav",
           "duree_s": 10.9
         },
         {
@@ -487,7 +455,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Afi__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Afi__sylvanus_olympio.wav",
           "duree_s": 11.9
         },
         {
@@ -497,7 +464,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Afi__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Afi__be_kpota.wav",
           "duree_s": 10.8
         },
         {
@@ -508,7 +474,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Kodzo__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Kodzo__sylvanus_olympio.wav",
           "duree_s": 11.6
         },
         {
@@ -519,7 +484,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Kodzo__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Kodzo__be_kpota.wav",
           "duree_s": 11.1
         },
         {
@@ -530,7 +494,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Akosiwa__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Akosiwa__sylvanus_olympio.wav",
           "duree_s": 12
         },
         {
@@ -541,7 +504,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Akosiwa__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Akosiwa__be_kpota.wav",
           "duree_s": 11.5
         },
         {
@@ -551,7 +513,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Komi__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Komi__sylvanus_olympio.wav",
           "duree_s": 12.2
         },
         {
@@ -561,7 +522,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Komi__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Komi__be_kpota.wav",
           "duree_s": 11.5
         },
         {
@@ -571,7 +531,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Sena__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Sena__sylvanus_olympio.wav",
           "duree_s": 11.7
         },
         {
@@ -581,7 +540,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Sena__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Sena__be_kpota.wav",
           "duree_s": 11
         },
         {
@@ -591,7 +549,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Abla__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Abla__sylvanus_olympio.wav",
           "duree_s": 11.7
         },
         {
@@ -601,7 +558,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Abla__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Abla__be_kpota.wav",
           "duree_s": 11.3
         },
         {
@@ -611,7 +567,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_veille__Mawuli__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Mawuli__sylvanus_olympio.wav",
           "duree_s": 12
         },
         {
@@ -621,7 +576,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_veille__Mawuli__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_veille__Mawuli__be_kpota.wav",
           "duree_s": 11.1
         }
       ]
@@ -649,7 +603,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Kosi__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Kosi__sylvanus_olympio.wav",
           "duree_s": 9.1
         },
         {
@@ -660,7 +613,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Kosi__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Kosi__be_kpota.wav",
           "duree_s": 8.5
         },
         {
@@ -670,7 +622,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Ama__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Ama__sylvanus_olympio.wav",
           "duree_s": 8.8
         },
         {
@@ -680,7 +631,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Ama__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Ama__be_kpota.wav",
           "duree_s": 8.4
         },
         {
@@ -690,7 +640,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Yao__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Yao__sylvanus_olympio.wav",
           "duree_s": 8.9
         },
         {
@@ -700,7 +649,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Yao__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Yao__be_kpota.wav",
           "duree_s": 8.6
         },
         {
@@ -710,7 +658,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Afi__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Afi__sylvanus_olympio.wav",
           "duree_s": 8.9
         },
         {
@@ -720,7 +667,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Afi__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Afi__be_kpota.wav",
           "duree_s": 8.6
         },
         {
@@ -731,7 +677,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Kodzo__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Kodzo__sylvanus_olympio.wav",
           "duree_s": 9.1
         },
         {
@@ -742,7 +687,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Kodzo__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Kodzo__be_kpota.wav",
           "duree_s": 8.4
         },
         {
@@ -753,7 +697,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Akosiwa__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Akosiwa__sylvanus_olympio.wav",
           "duree_s": 9.2
         },
         {
@@ -764,7 +707,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Akosiwa__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Akosiwa__be_kpota.wav",
           "duree_s": 8.8
         },
         {
@@ -774,7 +716,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Komi__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Komi__sylvanus_olympio.wav",
           "duree_s": 8.9
         },
         {
@@ -784,7 +725,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Komi__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Komi__be_kpota.wav",
           "duree_s": 9.2
         },
         {
@@ -794,7 +734,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Sena__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Sena__sylvanus_olympio.wav",
           "duree_s": 9.1
         },
         {
@@ -804,7 +743,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Sena__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Sena__be_kpota.wav",
           "duree_s": 8.6
         },
         {
@@ -814,7 +752,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Abla__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Abla__sylvanus_olympio.wav",
           "duree_s": 8.8
         },
         {
@@ -824,7 +761,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Abla__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Abla__be_kpota.wav",
           "duree_s": 8.4
         },
         {
@@ -834,7 +770,6 @@
           ],
           "centre": "sylvanus_olympio",
           "ogg": "voix/audio/messages/rappel_jour_j__Mawuli__sylvanus_olympio.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Mawuli__sylvanus_olympio.wav",
           "duree_s": 9.1
         },
         {
@@ -844,7 +779,6 @@
           ],
           "centre": "be_kpota",
           "ogg": "voix/audio/messages/rappel_jour_j__Mawuli__be_kpota.ogg",
-          "wav": "voix/audio/messages/rappel_jour_j__Mawuli__be_kpota.wav",
           "duree_s": 8.8
         }
       ]
@@ -871,7 +805,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Kosi.ogg",
-          "wav": "voix/audio/messages/pesee__Kosi.wav",
           "duree_s": 8.5
         },
         {
@@ -881,7 +814,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Ama.ogg",
-          "wav": "voix/audio/messages/pesee__Ama.wav",
           "duree_s": 8.6
         },
         {
@@ -891,7 +823,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Yao.ogg",
-          "wav": "voix/audio/messages/pesee__Yao.wav",
           "duree_s": 8.4
         },
         {
@@ -901,7 +832,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Afi.ogg",
-          "wav": "voix/audio/messages/pesee__Afi.wav",
           "duree_s": 8.6
         },
         {
@@ -912,7 +842,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Kodzo.ogg",
-          "wav": "voix/audio/messages/pesee__Kodzo.wav",
           "duree_s": 8.4
         },
         {
@@ -923,7 +852,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Akosiwa.ogg",
-          "wav": "voix/audio/messages/pesee__Akosiwa.wav",
           "duree_s": 9.1
         },
         {
@@ -933,7 +861,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Komi.ogg",
-          "wav": "voix/audio/messages/pesee__Komi.wav",
           "duree_s": 8.4
         },
         {
@@ -943,7 +870,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Sena.ogg",
-          "wav": "voix/audio/messages/pesee__Sena.wav",
           "duree_s": 8.4
         },
         {
@@ -953,7 +879,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Abla.ogg",
-          "wav": "voix/audio/messages/pesee__Abla.wav",
           "duree_s": 8.7
         },
         {
@@ -963,7 +888,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/pesee__Mawuli.ogg",
-          "wav": "voix/audio/messages/pesee__Mawuli.wav",
           "duree_s": 8.6
         }
       ]
@@ -976,7 +900,7 @@
       "destinataire": "Famille",
       "canal": "WhatsApp vocal",
       "texte_fr": "Conseil de la semaine. Ajoutez de la pâte d'arachide et du poisson séché écrasé à la bouillie de votre enfant. Cela l'aide à bien grandir.",
-      "modele_ewe": "Kwasiɖa sia ƒe aɖaŋuɖoɖo. Tsɔ azi tɔtɔ kple tɔmelã ƒuƒui si nètsrɔ̃ la kpe ɖe viwòa ƒe nuɖuɖu si nèɖa la ŋu. Esia kpena ɖe eŋu wòatsi nyuie.",
+      "modele_ewe": "Kwasiɖa sia ƒe aɖaŋuɖoɖo. Tsɔ azi tɔtɔ kple tɔmelã ƒuƒui si nétsu la kpe ɖe viwòa ƒe nuɖuɖu si nèɖa la ŋu. Esia kpena ɖe eŋu wòatsi nyuie.",
       "variables": [],
       "boutons": [],
       "audios": [
@@ -985,8 +909,7 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/nutrition_1.ogg",
-          "wav": "voix/audio/messages/nutrition_1.wav",
-          "duree_s": 14.8
+          "duree_s": 14.1
         }
       ]
     },
@@ -998,7 +921,7 @@
       "destinataire": "Famille",
       "canal": "WhatsApp vocal",
       "texte_fr": "Votre enfant {prenom} a atteint un âge important. L'éducatrice ou l'agent de santé va vous poser quelques questions simples sur son développement.",
-      "modele_ewe": "Viwò {prenom} xɔ ƒe geɖe. Nufiala alo ɖɔkta aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.",
+      "modele_ewe": "Viwò {prenom} xɔ ƒe geɖe. Nufiala alo dɔwɔla aɖe abia nya ʋɛ aɖewo tso eƒe tsitsi ŋu.",
       "variables": [
         "prenom"
       ],
@@ -1012,8 +935,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Kosi.ogg",
-          "wav": "voix/audio/messages/depistage__Kosi.wav",
-          "duree_s": 9.2
+          "duree_s": 9.3
         },
         {
           "prenom": "Ama",
@@ -1022,8 +944,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Ama.ogg",
-          "wav": "voix/audio/messages/depistage__Ama.wav",
-          "duree_s": 9.4
+          "duree_s": 9.5
         },
         {
           "prenom": "Yao",
@@ -1032,8 +953,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Yao.ogg",
-          "wav": "voix/audio/messages/depistage__Yao.wav",
-          "duree_s": 9.2
+          "duree_s": 9.3
         },
         {
           "prenom": "Afi",
@@ -1042,8 +962,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Afi.ogg",
-          "wav": "voix/audio/messages/depistage__Afi.wav",
-          "duree_s": 9.1
+          "duree_s": 9.2
         },
         {
           "prenom": "Kodzo",
@@ -1053,7 +972,6 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Kodzo.ogg",
-          "wav": "voix/audio/messages/depistage__Kodzo.wav",
           "duree_s": 9.3
         },
         {
@@ -1064,8 +982,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Akosiwa.ogg",
-          "wav": "voix/audio/messages/depistage__Akosiwa.wav",
-          "duree_s": 9.8
+          "duree_s": 9.9
         },
         {
           "prenom": "Komi",
@@ -1074,8 +991,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Komi.ogg",
-          "wav": "voix/audio/messages/depistage__Komi.wav",
-          "duree_s": 9.3
+          "duree_s": 9.4
         },
         {
           "prenom": "Sena",
@@ -1084,8 +1000,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Sena.ogg",
-          "wav": "voix/audio/messages/depistage__Sena.wav",
-          "duree_s": 9.4
+          "duree_s": 9.5
         },
         {
           "prenom": "Abla",
@@ -1094,8 +1009,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Abla.ogg",
-          "wav": "voix/audio/messages/depistage__Abla.wav",
-          "duree_s": 9.1
+          "duree_s": 9.2
         },
         {
           "prenom": "Mawuli",
@@ -1104,8 +1018,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/depistage__Mawuli.ogg",
-          "wav": "voix/audio/messages/depistage__Mawuli.wav",
-          "duree_s": 9.2
+          "duree_s": 9.3
         }
       ]
     },
@@ -1117,7 +1030,7 @@
       "destinataire": "Famille",
       "canal": "WhatsApp vocal",
       "texte_fr": "Pour bien accompagner votre enfant {prenom}, nous vous conseillons de voir un spécialiste. L'agent de santé vous aidera à prendre rendez-vous.",
-      "modele_ewe": "Ne èdi be yeakpe ɖe viwòa {prenom} ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. Dɔdzikpɔlaa ana afi si nèle la wò eye wòakpe ɖe ŋuwò nàɖo ɣeyiɣi aɖe",
+      "modele_ewe": "Ne èdi be yeakpe ɖe viwòa {prenom} ŋu nyuie la, anyo be nàyi ɖɔkta aɖe gbɔ. Dɔdzikpɔlaa afia wo afi si bèle la wò eye wòakpe ɖe ŋuwò nàdogoe",
       "variables": [
         "prenom"
       ],
@@ -1131,8 +1044,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Kosi.ogg",
-          "wav": "voix/audio/messages/orientation__Kosi.wav",
-          "duree_s": 14.6
+          "duree_s": 12.3
         },
         {
           "prenom": "Ama",
@@ -1141,8 +1053,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Ama.ogg",
-          "wav": "voix/audio/messages/orientation__Ama.wav",
-          "duree_s": 14.6
+          "duree_s": 12.3
         },
         {
           "prenom": "Yao",
@@ -1151,8 +1062,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Yao.ogg",
-          "wav": "voix/audio/messages/orientation__Yao.wav",
-          "duree_s": 14.5
+          "duree_s": 12.3
         },
         {
           "prenom": "Afi",
@@ -1161,8 +1071,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Afi.ogg",
-          "wav": "voix/audio/messages/orientation__Afi.wav",
-          "duree_s": 14.4
+          "duree_s": 12.2
         },
         {
           "prenom": "Kodzo",
@@ -1172,8 +1081,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Kodzo.ogg",
-          "wav": "voix/audio/messages/orientation__Kodzo.wav",
-          "duree_s": 14.5
+          "duree_s": 12.2
         },
         {
           "prenom": "Akosiwa",
@@ -1183,8 +1091,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Akosiwa.ogg",
-          "wav": "voix/audio/messages/orientation__Akosiwa.wav",
-          "duree_s": 15
+          "duree_s": 12.8
         },
         {
           "prenom": "Komi",
@@ -1193,8 +1100,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Komi.ogg",
-          "wav": "voix/audio/messages/orientation__Komi.wav",
-          "duree_s": 14.3
+          "duree_s": 12.1
         },
         {
           "prenom": "Sena",
@@ -1203,8 +1109,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Sena.ogg",
-          "wav": "voix/audio/messages/orientation__Sena.wav",
-          "duree_s": 14.6
+          "duree_s": 12.3
         },
         {
           "prenom": "Abla",
@@ -1213,8 +1118,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Abla.ogg",
-          "wav": "voix/audio/messages/orientation__Abla.wav",
-          "duree_s": 14.4
+          "duree_s": 12.2
         },
         {
           "prenom": "Mawuli",
@@ -1223,8 +1127,7 @@
           ],
           "centre": null,
           "ogg": "voix/audio/messages/orientation__Mawuli.ogg",
-          "wav": "voix/audio/messages/orientation__Mawuli.wav",
-          "duree_s": 14.9
+          "duree_s": 12.7
         }
       ]
     },
@@ -1236,7 +1139,7 @@
       "destinataire": "Familles de la zone",
       "canal": "WhatsApp vocal + appel",
       "texte_fr": "Distribution gratuite de vitamine A pour les enfants de six mois à cinq ans, au centre de santé de votre quartier.",
-      "modele_ewe": "Wole vitamin A nam femaxee na ɖevi tso ɣleti aɖeke va ɖo ƒe atɔ̃ le dɔyɔƒe si te ɖe mia gbɔ wu.",
+      "modele_ewe": "Wole nunyiame si nye vitamin A nam femaxee na ɖevi wo tso ɣleti aɖeke va ɖo ƒe atɔ̃ le dɔyɔƒe si te ɖe mia gbɔ wu.",
       "variables": [],
       "boutons": [],
       "audios": [
@@ -1245,8 +1148,7 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/annonce_vitamine_a.ogg",
-          "wav": "voix/audio/messages/annonce_vitamine_a.wav",
-          "duree_s": 8.4
+          "duree_s": 9.6
         }
       ]
     },
@@ -1258,7 +1160,7 @@
       "destinataire": "Familles de la zone",
       "canal": "WhatsApp vocal + appel",
       "texte_fr": "Journée de santé de l'enfant samedi au centre de santé de votre quartier. Venez avec la carte de votre enfant.",
-      "modele_ewe": "Memleɖagbe la, ɖeviwo ƒe lãmesẽ ŋkeke le mia ƒe dɔyɔƒe si te ɖe mia gbɔ wu. Mi va kple viwò ƒe lãmesẽgbalẽvi",
+      "modele_ewe": "Memleɖagbe la, ɖeviwo ƒe lãmesẽ ŋkeke le mia ƒe dɔyɔƒe si te ɖe mia gbɔ wu. Mi va kple viwò ƒe lãmesẽgbalẽvi.",
       "variables": [],
       "boutons": [],
       "audios": [
@@ -1267,8 +1169,7 @@
           "orthographes": [],
           "centre": null,
           "ogg": "voix/audio/messages/annonce_journee_sante.ogg",
-          "wav": "voix/audio/messages/annonce_journee_sante.wav",
-          "duree_s": 11.3
+          "duree_s": 11.7
         }
       ]
     }

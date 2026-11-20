@@ -1,7 +1,7 @@
 # Règles de croissance — ɖevi ƒe agbalẽ
 
 Validées par **Gerson Akagbe** (référent médical) le 18 novembre 2026, complétées le 19 novembre.
-Référence : normes de croissance de l'OMS (2006) ; support de Gerson `courbes de croissance.pdf`.
+Référence : normes de croissance de l'OMS (2006) ; support de Gerson `sources/courbes de croissance.pdf`.
 
 ## Indicateurs suivis
 

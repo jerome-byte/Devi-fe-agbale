@@ -1,0 +1,16 @@
+{
+  "name": "devi-scripts-base",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Scripts de la base Supabase : schéma, seed, référentiels et vérification médicale.",
+  "type": "module",
+  "scripts": {
+    "db:sql": "node apply-sql.mjs",
+    "db:reference": "node load-reference.mjs",
+    "db:init": "node apply-sql.mjs ../sql/01_schema.sql ../sql/02_views.sql ../sql/04_rules.sql ../sql/03_seed_demo.sql ../sql/05_demo.sql && node load-reference.mjs",
+    "gerson:check": "node gerson-check.mjs"
+  },
+  "dependencies": {
+    "pg": "^8.23.1"
+  }
+}

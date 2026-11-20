@@ -61,7 +61,7 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 **Fait (Jérôme)**
 - Voix Meta MMS éwé réglée : dictionnaire de prononciation (prénoms, centres), pauses entre les phrases, vitesse 1,0.
 - 16 messages traduits et validés à l'écoute (`voix/catalogue_messages.xlsx`).
-- Tous les audios générés dans `voix/audio/messages/` : **99 audios**, en `.ogg` (WhatsApp et lecteur du journal) et `.wav` (source), pour les 10 prénoms du dictionnaire (Kosi, Ama, Yao, Afi, Kodzo, Akosiwa, Komi, Sena, Abla, Mawuli) et les 2 centres (Sylvanus Olympio, Bè-Kpota).
+- Tous les audios générés dans `voix/audio/messages/` : **99 audios**, en `.ogg` (WhatsApp et lecteur de l'application), pour les 10 prénoms du dictionnaire (Kosi, Ama, Yao, Afi, Kodzo, Akosiwa, Komi, Sena, Abla, Mawuli) et les 2 centres (Sylvanus Olympio, Bè-Kpota).
 - Ajouter un prénom ou un centre : une ligne dans `voix/prononciation.json`, puis relancer `voix/02_generation_audios.ipynb`.
 - Remise à l'équipe : `voix/audio/messages/index_messages.json` (fichier à lire par l'application) et `voix/README_voix.md` (notice).
 
@@ -75,18 +75,16 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
 ```
 ɖevi_ƒe_agbalẽ_Hack4Children_2026/
 ├── README.md                                 ce fichier
-├── ɖevi ƒe agbalẽ_Hack4Children_2026.pdf     dossier de candidature
-├── Plan_prototype_repartition_taches.docx    plan détaillé (Word)
-├── Plan_prototype_repartition_taches.pdf     plan détaillé (PDF)
+├── docs/                                     dossier de candidature, plan détaillé (Word et PDF), vérification médicale
 ├── apps/
-│   ├── frontend/                             application Next.js de l'agent, de la garderie et du pilotage (apps/frontend/README.md)
+│   ├── frontend/                             application Next.js de l'agent, de la garderie et du pilotage, tableau de bord compris (apps/frontend/README.md)
 │   ├── backend/                              backend FastAPI : envoi WhatsApp et réponses (apps/backend/README.md)
 │   └── docs/                                 guides de mise en ligne (Render, WhatsApp Meta, Vercel)
-├── devi-dashboard/                           application Next.js du tableau de bord (devi-dashboard/README.md)
+├── scripts/                                  scripts de la base : schéma, seed, référentiels, vérification médicale
 ├── sql/                                      schéma, vues, moteur de règles, seed (Supabase)
 ├── seed/generate_seed.py                     génère les 300 enfants fictifs
 ├── INTEGRATION_DEV.md                        guide d'intégration de la base
-├── donnees_sante/                            calendrier PEV, tables OMS, règles de croissance
+├── donnees_sante/                            calendrier PEV, tables OMS, règles de croissance (documents d'origine dans sources/)
 └── voix/
     ├── README_voix.md                        notice voix pour Blaise et Cherif
     ├── 01_test_mms_ewe.ipynb                 réglages de la voix éwé (Colab)
@@ -94,31 +92,31 @@ Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L
     ├── prononciation.json                    dictionnaire de prononciation, centres, réglages
     ├── catalogue_messages.xlsx               les 16 messages (français, éwé, éwé pour la voix)
     └── audio/
-        └── messages/                         99 audios (.ogg WhatsApp + .wav) + index_messages.json
+        └── messages/                         99 audios .ogg (WhatsApp) + index_messages.json
 ```
 
-Le plan détaillé, avec le calendrier et les cases à cocher, est dans `Plan_prototype_repartition_taches.pdf`.
+Le plan détaillé, avec le calendrier et les cases à cocher, est dans `docs/Plan_prototype_repartition_taches.pdf`.
 
-## Application (tableau de bord)
+## Tableau de bord et base de données
 
-Le tableau de bord de pilotage est dans **`devi-dashboard/`** (Next.js + Supabase).
-Il ne lit que des vues agrégées : aucune donnée nominative.
+Le tableau de bord de pilotage fait partie de l'application (`apps/frontend`, espace Pilotage).
+Il ne lit que les vues agrégées de la base : aucune donnée nominative.
+
+Les scripts de la base sont dans **`scripts/`** (Node.js) :
 
 ```powershell
-cd devi-dashboard
+cd scripts
 npm install
-npm run dev        # http://localhost:3000/dashboard
+npm run db:init        # schéma, vues, moteur de règles, seed, puis référentiels de donnees_sante/
+npm run db:reference   # référentiels seulement (calendrier PEV, tables OMS, vitamine A)
+npm run gerson:check   # 3 enfants de test et rapport docs/verification_gerson_20nov.md
 ```
 
-- Notice complète : `devi-dashboard/README.md` (architecture, variables, Supabase, déploiement).
-- Guide d'intégration pour la plateforme : `INTEGRATION_DEV.md` (contrats, RPC, parcours, WhatsApp).
-- Base et données : `npm run db:init` applique le schéma, les vues, le moteur de règles,
-  le seed et les référentiels de `donnees_sante/` (calendrier PEV, tables OMS).
+- Connexion : `scripts/.env.local` (`NEXT_PUBLIC_SUPABASE_URL`, `SUPABASE_POOLER_HOST`) et le mot de passe dans `SUPABASE_DB_PASSWORD`, ou toute la chaîne dans `SUPABASE_DB_URL`. Ces fichiers sont ignorés par git.
+- Guide d'intégration de la base : `INTEGRATION_DEV.md` (contrats, RPC, parcours, WhatsApp).
 - Déjà chargé : 23 doses du calendrier, 122 lignes OMS poids, 124 lignes taille,
   124 lignes IMC, 17 lignes vitamine A / déparasitage, 300 enfants de démonstration,
   plus 3 enfants de test pour la vérification médicale.
-- Journal des messages : `/journal`, avec les 99 audios éwé copiés dans `devi-dashboard/public/audio/messages/`.
-- Le bandeau « données de démonstration » reste affiché tant que le seed est présent.
 
 
 ## Livrables de Gerson (référent médical) : qui les reçoit, où les mettre

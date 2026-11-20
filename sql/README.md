@@ -5,7 +5,8 @@
 ### Méthode recommandée : le script du projet
 
 ```powershell
-cd devi-dashboard
+cd scripts
+npm install
 npm run db:init
 ```
 
@@ -98,7 +99,7 @@ Les deux scripts sont rejouables.
 
 ## Audio
 
-Les audios sont dans `voix/audio/messages/` (99 `.ogg` et 99 `.wav`), décrits par
+Les audios sont dans `voix/audio/messages/` (99 `.ogg`), décrits par
 `index_messages.json`. La correspondance entre `template_code` et `id` du catalogue
 est dans `voix/README_voix.md`. La convention `.mp3` de la première version est
 abandonnée : le chemin réel vient du champ `ogg` du catalogue.

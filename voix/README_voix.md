@@ -9,7 +9,6 @@ Ce dossier contient tout ce qu'il faut pour les brancher dans l'application et s
 |---|---|
 | `audio/messages/index_messages.json` | **Le fichier à lire par l'application** : chaque message, son déclencheur, ses textes et ses audios |
 | `audio/messages/*.ogg` | Audios à envoyer sur **WhatsApp** (Opus, `audio/ogg; codecs=opus`) |
-| `audio/messages/*.wav` | Mêmes audios pour le **journal des messages** (lecteur audio dans le carnet) |
 | `catalogue_messages.xlsx` | Les textes source (français, éwé). Ne pas modifier sans Jérôme |
 | `prononciation.json` | Réglages de la voix, prénoms et centres |
 | `02_generation_audios.ipynb` | Régénère tous les audios si un texte change (Colab) |

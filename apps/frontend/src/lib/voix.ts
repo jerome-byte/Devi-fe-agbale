@@ -5,7 +5,6 @@ export type AudioCatalogue = {
   prenom: string | null;
   centre: string | null;
   ogg: string;
-  wav: string;
   duree_s: number;
 };
 

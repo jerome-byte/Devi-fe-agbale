@@ -13,7 +13,7 @@ Les données ont été fournies et validées par **Gerson** (référent médical
 
 **Reçu le 19 nov.** : 8 tables OMS taille/âge et IMC/âge, même format que les tables de poids : `oms_taille_age_0_2ans_filles.csv`, `oms_taille_age_2_5ans_filles.csv` (idem `_garcons`), `oms_imc_age_0_2ans_filles.csv`, `oms_imc_age_2_5ans_filles.csv` (idem `_garcons`) ; `calendrier_vitamineA_deparasitage.csv` ; confirmations de Gerson (seuils −2 / −3 pour les trois indicateurs, alerte IMC > +2) dans `regles_croissance.md`.
 
-Ne pas utiliser : `calendrier_pev_source.pdf`, `courbes de croissance.pdf`, les fiches `A_FOURNIR_Gerson*` et `reponses_Gerson_18nov.docx` (documents sources et échanges).
+Ne pas utiliser le dossier `sources/` (documents d'origine de Gerson et échanges) : tout ce qu'il contient est déjà converti dans les CSV ci-dessus.
 
 ## 1. Charger les données dans Supabase
 

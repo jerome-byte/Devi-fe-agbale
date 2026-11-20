@@ -61,3 +61,6 @@ desktop.ini
 donnees_sante/A_FOURNIR_Gerson.md
 donnees_sante/A_FOURNIR_Gerson.docx
 donnees_sante/~$FOURNIR_Gerson.docx
+
+# Audios .wav générés par voix/02_generation_audios.ipynb : seuls les .ogg sont versionnés
+voix/audio/messages/*.wav

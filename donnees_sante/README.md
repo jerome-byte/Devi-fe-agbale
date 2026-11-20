@@ -16,8 +16,8 @@ Notices détaillées : **`README_Cherif.md`** (base de données, règles, tablea
 | `calendrier_vitamineA_deparasitage.csv` | Prises de vitamine A (6 à 54 mois) et de déparasitage (12 à 54 mois), avec la dose | **Cherif** |
 | `regles_croissance.md` | Rythme des mesures, seuils « à surveiller » / « à orienter », surpoids, stagnation, qui alerter | **Cherif** et **Blaise** (à lire en entier) |
 | `README_Cherif.md`, `README_Blaise.md` | Notice de chacun | chacun la sienne |
-| `calendrier_pev_source.pdf`, `courbes de croissance.pdf`, les `.xlsx` OMS (`wfa_*`, `table_*`, `IMC_*`) | Documents sources de Gerson (les `.xlsx` ont été convertis en CSV ci-dessus) | personne (référence seulement) |
-| `reponses_Gerson_18nov.docx`, `A_FOURNIR.docx`, `A_FOURNIR_Gerson.md` | Échanges avec Gerson | **Jérôme** |
+| `sources/` : `calendrier_pev_source.pdf`, `courbes de croissance.pdf`, les `.xlsx` OMS (`table_*`, `IMC_*`) | Documents sources de Gerson (les `.xlsx` ont été convertis en CSV ci-dessus) | personne (référence seulement) |
+| `sources/reponses_Gerson_18nov.docx` | Réponses de Gerson du 18 novembre | **Jérôme** |
 
 ## Qui prend quoi
 

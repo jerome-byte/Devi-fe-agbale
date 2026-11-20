@@ -96,7 +96,7 @@ TEST_DATABASE_URL=postgresql://postgres:test@localhost:54329/postgres uv run pyt
 
 ## À régler avec Cherif
 
-- `sql/05_whatsapp.sql`, `sql/06_demo_envoi.sql` et `sql/07_app.sql` sont à intégrer à ses scripts (`npm run db:init`).
+- `sql/05_whatsapp.sql`, `sql/06_demo_envoi.sql` et `sql/07_app.sql` sont à appliquer après ceux de Cherif (`scripts/`, `npm run db:sql`).
 - `demo_fast_forward` crée des messages simulés, déjà « envoyés » : rien ne part sur WhatsApp. Pour la démo, utiliser `demo_envoyer` (ou `POST /admin/demo/...`).
 - `MISSED_3` est créé avec le canal `voice` : le backend l'envoie quand même sur WhatsApp, mais le canal doit être `whatsapp` pour le prototype.
 - La colonne `audio_url` reçoit le vrai chemin `.ogg` au moment de l'envoi, à la place du chemin `.mp3` calculé par la base.
