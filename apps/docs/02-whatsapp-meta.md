@@ -88,7 +88,7 @@ Sur Render, service `devi-backend`, onglet **Environment** :
 Enregistrer : Render redémarre le service. En mode `live`, il refuse de démarrer s'il manque une de ces variables. Le message d'erreur est dans **Logs**.
 
 ```bash
-curl https://devi-backend.onrender.com/sante
+curl https://devi-backend-5r52.onrender.com/sante
 # {"ok":true,"mode":"live"}
 ```
 
@@ -96,9 +96,9 @@ curl https://devi-backend.onrender.com/sante
 
 Le webhook permet à Meta de prévenir le backend quand une maman touche « 1 » ou « 2 », et quand un vocal est distribué ou écouté.
 
-1. Réveiller le backend : ouvrir `https://devi-backend.onrender.com/sante` et attendre la réponse.
+1. Réveiller le backend : ouvrir `https://devi-backend-5r52.onrender.com/sante` et attendre la réponse.
 2. Dans l'app Meta : **WhatsApp > Configuration**, section **Webhook**, **Edit**.
-3. **Callback URL** : `https://devi-backend.onrender.com/webhook/whatsapp`
+3. **Callback URL** : `https://devi-backend-5r52.onrender.com/webhook/whatsapp`
 4. **Verify token** : le jeton de l'étape 7.
 5. **Verify and save**. Meta appelle le backend, qui renvoie le code attendu. En cas d'échec, voir le tableau plus bas.
 6. Juste en dessous, **Webhook fields > Manage** : cocher **messages**, puis **Done**.
@@ -126,7 +126,7 @@ Le numéro de test reste limité aux 5 numéros déclarés, même en mode Live.
 5. Vérifier dans la base :
 
 ```bash
-curl -H "Authorization: Bearer <ADMIN_TOKEN>" "https://devi-backend.onrender.com/admin/messages?limite=10"
+curl -H "Authorization: Bearer <ADMIN_TOKEN>" "https://devi-backend-5r52.onrender.com/admin/messages?limite=10"
 ```
 
 La relance `MISSED_3` doit avoir `response_key: 2`.
@@ -134,7 +134,7 @@ La relance `MISSED_3` doit avoir `response_key: 2`.
 Entre deux répétitions, remettre l'enfant à zéro (sinon les mêmes rappels ne repartent pas) :
 
 ```bash
-curl -X POST -H "Authorization: Bearer <ADMIN_TOKEN>" https://devi-backend.onrender.com/admin/demo/<id_enfant>/reset
+curl -X POST -H "Authorization: Bearer <ADMIN_TOKEN>" https://devi-backend-5r52.onrender.com/admin/demo/<id_enfant>/reset
 ```
 
 ## En cas de problème

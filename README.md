@@ -37,6 +37,18 @@ Outils : Next.js (PWA) · Supabase · WhatsApp Cloud API · Meta MMS (voix éwé
 
 Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse).
 
+### WhatsApp réel : bloqué par Meta pour l'instant
+
+L'envoi réel est codé et prêt dans le backend, mais **Meta bloque encore notre compte**. La démo se fait donc avec le **téléphone WhatsApp simulé** de l'application : vocaux en éwé, boutons 1 et 2, alerte à l'agent.
+
+- **Ce qui est fait (20 nov.)** :
+  - l'app Meta `Devi-fe-agbale` et son compte WhatsApp de test, avec le numéro +1 555-189-8510 ;
+  - les téléphones de l'équipe déclarés comme destinataires ;
+  - l'utilisateur système `devi-backend`, avec son jeton (gardé par Jérôme, jamais dans git).
+- **Le blocage** : chaque message d'essai échoue avec le code **131031 « Business Account locked »**. Le Gestionnaire WhatsApp affiche « Compte restreint : avant de pouvoir envoyer des messages, vous devrez faire vérifier votre entreprise ». Meta exige la vérification de l'entreprise, avec des documents officiels, même pour le numéro de test.
+- **Pour débloquer** : faire vérifier l'entreprise dans les paramètres du portefeuille Meta (*Autorisations et vérifications*), ou demander un examen à l'assistance de Meta.
+- **Une fois débloqué**, il suffit de régler les variables sur Render (guide `apps/docs/02-whatsapp-meta.md`). D'ici là, `WHATSAPP_MODE` reste à `simulation`, sinon la démo ne marcherait plus.
+
 En ligne :
 - application (agent, garderie, pilotage) : https://devi-fe-agbale.vercel.app
 - backend (envoi WhatsApp et réponses) : https://devi-backend-5r52.onrender.com
@@ -65,7 +77,7 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 - ✅ Espace agent : liste priorisée, scan QR, vaccin prérempli, pesée
 - ✅ Backend FastAPI sur Render : envoi WhatsApp, boutons de réponse 1 / 2, webhook. Il tourne en simulation : les messages s'affichent dans le téléphone simulé de l'application
 - ✅ Comptes de démonstration
-- ⏳ Brancher le vrai WhatsApp (Meta) : numéro, jeton, webhook sur Render, `DESTINATAIRES_AUTORISES` = numéros de l'équipe, `WHATSAPP_MODE=live`, puis un essai complet sur un téléphone de l'équipe (21 nov., guide `apps/docs/02-whatsapp-meta.md`)
+- ⏳ Brancher le vrai WhatsApp (Meta) dès que Meta lève le blocage du compte (voir « WhatsApp réel : bloqué par Meta ») : identifiants et jeton sur Render, webhook, `DESTINATAIRES_AUTORISES` = numéros de l'équipe, `WHATSAPP_MODE=live`, puis un essai complet. En attendant, la démo reste en simulation
 - ⏳ Essai sur un vrai téléphone Android : installation de l'application, scan d'une carte imprimée avec la caméra (21 nov.)
 
 ### Cherif Tenga — moteur de règles, données, tableau de bord
