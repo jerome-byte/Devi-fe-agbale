@@ -1,14 +1,9 @@
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
+/** Logo de ɖevi ƒe agbalẽ (carré bleu marine, coins arrondis). */
 export function LogoMarque({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 64 64" className={cn("size-9", className)} aria-hidden>
-      <rect width="64" height="64" rx="16" fill="#00aeef" />
-      <path d="M14 20c6-3 12-3 18 1v27c-6-4-12-4-18-1z" fill="#fbf6ee" />
-      <path d="M50 20c-6-3-12-3-18 1v27c6-4 12-4 18-1z" fill="#f3eadb" />
-      <circle cx="32" cy="13" r="5" fill="#ffd236" />
-    </svg>
-  );
+  return <Image src="/images/logo-marque.png" alt="" width={128} height={128} className={cn("size-9 shrink-0", className)} aria-hidden priority />;
 }
 
 export function Logo({ className, clair }: { className?: string; clair?: boolean }) {

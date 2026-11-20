@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { BadgeCheck, CheckCheck, ChevronLeft, Phone, Video } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { QRCodeSVG } from "qrcode.react";
@@ -33,13 +34,7 @@ export function TelephoneWhatsApp({ enfant, className }: { enfant: Enfant; class
           {/* entête WhatsApp */}
           <div className="relative z-10 flex items-center gap-2 bg-[#075e54] px-3 pb-2.5 pt-10 text-white">
             <ChevronLeft className="size-5 opacity-80" />
-            <span className="grid size-9 place-items-center rounded-full bg-[#fbf6ee]">
-              <svg viewBox="0 0 64 64" className="size-6">
-                <path d="M14 20c6-3 12-3 18 1v27c-6-4-12-4-18-1z" fill="#00aeef" />
-                <path d="M50 20c-6-3-12-3-18 1v27c6-4 12-4 18-1z" fill="#2653b9" />
-                <circle cx="32" cy="13" r="5" fill="#ffd236" />
-              </svg>
-            </span>
+            <Image src="/images/logo-marque.png" alt="" width={72} height={72} className="size-9 shrink-0 rounded-full" />
             <div className="min-w-0 flex-1 leading-tight">
               <p className="flex items-center gap-1 truncate text-[14px] font-semibold">
                 ɖevi ƒe agbalẽ <BadgeCheck className="size-3.5 fill-[#25d366] text-[#075e54]" />

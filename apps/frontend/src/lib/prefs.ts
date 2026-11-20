@@ -34,8 +34,8 @@ export function appliquerTheme(theme: Theme) {
 /** Couleurs des graphiques, lisibles dans les deux thèmes. */
 export function couleursGraphe(sombre: boolean) {
   return sombre
-    ? { primaire: "#1fb8f1", primaireDouce: "#0c2a3a", grille: "#2c2f2d", axe: "#9b9d99", texte: "#ececea", cible: "#cbcbc7", danger: "#f07a7a", warn: "#e8a64a", dangerDoux: "#3a2020", warnDoux: "#3a2c18", normalDoux: "#173527", carte: "#1b1b1b" }
-    : { primaire: "#0b8fd3", primaireDouce: "#c8eefd", grille: "#e3e3e0", axe: "#696a6e", texte: "#141414", cible: "#3b3c3f", danger: "#b4232a", warn: "#a35a00", dangerDoux: "#fbe2d5", warnDoux: "#feedc4", normalDoux: "#e3f6e9", carte: "#ffffff" };
+    ? { primaire: "#84a5d3", primaireDouce: "#12243b", grille: "#2c2f2d", axe: "#9b9d99", texte: "#ececea", cible: "#cbcbc7", danger: "#f07a7a", warn: "#e8a64a", dangerDoux: "#3a2020", warnDoux: "#3a2c18", normalDoux: "#173527", carte: "#1b1b1b" }
+    : { primaire: "#1f4b8c", primaireDouce: "#d9e4f3", grille: "#e3e3e0", axe: "#696a6e", texte: "#141414", cible: "#3b3c3f", danger: "#b4232a", warn: "#a35a00", dangerDoux: "#fbe2d5", warnDoux: "#feedc4", normalDoux: "#e3f6e9", carte: "#ffffff" };
 }
 
 /** Vrai quand la classe .dark est posée sur <html> (suit le thème en direct). */
