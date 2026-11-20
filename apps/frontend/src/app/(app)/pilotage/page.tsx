@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle, BarChart3, Baby, ChevronRight, FileX2, Headphones, Info, LineChart as IconeCourbe, MapPin, Megaphone, RefreshCw, Ruler, Syringe, TableProperties } from "lucide-react";
+import { AlertTriangle, BarChart3, Baby, ChevronRight, FileX2, Headphones, Info, LineChart as IconeCourbe, MapPin, Megaphone, RefreshCw, Ruler, ShieldAlert, Syringe, TableProperties } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
@@ -14,6 +14,8 @@ import type { CentreId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const CIBLE = 90;
+const AIDE_RISQUE =
+  "Score de risque d'abandon calculé pour chaque enfant : 3 points par rendez-vous de vaccin manqué, 2 sans acte de naissance, 2 si la courbe de poids stagne ou chute, 1 par message vocal non écouté (3 au plus), 1 si la famille habite à plus de 4 km du centre. Risque élevé : 10 points ou plus. Seuls les totaux sont affichés ici.";
 const RAFRAICHIR_MS = 30_000;
 
 /**
@@ -124,10 +126,21 @@ export default function Pilotage() {
         {d.source === "base" ? "Chiffres calculés par le moteur de règles, mis à jour toutes les 30 secondes." : ""} Aucune donnée nominative n&apos;est affichée ici.
       </div>
 
-      <div className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+      <div className="mb-4 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
         <Indicateur libelle="Penta 3 à jour" valeur={`${Math.round(d.penta3.taux)} %`} sous={`${d.penta3.faits} enfants sur ${d.penta3.eligibles} · cible ${CIBLE} %`} icone={Syringe} ton={d.penta3.taux >= CIBLE ? "ok" : "warn"} />
         <Indicateur libelle="Abandon Penta 1 à 3" valeur={`${Math.round(d.abandon.taux)} %`} sous={`${d.abandon.perdus} enfants perdus en route`} icone={AlertTriangle} ton={d.abandon.taux <= 10 ? "ok" : "danger"} />
         <Indicateur libelle="Sans acte de naissance" valeur={`${Math.round(d.sansActe.taux)} %`} sous={`${d.sansActe.n} enfants à accompagner`} icone={FileX2} ton={d.sansActe.taux <= 10 ? "ok" : "warn"} />
+        <Indicateur
+          libelle={
+            <span className="inline-flex items-center gap-1" title={AIDE_RISQUE}>
+              Enfants à risque élevé <Info size={13} className="shrink-0" aria-label={AIDE_RISQUE} />
+            </span>
+          }
+          valeur={d.risque.n}
+          sous={`${Math.round(d.risque.taux)} % des enfants · score de 10 ou plus`}
+          icone={ShieldAlert}
+          ton={d.risque.taux <= 10 ? "ok" : d.risque.taux <= 25 ? "warn" : "danger"}
+        />
         <Indicateur libelle="Vocaux écoutés" valeur={`${Math.round(d.ecoute.taux)} %`} sous={d.ecoute.detail} icone={Headphones} ton={d.ecoute.taux >= 70 ? "ok" : "warn"} />
       </div>
 
@@ -155,7 +168,7 @@ export default function Pilotage() {
                     <ReferenceLine x={CIBLE} stroke={c.cible} strokeDasharray="4 4" label={{ value: "cible", position: "top", fontSize: 11, fill: c.axe }} />
                     <Tooltip cursor={{ fill: c.primaireDouce, opacity: 0.4 }} content={({ active, payload }) => {
                       const p = payload?.[0]?.payload as (typeof d.zones)[number] | undefined;
-                      return active && p ? <Infobulle titre={p.q} valeur={`${p.penta3} % à jour`} detail={`${p.n} enfants · abandon ${p.abandon} % · sans acte ${p.sansActe} %`} /> : null;
+                      return active && p ? <Infobulle titre={p.q} valeur={`${p.penta3} % à jour`} detail={`${p.n} enfants · abandon ${p.abandon} % · sans acte ${p.sansActe} % · ${p.risque} à risque élevé`} /> : null;
                     }} />
                     <Bar dataKey="penta3" fill={c.primaire} radius={[0, 3, 3, 0]} maxBarSize={16} label={{ position: "right", fontSize: 11.5, fill: c.axe, formatter: (v: unknown) => `${v} %` }}>
                       {d.zones.map((q) => (
@@ -174,6 +187,9 @@ export default function Pilotage() {
                     <th className="text-right">Penta 3</th>
                     <th className="text-right">Abandon</th>
                     <th className="text-right">Sans acte</th>
+                    <th className="text-right" title={AIDE_RISQUE}>
+                      Risque élevé
+                    </th>
                     <th className="text-right">{d.source === "base" ? "RDV manqués" : "Retards"}</th>
                     <th>Niveau</th>
                   </tr>
@@ -188,6 +204,7 @@ export default function Pilotage() {
                         <td className="tnum text-right">{q.penta3} %</td>
                         <td className={cn("tnum text-right", q.abandon > 10 && "text-danger")}>{q.abandon} %</td>
                         <td className={cn("tnum text-right", q.sansActe > 15 && "text-warn")}>{q.sansActe} %</td>
+                        <td className={cn("tnum text-right", q.n > 0 && q.risque / q.n > 0.25 && "font-semibold text-danger")}>{q.risque}</td>
                         <td className="tnum text-right">{q.retards}</td>
                         <td>
                           <Pastille ton={n.t} point taille="sm">

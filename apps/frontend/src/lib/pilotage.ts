@@ -6,12 +6,12 @@
 // - Mode local (sans Supabase) : calculs dans le navigateur sur les enfants fictifs, comme avant.
 
 import { clientSupabase } from "./base";
-import { ANTIGENES, abandon, couverture, indicateurs, parAntigene, tendance } from "./indicateurs";
+import { ANTIGENES, abandon, couverture, indicateurs, parAntigene, risqueEleve, tendance } from "./indicateurs";
 import { calendrierEnfant } from "./pev";
 import { QUARTIERS } from "./seed";
 import type { CentreId, Enfant, MessageEnvoye } from "./types";
 
-export type LigneZone = { q: string; n: number; penta3: number; abandon: number; sansActe: number; retards: number; choisie?: boolean };
+export type LigneZone = { q: string; n: number; penta3: number; abandon: number; sansActe: number; retards: number; risque: number; choisie?: boolean };
 
 export type DonneesPilotage = {
   source: "base" | "local";
@@ -19,6 +19,8 @@ export type DonneesPilotage = {
   penta3: { taux: number; faits: number; eligibles: number };
   abandon: { taux: number; perdus: number };
   sansActe: { taux: number; n: number };
+  /** Enfants dont le score de risque d'abandon est de 10 ou plus (vue v_child_risk de Cherif). */
+  risque: { taux: number; n: number };
   ecoute: { taux: number; detail: string };
   zones: LigneZone[];
   antigenes: { nom: string; taux: number; faits: number; eligibles: number }[];
@@ -53,6 +55,7 @@ export function pilotageLocal(enfants: Enfant[], messages: MessageEnvoye[], zone
         abandon: Math.round(abandon(l, auJour).taux),
         sansActe: l.length ? Math.round((l.filter((e) => !e.acteNaissance).length / l.length) * 100) : 0,
         retards: l.filter((e) => calendrierEnfant(e, auJour).some((r) => r.joursRetard >= 7)).length,
+        risque: risqueEleve(l, messages, auJour),
       };
     })
     .sort((a, b) => a.penta3 - b.penta3);
@@ -62,6 +65,10 @@ export function pilotageLocal(enfants: Enfant[], messages: MessageEnvoye[], zone
     penta3: ind.penta3,
     abandon: { taux: ind.abandon.taux, perdus: ind.abandon.p1 - ind.abandon.p3 },
     sansActe: { taux: ind.tauxSansActe, n: ind.sansActe },
+    risque: (() => {
+      const n = risqueEleve(dansZone, messages, auJour);
+      return { n, taux: dansZone.length ? (n / dansZone.length) * 100 : 0 };
+    })(),
     ecoute: { taux: ind.tauxEcoute, detail: `${ind.messages30} messages sur 30 jours` },
     zones,
     antigenes: parAntigene(dansZone, auJour),
@@ -91,6 +98,7 @@ type VueMessages = { zone_id: number; sent: number; listened: number; listen_pct
 type VueCroissance = { zone_id: number; a_surveiller: number; a_orienter: number };
 type VueTendance = { month: string; due_count: number; done_count: number; coverage_pct: number | null };
 type VueAlertes = { zone_id: number; type: string; open_count: number };
+type VueRisque = { zone_id: number; children: number; high_risk: number; high_risk_pct: number | null };
 
 export type VuesPilotage = {
   zones: VueZone[];
@@ -101,6 +109,7 @@ export type VuesPilotage = {
   croissance: VueCroissance[];
   tendance: VueTendance[];
   alertes: VueAlertes[];
+  risque: VueRisque[];
 };
 
 /** Lit les vues agrégées de la base. Lève une erreur lisible si une vue manque. */
@@ -111,7 +120,7 @@ export async function chargerVuesPilotage(): Promise<VuesPilotage> {
     if (error) throw new Error(`Lecture de ${vue} : ${error.message}`);
     return (data ?? []) as unknown as T[];
   };
-  const [zones, couverture, abandon, actes, messages, croissance, tendance, alertes] = await Promise.all([
+  const [zones, couverture, abandon, actes, messages, croissance, tendance, alertes, risque] = await Promise.all([
     lire<VueZone>("v_zone_summary", "zone_id, zone, children, missed_count"),
     lire<VueCouverture>("v_coverage_by_zone", "zone_id, zone, vaccine_code, dose, due_count, done_count"),
     lire<VueAbandon>("v_penta_dropout", "zone_id, penta1_cohort, penta3_done, dropout_pct"),
@@ -120,8 +129,9 @@ export async function chargerVuesPilotage(): Promise<VuesPilotage> {
     lire<VueCroissance>("v_growth_by_zone", "zone_id, a_surveiller, a_orienter"),
     lire<VueTendance>("v_coverage_trend", "month, due_count, done_count, coverage_pct"),
     lire<VueAlertes>("v_alerts_summary", "zone_id, type, open_count"),
+    lire<VueRisque>("v_risk_by_zone", "zone_id, children, high_risk, high_risk_pct"),
   ]);
-  return { zones, couverture, abandon, actes, messages, croissance, tendance, alertes };
+  return { zones, couverture, abandon, actes, messages, croissance, tendance, alertes, risque };
 }
 
 /** Zones proposées dans le sélecteur (0 = toutes zones). */
@@ -156,6 +166,7 @@ export function pilotageBase(v: VuesPilotage, zoneId: number): DonneesPilotage {
   const acte = pourZone(v.actes);
   const msg = pourZone(v.messages);
   const crois = pourZone(v.croissance);
+  const risque = pourZone(v.risque);
   const enRetard = v.alertes
     .filter((a) => a.type === "missed_7d" && (zoneId === 0 || Number(a.zone_id) === zoneId))
     .reduce((s, a) => s + nombre(a.open_count), 0);
@@ -170,6 +181,7 @@ export function pilotageBase(v: VuesPilotage, zoneId: number): DonneesPilotage {
         abandon: arrondi(v.abandon.find((x) => Number(x.zone_id) === Number(z.zone_id))?.dropout_pct),
         sansActe: arrondi(v.actes.find((x) => Number(x.zone_id) === Number(z.zone_id))?.missing_pct),
         retards: nombre(z.missed_count),
+        risque: nombre(v.risque.find((x) => Number(x.zone_id) === Number(z.zone_id))?.high_risk),
         choisie: zoneId !== 0 && Number(z.zone_id) === zoneId,
       };
     })
@@ -190,6 +202,7 @@ export function pilotageBase(v: VuesPilotage, zoneId: number): DonneesPilotage {
     penta3: cumul(couv, "PENTA", 3),
     abandon: { taux: nombre(ab?.dropout_pct), perdus: nombre(ab?.penta1_cohort) - nombre(ab?.penta3_done) },
     sansActe: { taux: nombre(acte?.missing_pct), n: nombre(acte?.missing) },
+    risque: { taux: nombre(risque?.high_risk_pct), n: nombre(risque?.high_risk) },
     ecoute: { taux: nombre(msg?.listen_pct), detail: `${nombre(msg?.listened)} écoutés sur ${nombre(msg?.sent)} envoyés` },
     zones,
     antigenes: ANTIGENES.map((a) => {

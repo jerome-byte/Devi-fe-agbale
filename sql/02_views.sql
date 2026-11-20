@@ -172,6 +172,19 @@ select
   (select flagged_pct from v_growth_by_zone where zone_id = 0)                   as growth_flagged_pct,
   (select count(*) from v_child_risk where risk_score >= 10)                      as high_risk_children;
 
+-- Risque d'abandon par zone, sans aucun nom (lisible par le pilotage).
+-- Élevé : score >= 10 ; moyen : 5 à 9. Zone 0 = toutes zones.
+create or replace view v_risk_by_zone as
+select coalesce(z.id, 0) as zone_id, coalesce(z.name, 'Toutes zones') as zone,
+       count(*)                                                as children,
+       count(*) filter (where r.risk_score >= 10)              as high_risk,
+       count(*) filter (where r.risk_score between 5 and 9)    as medium_risk,
+       round(100.0 * count(*) filter (where r.risk_score >= 10) / nullif(count(*), 0), 1) as high_risk_pct
+from v_child_risk r
+join zones z on z.id = r.zone_id
+group by grouping sets ((z.id, z.name), ());
+grant select on v_risk_by_zone to anon, authenticated;
+
 -- ========== VUES DE COMPATIBILITÉ ====================================
 -- Noms et colonnes attendus par les notices de donnees_sante/ (Blaise) :
 -- lecture seule, calculées depuis les tables internes.

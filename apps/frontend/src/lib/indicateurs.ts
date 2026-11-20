@@ -3,6 +3,28 @@ import { etatCroissance } from "./oms";
 import { calendrierEnfant, dateContact, CONTACTS } from "./pev";
 import type { Enfant, MessageEnvoye } from "./types";
 
+/** Seuil du risque élevé, comme dans la base (v_kpis, v_risk_by_zone). */
+export const SEUIL_RISQUE = 10;
+
+/**
+ * Score de risque d'abandon d'un enfant, mêmes règles que la vue v_child_risk de Cherif :
+ * 3 points par rendez-vous manqué, 2 sans acte de naissance, 2 si la courbe de poids
+ * stagne ou chute, 1 par message non écouté (3 au plus) sur 60 jours.
+ * (La distance au centre n'existe pas en mode local.)
+ */
+export function scoreRisque(e: Enfant, messages: MessageEnvoye[], auJour: string) {
+  const manques = calendrierEnfant(e, auJour).filter((r) => r.joursRetard > 0).length;
+  const niveau = etatCroissance(e).niveau;
+  const croissance = niveau === "a_surveiller" || niveau === "a_orienter";
+  const nonEcoutes = messages.filter((m) => m.enfantId === e.id && m.statut === "envoye" && ecartJours(m.date.slice(0, 10), auJour) <= 60).length;
+  return 3 * manques + (e.acteNaissance ? 0 : 2) + (croissance ? 2 : 0) + Math.min(nonEcoutes, 3);
+}
+
+/** Nombre d'enfants à risque élevé (score de 10 ou plus). */
+export function risqueEleve(enfants: Enfant[], messages: MessageEnvoye[], auJour: string) {
+  return enfants.filter((e) => scoreRisque(e, messages, auJour) >= SEUIL_RISQUE).length;
+}
+
 /** Un enfant est « éligible » pour une dose quand la date prévue est passée depuis au moins 28 jours. */
 function eligible(e: Enfant, contactNumero: number, auJour: string) {
   const c = CONTACTS.find((x) => x.numero === contactNumero)!;
