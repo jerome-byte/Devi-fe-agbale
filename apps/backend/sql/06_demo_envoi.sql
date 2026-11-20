@@ -42,9 +42,12 @@ end $$;
 
 -- Remise à zéro complète, messages réels compris (sinon la contrainte unique
 -- empêcherait de renvoyer le même rappel à la répétition suivante).
+-- Seuls les rendez-vous « manqués » repassent à « prévu » : les vaccins déjà faits
+-- restent faits (comme demo_reset_child de Cherif).
 create or replace function demo_reset_envoi(p_child_id uuid) returns void
 language sql as $$
   delete from messages where child_id = p_child_id;
   delete from alerts   where child_id = p_child_id;
-  update appointments set status = 'planned', done_at = null where child_id = p_child_id;
+  update appointments set status = 'planned', done_at = null
+   where child_id = p_child_id and status = 'missed';
 $$;
