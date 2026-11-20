@@ -100,8 +100,14 @@ export async function sessionActuelle(): Promise<Session | null> {
 }
 
 export async function seDeconnecter() {
-  await supabase().auth.signOut();
+  // « local » : ne ferme que la session de ce navigateur. Par défaut, Supabase ferme toutes
+  // les sessions du compte sur tous les appareils, or les comptes de démonstration sont partagés
+  // (jury, équipe) : une déconnexion déconnectait tout le monde.
+  await supabase().auth.signOut({ scope: "local" });
 }
+
+/** Événement envoyé quand le serveur refuse la session : l'application renvoie vers la connexion. */
+export const SESSION_EXPIREE = "devi:session-expiree";
 
 // ---------- Correspondances base <-> application ----------
 
@@ -294,14 +300,27 @@ export function fusionnerLocal(base: Enfant[], avant: Enfant[]): Enfant[] {
 
 export async function backend<T = unknown>(chemin: string, methode: "GET" | "POST" | "PATCH" = "GET", corps?: unknown): Promise<T> {
   // La route serveur vérifie la session : on lui passe le jeton de l'utilisateur connecté.
+  const envoyer = (jeton: string) =>
+    fetch(`/api/backend/${chemin}`, {
+      method: methode,
+      headers: { "content-type": "application/json", authorization: `Bearer ${jeton}` },
+      body: corps === undefined ? undefined : JSON.stringify(corps),
+    });
+  const expiree = () => {
+    window.dispatchEvent(new Event(SESSION_EXPIREE));
+    return new Error("Session expirée : reconnectez-vous.");
+  };
   const { data } = await supabase().auth.getSession();
   const jeton = data.session?.access_token;
-  if (!jeton) throw new Error("Session expirée : reconnectez-vous.");
-  const r = await fetch(`/api/backend/${chemin}`, {
-    method: methode,
-    headers: { "content-type": "application/json", authorization: `Bearer ${jeton}` },
-    body: corps === undefined ? undefined : JSON.stringify(corps),
-  });
+  if (!jeton) throw expiree();
+  let r = await envoyer(jeton);
+  if (r.status === 401) {
+    // Jeton refusé (expiré ou session fermée ailleurs) : on tente un renouvellement, une fois.
+    const { data: neuf } = await supabase().auth.refreshSession();
+    if (!neuf.session) throw expiree();
+    r = await envoyer(neuf.session.access_token);
+    if (r.status === 401) throw expiree();
+  }
   const json = await r.json().catch(() => ({}));
   if (!r.ok) {
     const detail = typeof json.detail === "string" ? json.detail : JSON.stringify(json.detail ?? json);

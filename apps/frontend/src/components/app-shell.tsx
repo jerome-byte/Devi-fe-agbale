@@ -3,7 +3,8 @@
 import { CalendarClock, CircleAlert, PanelLeftClose, PanelLeftOpen, Plus, ScanLine, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { SESSION_EXPIREE } from "@/lib/base";
 import { dateLongue } from "@/lib/dates";
 import { usePrefs } from "@/lib/prefs";
 import { useAuJour, useStore } from "@/lib/store";
@@ -157,9 +158,22 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     setMobile(false);
   }
 
+  // Page à rouvrir après une reconnexion forcée (session refusée par le serveur).
+  const retourApres = useRef<string | null>(null);
   useEffect(() => {
-    if (hydrate && !session) router.replace("/connexion");
+    if (hydrate && !session) router.replace(retourApres.current ? `/connexion?suite=${encodeURIComponent(retourApres.current)}` : "/connexion");
   }, [hydrate, session, router]);
+
+  // Session refusée par le serveur (expirée, ou fermée sur un autre appareil) :
+  // on se déconnecte proprement, puis on revient sur la même page après la reconnexion.
+  useEffect(() => {
+    const expiree = () => {
+      retourApres.current = window.location.pathname;
+      useStore.getState().deconnecter();
+    };
+    window.addEventListener(SESSION_EXPIREE, expiree);
+    return () => window.removeEventListener(SESSION_EXPIREE, expiree);
+  }, []);
 
   // Le pilotage ne voit que ses pages (statistiques, structures, comptes, annonces) :
   // il n'inscrit pas d'enfant et n'ouvre aucun dossier. Les agents et éducatrices
