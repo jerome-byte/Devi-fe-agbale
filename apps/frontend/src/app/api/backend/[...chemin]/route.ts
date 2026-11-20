@@ -4,7 +4,7 @@
 // Sécurité : le relais n'accepte que les utilisateurs connectés (session Supabase),
 // et seulement les routes permises par leur rôle (table profiles). Il transmet au backend
 // l'identifiant de l'utilisateur (en-tête x-devi-utilisateur), vérifié ici.
-// Structures et comptes : pilotage seulement.
+// Zones, structures et comptes : pilotage seulement.
 import { NextResponse, type NextRequest } from "next/server";
 
 type Role = "agent" | "educatrice" | "pilotage" | "admin";
@@ -14,7 +14,7 @@ const AUTORISEES: { motif: RegExp; roles: Role[] }[] = [
   { motif: /^app\//, roles: ["agent", "educatrice", "admin"] },
   { motif: /^admin\/demo\//, roles: ["agent", "educatrice", "pilotage", "admin"] },
   { motif: /^simulation\/reponse$/, roles: ["agent", "educatrice", "pilotage", "admin"] },
-  { motif: /^admin\/(structures|comptes)(\/|$)/, roles: ["pilotage", "admin"] },
+  { motif: /^admin\/(structures|comptes|zones)(\/|$)/, roles: ["pilotage", "admin"] },
 ];
 
 /** Vérifie le jeton de session auprès de Supabase et lit le rôle de l'utilisateur (compte actif seulement). */

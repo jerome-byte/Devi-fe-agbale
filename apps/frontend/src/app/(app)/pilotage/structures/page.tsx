@@ -8,6 +8,7 @@ import {
   LIBELLE_TYPE,
   chargerStructures,
   creerStructure,
+  creerZone,
   messageErreur,
   useChargement,
   type TypeStructure,
@@ -34,17 +35,29 @@ export default function Structures() {
   const [nom, setNom] = useState("");
   const [zone, setZone] = useState("");
   const [centre, setCentre] = useState("");
+  const [nouvelleZone, setNouvelleZone] = useState("");
+  const [commune, setCommune] = useState("");
+  const zoneACreer = zone === "nouvelle";
   const [envoi, setEnvoi] = useState(false);
   const [retour, setRetour] = useState<{ ok: boolean; texte: string; id?: number; type?: TypeStructure } | null>(null);
   const centres = structures.filter((s) => s.type !== "garderie");
 
   async function enregistrer(e: React.FormEvent) {
     e.preventDefault();
-    if (!nom.trim() || !zone) return;
+    if (!nom.trim() || !zone || (zoneACreer && !nouvelleZone.trim())) return;
     setEnvoi(true);
     setRetour(null);
     try {
-      const r = await creerStructure({ type, nom: nom.trim(), zone_id: Number(zone), centre_id: type === "garderie" && centre ? Number(centre) : null });
+      // Zone absente de la liste : on la crée d'abord.
+      let zoneId = Number(zone);
+      if (zoneACreer) {
+        const z = await creerZone({ nom: nouvelleZone.trim(), commune: commune.trim() || null });
+        zoneId = z.id;
+        setZone(String(z.id));
+        setNouvelleZone("");
+        setCommune("");
+      }
+      const r = await creerStructure({ type, nom: nom.trim(), zone_id: zoneId, centre_id: type === "garderie" && centre ? Number(centre) : null });
       setRetour({ ok: true, texte: `${LIBELLE_TYPE[r.type]} « ${r.nom} » enregistré${r.type === "garderie" ? "e" : ""}.`, id: r.id, type: r.type });
       setNom("");
       setCentre("");
@@ -198,8 +211,19 @@ export default function Structures() {
                     {z.nom}
                   </option>
                 ))}
+                <option value="nouvelle">+ Nouvelle zone…</option>
               </Selecteur>
             </Champ>
+            {zoneACreer && (
+              <div className="animate-fade-in space-y-3 rounded-md border border-line bg-card-muted p-3">
+                <Champ label="Nom de la zone">
+                  <input className="input" value={nouvelleZone} onChange={(e) => setNouvelleZone(e.target.value)} placeholder="Ex. Tokoin" required minLength={2} />
+                </Champ>
+                <Champ label="Commune (facultatif)">
+                  <input className="input" value={commune} onChange={(e) => setCommune(e.target.value)} placeholder="Ex. Golfe 2" />
+                </Champ>
+              </div>
+            )}
             {type === "garderie" && (
               <Champ label="Centre de santé partenaire" aide="Le centre qui reçoit les enfants orientés par la garderie.">
                 <Selecteur value={centre} onChange={(e) => setCentre(e.target.value)}>
@@ -212,7 +236,7 @@ export default function Structures() {
                 </Selecteur>
               </Champ>
             )}
-            <Bouton type="submit" className="w-full" icone={Plus} chargement={envoi} disabled={envoi || !nom.trim() || !zone}>
+            <Bouton type="submit" className="w-full" icone={Plus} chargement={envoi} disabled={envoi || !nom.trim() || !zone || (zoneACreer && nouvelleZone.trim().length < 2)}>
               Enregistrer la structure
             </Bouton>
             {retour && (

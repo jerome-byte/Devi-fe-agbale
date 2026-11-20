@@ -54,6 +54,8 @@ export const structuresPour = (role: RoleGere, liste: Structure[]) =>
 export const chargerStructures = () => backend<{ zones: Zone[]; structures: Structure[] }>("admin/structures");
 export const chargerComptes = () => backend<Compte[]>("admin/comptes");
 
+export const creerZone = (corps: { nom: string; commune: string | null }) => backend<{ id: number; nom: string }>("admin/zones", "POST", corps);
+
 export const creerStructure = (corps: { type: TypeStructure; nom: string; zone_id: number; centre_id: number | null }) =>
   backend<{ type: TypeStructure; id: number; nom: string }>("admin/structures", "POST", corps);
 

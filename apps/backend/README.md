@@ -66,6 +66,7 @@ Garde-fous :
 
 | Route | Rôle |
 |---|---|
+| `POST /admin/zones` | Nouvelle zone : `nom`, `commune` (facultatif) |
 | `GET /admin/structures` | Zones, hôpitaux, centres de santé et garderies, avec leur nombre de comptes et d'enfants |
 | `POST /admin/structures` | Nouvelle structure : `type` (`hopital`, `centre`, `garderie`), `nom`, `zone_id`, `centre_id` (garderie) |
 | `GET /admin/comptes` | Comptes des agents et des éducatrices |

@@ -94,6 +94,39 @@ def auth_admin(request: Request) -> AuthAdmin:
 Utilisateur = Annotated[UUID | None, Header(alias="x-devi-utilisateur")]
 
 
+# ---------- Zones -------------------------------------------------------------
+
+
+class NouvelleZone(BaseModel):
+    nom: str = Field(min_length=2, max_length=80)
+    commune: str | None = Field(default=None, max_length=80)
+
+    @field_validator("nom", "commune", mode="before")
+    @classmethod
+    def propre(cls, v):
+        if isinstance(v, str):
+            v = " ".join(v.split())
+            return v or None
+        return v
+
+
+@router.post("/zones", status_code=201)
+async def creer_zone(request: Request, corps: NouvelleZone):
+    """Nouvelle zone (quartier ou aire de santé) du district."""
+    async with request.app.state.pool.connection() as conn, conn.transaction():
+        if await (await conn.execute("select 1 from zones where lower(name) = lower(%s)", (corps.nom,))).fetchone():
+            raise HTTPException(409, "une zone porte déjà ce nom")
+        await conn.execute("lock table zones in share row exclusive mode")
+        ligne = await (
+            await conn.execute(
+                """insert into zones (id, name, commune, prefecture)
+                   values ((select coalesce(max(id), 0) + 1 from zones), %s, %s, 'Golfe') returning id""",
+                (corps.nom, corps.commune),
+            )
+        ).fetchone()
+    return {"id": ligne["id"], "nom": corps.nom}
+
+
 # ---------- Structures --------------------------------------------------------
 
 

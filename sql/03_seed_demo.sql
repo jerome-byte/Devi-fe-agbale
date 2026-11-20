@@ -16,7 +16,7 @@ insert into health_centers (id, name, zone_id, lat, lng) values
   (4, 'Centre de santé d''Agoè', 4, NULL, NULL),
   (5, 'Centre de santé de Djidjolé', 5, NULL, NULL),
   (6, 'Centre de santé de Baguida', 6, NULL, NULL),
-  (7, 'Centre Hospitalier Sylvanus Olympio', 1, NULL, NULL) on conflict do nothing;
+  (7, 'Centre Hospitalier Sylvanus Olympio', 2, NULL, NULL) on conflict do nothing;
 insert into daycares (id, name, zone_id, center_id) values
   (1, 'Garderie Communautaire Intégrée — marché de Hanoukopé', 2, 2),
   (2, 'Garderie Communautaire Intégrée — marché d''Adidogomé', 3, 3) on conflict do nothing;

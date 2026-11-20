@@ -53,7 +53,7 @@ const CAS = [
     sexe: "F",
     age: "13 months",
     center: 7,
-    zone: 1,
+    zone: 2,
     mesures: [
       ["-70 days", 7.6, 72.0],
       ["-35 days", 7.5, 73.0],

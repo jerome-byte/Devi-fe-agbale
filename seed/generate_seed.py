@@ -140,7 +140,7 @@ def generate(n, seed, as_of):
         tables["health_centers"].append(dict(id=z[0], name=z[3], zone_id=z[0], lat=None, lng=None))
     # Centre supplémentaire demandé par l'application (audio Sylvanus Olympio).
     tables["health_centers"].append(dict(
-        id=7, name="Centre Hospitalier Sylvanus Olympio", zone_id=1, lat=None, lng=None))
+        id=7, name="Centre Hospitalier Sylvanus Olympio", zone_id=2, lat=None, lng=None))
     for d in DAYCARES:
         tables["daycares"].append(dict(id=d[0], name=d[1], zone_id=d[2], center_id=d[2]))
 
