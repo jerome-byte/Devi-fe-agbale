@@ -23,6 +23,7 @@ from psycopg_pool import AsyncConnectionPool
 from pydantic import BaseModel
 
 from .catalogue import Catalogue
+from .comptes import router as router_comptes
 from .config import Settings, chiffres, get_settings
 from .envoi import envoyer_lot
 from .routes_app import router as router_app
@@ -86,6 +87,7 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(title="ɖevi ƒe agbalẽ — backend", lifespan=lifespan)
 app.include_router(router_app)
+app.include_router(router_comptes)
 
 
 async def envoyer(app: FastAPI):

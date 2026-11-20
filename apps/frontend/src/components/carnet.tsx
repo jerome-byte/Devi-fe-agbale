@@ -255,7 +255,7 @@ function Apercu({ enfant, auJour, educ, scanne, versOnglet }: { enfant: Enfant; 
               </LigneInfo>
             )}
             <LigneInfo libelle="Langue des messages">{LANGUE[enfant.langue]}</LigneInfo>
-            <LigneInfo libelle="Centre de santé">{CENTRES[enfant.centre]}</LigneInfo>
+            <LigneInfo libelle="Centre de santé">{enfant.centreNom ?? CENTRES[enfant.centre]}</LigneInfo>
             <LigneInfo libelle="Quartier">{enfant.quartier}</LigneInfo>
             <LigneInfo libelle="Garderie">{enfant.garderie ?? "Aucune"}</LigneInfo>
             <LigneInfo libelle="Acte de naissance">

@@ -28,6 +28,7 @@ export type Enfant = {
   mere: { nom: string; telephone: string };
   langue: Langue;
   centre: CentreId;
+  centreNom?: string; // mode base : nom de la structure (centre créé par le pilotage, sans audio propre)
   quartier: string;
   garderie: string | null;
   acteNaissance: boolean;

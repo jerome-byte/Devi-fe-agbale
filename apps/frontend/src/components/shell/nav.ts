@@ -1,11 +1,13 @@
 import {
   BarChart3,
   Baby,
+  Building2,
   LayoutDashboard,
   Megaphone,
   MessageCircle,
   ScanLine,
   Store,
+  UserCog,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -43,6 +45,13 @@ export const NAV: SectionNav[] = [
     liens: [
       { href: "/messages", libelle: "Messages", icone: MessageCircle, roles: ["agent", "pilotage"], compteur: "reponses", motsCles: "vocal whatsapp audio éwé" },
       { href: "/pilotage/annonces", libelle: "Annonces vocales", icone: Megaphone, roles: ["pilotage"], motsCles: "campagne vitamine" },
+    ],
+  },
+  {
+    titre: "Administration",
+    liens: [
+      { href: "/pilotage/structures", libelle: "Structures", icone: Building2, roles: ["pilotage"], motsCles: "hôpital centre garderie créer" },
+      { href: "/pilotage/comptes", libelle: "Comptes", icone: UserCog, roles: ["pilotage"], motsCles: "agent éducatrice utilisateur mot de passe désactiver" },
     ],
   },
 ];

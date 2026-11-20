@@ -49,6 +49,7 @@ const FONCTIONS: Record<Role, string> = {
 
 type LigneProfil = {
   full_name: string | null;
+  active?: boolean;
   role: Role | "admin";
   health_centers: { name: string } | null;
   daycares: { name: string } | null;
@@ -57,12 +58,13 @@ type LigneProfil = {
 async function profilDe(userId: string, email: string | undefined): Promise<Session> {
   const { data, error } = await supabase()
     .from("profiles")
-    .select("full_name, role, health_centers(name), daycares(name)")
+    .select("*, health_centers(name), daycares(name)")
     .eq("id", userId)
     .maybeSingle();
   if (error) throw new Error(`Lecture du profil : ${error.message}`);
   const p = data as unknown as LigneProfil | null;
   if (!p) throw new Error("Ce compte n'a pas encore de rôle. Demandez à l'administrateur de l'activer.");
+  if (p.active === false) throw new Error("Ce compte est désactivé. Contactez le pilotage du district.");
   // Un administrateur utilise l'interface de pilotage.
   const role: Role = p.role === "admin" ? "pilotage" : p.role;
   return {
@@ -219,8 +221,9 @@ export async function chargerDepuisBase(): Promise<{ enfants: Enfant[]; messages
 
   const enfants: Enfant[] = [];
   for (const l of (enf.data ?? []) as unknown as LigneEnfant[]) {
-    const centre = centreDepuisNom(l.health_centers?.name);
-    if (!centre) continue; // seuls Bè-Kpota et Sylvanus Olympio ont des audios
+    // Les centres créés par le pilotage n'ont pas encore d'audio : on garde leur nom pour l'affichage.
+    const centreConnu = centreDepuisNom(l.health_centers?.name);
+    const centre: CentreId = centreConnu ?? "be_kpota";
     const tuteur = l.guardians.find((g) => g.is_primary) ?? l.guardians[0];
     const vaccins: Record<string, string> = {};
     for (const a of l.appointments) {
@@ -237,6 +240,7 @@ export async function chargerDepuisBase(): Promise<{ enfants: Enfant[]; messages
       mere: { nom: tuteur?.name ?? "", telephone: tuteur?.phone ?? "" },
       langue: LANGUES[tuteur?.language ?? "ewe"] ?? "ewe",
       centre,
+      ...(centreConnu ? {} : { centreNom: l.health_centers?.name ?? "" }),
       quartier: l.zones?.name ?? "",
       garderie: l.daycares?.name ?? null,
       acteNaissance: l.has_birth_certificate,
@@ -285,7 +289,7 @@ export function fusionnerLocal(base: Enfant[], avant: Enfant[]): Enfant[] {
 
 // ---------- Écriture (backend) ----------
 
-export async function backend<T = unknown>(chemin: string, methode: "POST" | "PATCH", corps?: unknown): Promise<T> {
+export async function backend<T = unknown>(chemin: string, methode: "GET" | "POST" | "PATCH" = "GET", corps?: unknown): Promise<T> {
   // La route serveur vérifie la session : on lui passe le jeton de l'utilisateur connecté.
   const { data } = await supabase().auth.getSession();
   const jeton = data.session?.access_token;

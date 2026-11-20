@@ -62,7 +62,7 @@ export function CarteImprimable({ id }: { id: string }) {
             ))}
           </ul>
           <p className="mt-3 text-[11px] leading-snug text-muted">
-            {CENTRES[e.centre]} · Montrez cette carte à chaque visite. Le code ne contient aucune donnée personnelle.
+            {e.centreNom ?? CENTRES[e.centre]} · Montrez cette carte à chaque visite. Le code ne contient aucune donnée personnelle.
           </p>
         </div>
       </div>

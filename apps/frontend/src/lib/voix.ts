@@ -54,7 +54,7 @@ export function prenomCanonique(prenom: string): string | null {
 }
 
 /** Retourne le chemin public de l'audio .ogg pour un message et un enfant donnés. */
-export function audioPour(messageId: string, enfant?: Pick<Enfant, "prenom" | "centre"> | null) {
+export function audioPour(messageId: string, enfant?: Pick<Enfant, "prenom" | "centre" | "centreNom"> | null) {
   const m = messageCatalogue(messageId);
   if (!m) return null;
   let a: AudioCatalogue | undefined;
@@ -68,13 +68,13 @@ export function audioPour(messageId: string, enfant?: Pick<Enfant, "prenom" | "c
   return { src: "/" + a.ogg, duree: a.duree_s };
 }
 
-export function texteMessage(messageId: string, enfant?: Pick<Enfant, "prenom" | "centre"> | null) {
+export function texteMessage(messageId: string, enfant?: Pick<Enfant, "prenom" | "centre" | "centreNom"> | null) {
   const m = messageCatalogue(messageId);
   if (!m) return { fr: "", ewe: "" };
   const remplir = (t: string) =>
     t
       .replaceAll("{prenom}", enfant?.prenom ?? "votre enfant")
-      .replaceAll("{centre}", enfant ? CENTRES[enfant.centre] : "votre quartier");
+      .replaceAll("{centre}", enfant ? (enfant.centreNom ?? CENTRES[enfant.centre]) : "votre quartier");
   return { fr: remplir(m.texte_fr), ewe: remplir(m.modele_ewe) };
 }
 

@@ -23,6 +23,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { useMemo, useState } from "react";
 import { TelephoneWhatsApp } from "@/components/telephone-whatsapp";
 import { Bouton, Carte, CarteCorps, CarteEntete, Champ, EntetePage, LienBouton, LigneInfo, Pastille, Selecteur, Tableau } from "@/components/ui";
+import { MODE_BASE } from "@/lib/base";
 import { ajouterJours, dateCourte, ecartJours, libelleAge } from "@/lib/dates";
 import { CONTACTS, calendrierEnfant, dateContact } from "@/lib/pev";
 import { GARDERIES, QUARTIERS } from "@/lib/seed";
@@ -84,6 +85,9 @@ function Choix({ actif, onClick, children, className, disabled }: { actif: boole
 export default function Inscription() {
   const auJour = useAuJour();
   const inscrire = useStore((s) => s.inscrire);
+  // Mode base : l'agent inscrit toujours dans sa propre structure (le backend l'impose aussi).
+  const session = useStore((s) => s.session);
+  const centreFixe = MODE_BASE && session?.role === "agent" ? session.lieu : null;
   const vide: Formulaire = {
     prenom: "",
     nom: "",
@@ -326,6 +330,12 @@ export default function Inscription() {
               <>
                 <div>
                   <p className="label">Centre de santé de suivi</p>
+                  {centreFixe ? (
+                    <p className="rounded-md border border-line bg-card-muted px-3 py-2.5">
+                      <span className="block font-medium">{centreFixe}</span>
+                      <span className="block text-xs text-muted">L&apos;enfant est inscrit dans votre structure.</span>
+                    </p>
+                  ) : (
                   <div className="grid gap-1.5 sm:grid-cols-2">
                     {(Object.keys(CENTRES) as CentreId[]).map((c) => (
                       <Choix key={c} actif={f.centre === c} className="py-2.5" onClick={() => setF((x) => ({ ...x, centre: c, quartier: QUARTIERS[c][0] }))}>
@@ -334,6 +344,7 @@ export default function Inscription() {
                       </Choix>
                     ))}
                   </div>
+                  )}
                 </div>
                 <div className="grid gap-4 sm:grid-cols-2">
                   <Champ label="Quartier">
@@ -444,7 +455,7 @@ export default function Inscription() {
               <LigneInfo libelle="Âge">{libelleAge(f.naissance, auJour)}</LigneInfo>
               <LigneInfo libelle="Mère">{f.mere || <span className="text-muted">À remplir</span>}</LigneInfo>
               <LigneInfo libelle="Téléphone">{chiffres ? `+228 ${f.telephone}` : <span className="text-muted">À remplir</span>}</LigneInfo>
-              <LigneInfo libelle="Centre">{CENTRES[f.centre]}</LigneInfo>
+              <LigneInfo libelle="Centre">{centreFixe ?? CENTRES[f.centre]}</LigneInfo>
               <LigneInfo libelle="Acte de naissance">{f.acte === null ? <span className="text-muted">À préciser</span> : f.acte ? "Oui" : "Pas encore"}</LigneInfo>
             </dl>
           </Carte>
@@ -508,7 +519,7 @@ function Succes({ id, onAutre }: { id: string; onAutre: () => void }) {
                   {enfant.prenom} {enfant.nom}
                 </p>
                 <p className="text-[0.9rem] text-white/70">
-                  {enfant.sexe === "F" ? "Née" : "Né"} le {dateCourte(enfant.naissance)} · {CENTRES[enfant.centre]}
+                  {enfant.sexe === "F" ? "Née" : "Né"} le {dateCourte(enfant.naissance)} · {enfant.centreNom ?? CENTRES[enfant.centre]}
                 </p>
                 <p className="mt-2 inline-block rounded bg-white/10 px-2 py-0.5 font-mono text-sm tracking-widest">{enfant.id}</p>
               </div>

@@ -30,6 +30,11 @@ class Settings(BaseSettings):
     destinataires_autorises: str = ""
     admin_token: str = ""
 
+    # Création des comptes par le pilotage (apps/backend/app/comptes.py).
+    # Clé d'administration Supabase : uniquement ici, jamais dans l'application.
+    supabase_url: str = ""
+    supabase_service_role_key: str = ""
+
     voix_racine: Path = RACINE_DEPOT
     envoi_intervalle_s: int = 30
     regles_intervalle_s: int = 0

@@ -6,10 +6,10 @@ Les calculs (dates de rendez-vous, z-score, statut, tendance) restent ceux de la
 """
 
 from datetime import date
-from typing import Literal
+from typing import Annotated, Literal
 from uuid import UUID
 
-from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
+from fastapi import APIRouter, BackgroundTasks, Depends, Header, HTTPException, Request
 from pydantic import BaseModel, Field
 
 from .envoi import envoyer_lot
@@ -74,17 +74,35 @@ async def _id_centre(conn, catalogue, cle: str) -> int:
     raise HTTPException(422, f"centre « {cle} » absent de la table health_centers")
 
 
+async def _centre_de(conn, utilisateur: UUID | None) -> int | None:
+    """Centre de l'agent connecté (transmis par le relais de l'application)."""
+    if not utilisateur:
+        return None
+    p = await (
+        await conn.execute("select center_id from profiles where id = %s and role = 'agent'", (utilisateur,))
+    ).fetchone()
+    return p["center_id"] if p else None
+
+
 @router.post("/enfants", status_code=201)
-async def inscrire(request: Request, corps: Inscription, taches: BackgroundTasks):
+async def inscrire(
+    request: Request,
+    corps: Inscription,
+    taches: BackgroundTasks,
+    utilisateur: Annotated[UUID | None, Header(alias="x-devi-utilisateur")] = None,
+):
     s = request.app.state
     async with s.pool.connection() as conn, conn.transaction():
-        centre_id = await _id_centre(conn, s.catalogue, corps.centre)
+        # Un agent inscrit toujours dans son propre centre, y compris un centre créé par le pilotage.
+        centre_id = await _centre_de(conn, utilisateur) or await _id_centre(conn, s.catalogue, corps.centre)
         # Le déclencheur de la base crée le calendrier vaccinal de l'enfant.
         enfant = await (
             await conn.execute(
-                """insert into children (first_name, birth_date, sex, center_id, has_birth_certificate)
-                   values (%s, %s, %s, %s, %s) returning id""",
-                (corps.prenom, corps.naissance, corps.sexe, centre_id, corps.acte_naissance),
+                """insert into children (first_name, birth_date, sex, center_id, has_birth_certificate, zone_id, created_by)
+                   values (%s, %s, %s, %s, %s, (select zone_id from health_centers where id = %s),
+                           (select id from profiles where id = %s))
+                   returning id""",
+                (corps.prenom, corps.naissance, corps.sexe, centre_id, corps.acte_naissance, centre_id, utilisateur),
             )
         ).fetchone()
         enfant_id = enfant["id"]

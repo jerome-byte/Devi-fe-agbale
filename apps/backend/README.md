@@ -62,6 +62,19 @@ Garde-fous :
 | `PATCH /app/enfants/{id}/acte` | Acte de naissance obtenu ou non |
 | `POST /app/messages/{id}/ecoute` | Vocal écouté dans le téléphone simulé |
 
+### Structures et comptes (pilotage)
+
+| Route | Rôle |
+|---|---|
+| `GET /admin/structures` | Zones, hôpitaux, centres de santé et garderies, avec leur nombre de comptes et d'enfants |
+| `POST /admin/structures` | Nouvelle structure : `type` (`hopital`, `centre`, `garderie`), `nom`, `zone_id`, `centre_id` (garderie) |
+| `GET /admin/comptes` | Comptes des agents et des éducatrices |
+| `POST /admin/comptes` | Nouveau compte : `nom`, `email`, `role` (`agent`, `educatrice`), `structure_id` ; renvoie le mot de passe provisoire, une seule fois |
+| `PATCH /admin/comptes/{id}` | `{"actif": false}` désactive le compte (plus de connexion, plus de lecture), `true` le réactive |
+| `POST /admin/comptes/{id}/mot-de-passe` | Nouveau mot de passe provisoire |
+
+Ces routes créent les comptes dans Supabase Auth avec `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY`, qui ne vivent que sur le serveur du backend. Dans l'application, seul le rôle pilotage peut les appeler. Exécuter d'abord `sql/07_comptes_structures.sql`.
+
 Les routes `/app` servent l'application (`apps/frontend`), qui les appelle par sa route serveur `/api/backend`. Les routes `/app`, `/admin` et `/simulation` exigent l'en-tête `Authorization: Bearer <ADMIN_TOKEN>`. La documentation interactive est sur `/docs`.
 
 ## Brancher WhatsApp (mode live)

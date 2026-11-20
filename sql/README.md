@@ -27,6 +27,13 @@ Exécuter `01`, `02`, `04` puis `03` dans cet ordre. Le seed fait 1,6 Mo et prè
 12 000 lignes : l'éditeur web le refuse, il faut passer par le script ou découper le
 fichier.
 
+### Sécurité et comptes (après les scripts du backend `apps/backend/sql/05` à `07`)
+
+1. `06_securite_roles.sql` : connexion obligatoire, chaque rôle ne lit que ses enfants (agent : son centre ; éducatrice : sa garderie ; pilotage : vues agrégées seulement).
+2. `07_comptes_structures.sql` : type de structure (hôpital ou centre de santé), e-mail et état des comptes. Un compte désactivé ne lit plus rien, même avec une session ouverte. Les structures et les comptes se créent ensuite depuis les pages Structures et Comptes du pilotage.
+
+Les deux scripts sont rejouables.
+
 ## Référentiels validés par Gerson
 
 | Fichier | Table | Vue de compatibilité |
