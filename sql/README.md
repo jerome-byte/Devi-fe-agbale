@@ -67,6 +67,8 @@ Les deux scripts sont rejouables.
   **déparasitage**.
 - 3 enfants de test et rapport : `npm run gerson:check` →
   `docs/verification_gerson_20nov.md`.
+- Réponse **« 2 »** de la mère à la relance : alerte `reply_unavailable` pour l'agent
+  de son centre (déclencheur `messages_reponse_empechement`, `04_rules.sql`).
 
 ## Moteur de règles
 

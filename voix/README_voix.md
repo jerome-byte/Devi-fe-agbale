@@ -81,8 +81,12 @@ Pour ajouter un prénom ou un centre : une ligne dans `prononciation.json`, puis
 | `J0` | `rappel_jour_j` | prénom + centre | `rappel_jour_j__Ama__be_kpota.ogg` |
 | `MISSED_3` | `manque_3j` (+ boutons « 1 » / « 2 ») | aucune | `manque_3j.ogg` |
 | `BIRTH_CERT` | `acte_naissance` | prénom | `acte_naissance__Ama.ogg` |
+| `PESEE` | `pesee` | prénom | `pesee__Ama.ogg` |
+| `CROISSANCE` | `croissance` | prénom | `croissance__Ama.ogg` |
+| `VITAMINE_A` | `annonce_vitamine_a` (annonce de campagne, en attendant un rappel individuel) | aucune | `annonce_vitamine_a.ogg` |
+| `DEPARASITAGE` | aucun audio pour l'instant : l'envoi échoue tant qu'il n'est pas enregistré | | |
 
-Les autres messages (`pesee`, `croissance`, `nutrition_1`, `depistage`, `orientation`, annonces) gardent leur `id` du catalogue s'ils sont ajoutés dans la base.
+Les autres messages (`nutrition_1`, `depistage`, `orientation`, annonces) gardent leur `id` du catalogue s'ils sont ajoutés dans la base.
 Pour le prototype, **tous** les messages partent sur **WhatsApp** (canal `whatsapp`, y compris `MISSED_3`). L'appel vocal est réservé à la finale.
 
 ## Boutons de réponse (`manque_3j`)

@@ -17,6 +17,8 @@ set search_path = public, extensions;
 alter table public.health_centers add column if not exists kind text not null default 'centre';
 alter table public.health_centers drop constraint if exists health_centers_kind_check;
 alter table public.health_centers add constraint health_centers_kind_check check (kind in ('hopital', 'centre'));
+-- Le CHU Sylvanus Olympio (ajouté par le seed) est un hôpital.
+update public.health_centers set kind = 'hopital' where name ilike '%sylvanus olympio%' and kind <> 'hopital';
 
 -- ---------- 2. Comptes : e-mail, état, création ------------------------
 alter table public.profiles add column if not exists email text;

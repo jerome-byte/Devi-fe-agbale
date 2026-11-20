@@ -424,6 +424,33 @@ language sql security definer set search_path = public, extensions as $$
   returning *;
 $$;
 
+-- ---------- Réponse « 2 » de la mère : alerte pour l'agent ---------------
+-- La mère répond « 2 » (empêchement) à la relance MISSED_3 : le backend enregistre
+-- messages.response_key = 2 et lui renvoie reponse_empechement. Ce déclencheur crée
+-- en plus une alerte pour l'agent de son centre, qui pourra la rappeler.
+-- Une seule alerte ouverte par enfant et par rendez-vous.
+create or replace function trg_reponse_empechement() returns trigger
+language plpgsql as $$
+begin
+  if new.response_key = 2 and old.response_key is distinct from 2 then
+    insert into alerts (child_id, appointment_id, type, target_role, center_id)
+    select new.child_id, new.appointment_id, 'reply_unavailable', 'agent', c.center_id
+    from children c
+    where c.id = new.child_id
+      and not exists (
+        select 1 from alerts a
+         where a.child_id = new.child_id and a.type = 'reply_unavailable'
+           and a.appointment_id is not distinct from new.appointment_id
+           and a.status in ('open', 'acknowledged'));
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists messages_reponse_empechement on messages;
+create trigger messages_reponse_empechement
+  after update of response_key on messages
+  for each row execute function trg_reponse_empechement();
+
 -- Droits : commandes de démonstration appelées par le tableau de bord.
 do $$
 begin

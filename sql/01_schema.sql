@@ -196,7 +196,7 @@ create table if not exists alerts (
   appointment_id uuid references appointments(id) on delete cascade,
   type           text not null check (type in
     ('missed_7d','growth_stagnation','growth_surveiller','growth_orient',
-     'birth_cert_missing','screening_due','referral')),
+     'birth_cert_missing','screening_due','referral','reply_unavailable')),
   target_role    text check (target_role in ('agent','educatrice','pilotage')),
   center_id      int references health_centers(id),
   status         text not null default 'open' check (status in ('open','acknowledged','resolved')),
@@ -240,7 +240,7 @@ alter table weigh_ins add column if not exists status_indicator text;
 alter table alerts drop constraint if exists alerts_type_check;
 alter table alerts add constraint alerts_type_check check (type in
   ('missed_7d','growth_stagnation','growth_surveiller','growth_orient',
-   'birth_cert_missing','screening_due','referral'));
+   'birth_cert_missing','screening_due','referral','reply_unavailable'));
 
 -- Codes alignés sur le calendrier PEV validé par Gerson (donnees_sante/calendrier_pev.csv).
 update vaccine_schedule s set vaccine_code = 'PNEUMO'

@@ -113,6 +113,9 @@ const CODES_BASE: Record<string, string> = {
   J0: "rappel_jour_j",
   MISSED_3: "manque_3j",
   BIRTH_CERT: "acte_naissance",
+  PESEE: "pesee",
+  CROISSANCE: "croissance",
+  VITAMINE_A: "annonce_vitamine_a",
 };
 
 const LANGUES: Record<string, Langue> = { ewe: "ewe", mina: "mina", kabiye: "kabiye", fr: "francais" };

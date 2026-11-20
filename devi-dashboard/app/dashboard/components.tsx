@@ -37,6 +37,7 @@ export const ALERT_LABELS: Record<string, string> = {
   birth_cert_missing: "Acte de naissance manquant",
   screening_due: "Dépistage à faire",
   referral: "Orientation à suivre",
+  reply_unavailable: "La mère ne peut pas venir (réponse 2)",
 };
 
 export function PageHeader({

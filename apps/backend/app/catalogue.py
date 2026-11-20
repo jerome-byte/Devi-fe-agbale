@@ -20,6 +20,11 @@ CODES_BASE = {
     "J0": "rappel_jour_j",
     "MISSED_3": "manque_3j",
     "BIRTH_CERT": "acte_naissance",
+    "PESEE": "pesee",
+    "CROISSANCE": "croissance",
+    # Rappel individuel vitamine A : l'annonce de campagne, en attendant un audio dédié.
+    "VITAMINE_A": "annonce_vitamine_a",
+    # DEPARASITAGE : pas encore d'audio enregistré.
 }
 
 # Réponse de la famille -> message renvoyé
