@@ -51,14 +51,13 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 
 ### Jérôme Akota — chef de projet, voix en éwé
 - ✅ 99 messages vocaux en éwé (Meta MMS), vérifiés à l'écoute et reliés au journal des messages et aux envois WhatsApp
-- ✅ Fusion des branches de Blaise et de Cherif, revue par issues GitHub, corrections
+- ✅ Fusion des branches de Blaise et de Cherif, revue par issues GitHub, corrections ; branches fusionnées supprimées sur GitHub
 - ✅ Pages de connexion par rôle, pages Structures et Comptes du pilotage, nouveau logo, application installable sur téléphone
 - ✅ Scan QR corrigé et testé en ligne (garderie et centre de santé), flèche « Retour » sur les pages
 - ✅ Score de risque dans le Pilotage : carte « Enfants à risque élevé » et colonne par zone
 - ⏳ Audio du déparasitage, le seul message sans enregistrement (21 nov.)
 - ⏳ Présentation PDF, 1 à 5 captures d'écran, courte vidéo facultative, notes du dépôt avec les liens et les comptes de démonstration (21-22 nov.)
 - ⏳ Dépôt officiel sur U-Events (22 nov.)
-- ⏳ Ménage : supprimer les branches `mounix` et `features/dashboard` sur GitHub, désactiver le compte de test
 
 ### Blaise Moune Tchoubou — applications
 - ✅ Projet Next.js + Supabase, comptes par rôle, mise en ligne sur Vercel

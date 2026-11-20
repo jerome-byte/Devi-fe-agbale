@@ -7,9 +7,12 @@ De Jérôme, le 20 novembre 2026. À lire avant de reprendre le travail sur le d
 ```bash
 git checkout master
 git pull origin master
+git fetch --prune
 ```
 
-- Les branches `mounix` (Blaise, PR #4) et `features/dashboard` (Cherif, PR #1, puis vos corrections de l'issue du 19 novembre) sont **fusionnées dans `master`**. Elles vont être supprimées sur GitHub : ne travaillez plus dessus. Pour une nouvelle tâche, partez de `master` dans une nouvelle branche.
+- Les branches `mounix` (Blaise, PR #4) et `features/dashboard` (Cherif, PR #1, puis vos corrections de l'issue du 19 novembre) sont **fusionnées dans `master`** et **supprimées sur GitHub** depuis le 20 novembre. Tout leur travail est dans `master` : rien n'est perdu. `git fetch --prune` retire de votre ordinateur les références à ces branches supprimées.
+- Si vous avez encore une branche locale `mounix` ou `features/dashboard`, elle ne sert plus : `git branch -D mounix` (ou `git branch -D features/dashboard`). Si vous y aviez des changements jamais poussés, prévenez-moi avant de la supprimer.
+- Pour une nouvelle tâche, partez de `master` à jour et créez une branche par sujet, par exemple `git checkout -b finale/appel-vocal`. On fusionne ensuite par pull request.
 - Après le `pull` : `npm install` dans `apps/frontend` et dans `scripts/`.
 - **Tout ce qui touche la base est déjà appliqué sur Supabase**. Il n'y a rien à rejouer.
 - Backend en local : ajoutez dans `apps/backend/.env` les deux nouvelles variables `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY` (voir `.env.example`). Elles servent seulement aux pages Structures et Comptes. Sur Render, elles sont déjà réglées.
@@ -105,7 +108,6 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 ### Jérôme (pour info)
 - Enregistrer l'audio du déparasitage.
 - Faire le PDF, les captures, la vidéo facultative et les notes du dépôt, avec les liens et les comptes de démonstration.
-- Supprimer les branches fusionnées, désactiver mon compte de test.
 - Faire le dépôt sur U-Events.
 
 ### Toute l'équipe
