@@ -1,4 +1,11 @@
 # ɖevi ƒe agbalẽ — Hack4Children 2026 (UNICEF Togo)
+## le lien et les identifiant pour la demo
+agent@example.com
+educatrice@example.com
+pilotage@example.com
+mot de passe:
+hackathon_children
+les trois compte on le meme mot de passe
 
 **Le carnet vivant de chaque enfant, de la naissance à 6 ans.**
 ## Le projet en bref
