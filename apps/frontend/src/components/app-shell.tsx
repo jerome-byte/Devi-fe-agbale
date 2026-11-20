@@ -161,6 +161,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     if (hydrate && !session) router.replace("/connexion");
   }, [hydrate, session, router]);
 
+  // Le pilotage ne voit que ses pages (statistiques, structures, comptes, annonces) :
+  // il n'inscrit pas d'enfant et n'ouvre aucun dossier. Les agents et éducatrices
+  // n'ont pas accès aux pages du pilotage.
+  const horsPerimetre = session && ((session.role === "pilotage") !== (pathname === "/pilotage" || pathname.startsWith("/pilotage/")));
+  useEffect(() => {
+    if (session && horsPerimetre) router.replace(ACCUEIL[session.role]);
+  }, [session, horsPerimetre, router]);
+
   useEffect(() => {
     const touche = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
@@ -172,7 +180,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     return () => window.removeEventListener("keydown", touche);
   }, []);
 
-  if (!hydrate || !session) {
+  if (!hydrate || !session || horsPerimetre) {
     return (
       <div className="space-y-3 p-6">
         <Squelette className="h-8 w-56" />
