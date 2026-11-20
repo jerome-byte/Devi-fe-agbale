@@ -102,7 +102,7 @@ export default function Enfants() {
     <>
       <EntetePage
         titre={educ ? "Enfants de la garderie" : "Enfants suivis"}
-        description={`${base.length} enfants · ${session.lieu}`}
+        description={`${base.length} enfants · ${session.lieu} · Cliquez sur un enfant pour voir son dossier.`}
         ariane={[{ libelle: "Suivi des enfants" }, { libelle: "Enfants" }]}
         actions={
           educ ? (

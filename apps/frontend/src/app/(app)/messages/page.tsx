@@ -74,7 +74,7 @@ export default function Messages() {
     <>
       <EntetePage
         titre="Journal des messages"
-        description="Chaque vocal envoyé aux familles, à écouter ici sans téléphone."
+        description="Chaque vocal envoyé aux familles, à écouter ici sans téléphone. Cliquez sur un enfant pour voir son dossier."
         ariane={[{ libelle: "Familles" }, { libelle: "Journal des messages" }]}
       />
 

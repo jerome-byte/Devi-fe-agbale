@@ -17,7 +17,8 @@ import { Palette } from "./shell/palette";
 import { Topbar } from "./shell/topbar";
 import { Squelette } from "./ui";
 
-function actif(pathname: string, href: string) {
+function actif(pathname: string, lien: string) {
+  const href = lien.split("?")[0]; // « /messages?filtre=reponses » est actif sur /messages
   if (href === "/pilotage") return pathname === "/pilotage";
   return pathname === href || pathname.startsWith(href + "/");
 }

@@ -91,7 +91,7 @@ export default function EspaceAgent() {
           <Carte>
             <CarteEntete
               titre="À appeler en priorité"
-              description="Classés par urgence : retard de vaccin, empêchement, croissance"
+              description="Classés par urgence. Cliquez sur un enfant pour voir son dossier."
               icone={PhoneCall}
               lien={{ href: "/enfants?filtre=urgent", libelle: `Tout voir (${prioritaires.length})` }}
             />
