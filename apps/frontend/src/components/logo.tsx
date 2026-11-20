@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 
 /** Logo de ɖevi ƒe agbalẽ (carré bleu marine, coins arrondis). */
 export function LogoMarque({ className }: { className?: string }) {
-  return <Image src="/images/logo-marque.png" alt="" width={128} height={128} className={cn("size-9 shrink-0", className)} aria-hidden priority />;
+  return <Image src="/images/logo-marque-v2.png" unoptimized alt="" width={128} height={128} className={cn("size-9 shrink-0", className)} aria-hidden priority />;
 }
 
 export function Logo({ className, clair }: { className?: string; clair?: boolean }) {

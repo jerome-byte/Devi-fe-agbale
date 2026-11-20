@@ -126,9 +126,9 @@ function Entete() {
           </span>
         </div>
       </div>
-      <div className="container-site flex h-18 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2.5" aria-label="ɖevi ƒe agbalẽ, accueil">
-          <LogoMarque className="size-10" />
+      <div className="container-site flex h-20 items-center justify-between">
+        <Link href="/" className="flex items-center gap-3" aria-label="ɖevi ƒe agbalẽ, accueil">
+          <LogoMarque className="size-12 rounded-[22%] shadow-lg ring-2 ring-white/85 lg:size-14" />
           <span className={cn("font-vitrine text-[1.35rem] font-bold leading-none", plein ? "text-dark-800 dark:text-white" : "text-white")}>ɖevi ƒe agbalẽ</span>
         </Link>
         <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
@@ -574,7 +574,7 @@ function Pied() {
       <div className="container-site grid gap-12 py-16 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <Link href="/" className="flex items-center gap-2.5">
-            <LogoMarque className="size-10" />
+            <LogoMarque className="size-14 rounded-[22%] ring-1 ring-white/25" />
             <span className="font-vitrine text-xl font-bold text-white">ɖevi ƒe agbalẽ</span>
           </Link>
           <p className="mt-5 max-w-sm text-sm leading-relaxed">

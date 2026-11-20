@@ -95,7 +95,7 @@ export function InstallerApp() {
   return (
     <div role="dialog" aria-labelledby="installer-titre" className="fixed inset-x-3 bottom-3 z-[65] animate-fade-in sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-96">
       <div className="card flex gap-3 p-3.5 shadow-xl">
-        <Image src="/icons/icon-192.png" alt="" width={48} height={48} className="size-12 shrink-0 rounded-xl" />
+        <Image src="/icons/icon-192-v2.png" unoptimized alt="" width={48} height={48} className="size-12 shrink-0 rounded-xl" />
         <div className="min-w-0 flex-1">
           <p id="installer-titre" className="font-semibold leading-tight">
             Installer ɖevi ƒe agbalẽ

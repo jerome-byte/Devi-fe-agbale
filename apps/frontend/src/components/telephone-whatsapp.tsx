@@ -34,7 +34,7 @@ export function TelephoneWhatsApp({ enfant, className }: { enfant: Enfant; class
           {/* entête WhatsApp */}
           <div className="relative z-10 flex items-center gap-2 bg-[#075e54] px-3 pb-2.5 pt-10 text-white">
             <ChevronLeft className="size-5 opacity-80" />
-            <Image src="/images/logo-marque.png" alt="" width={72} height={72} className="size-9 shrink-0 rounded-full" />
+            <Image src="/images/logo-marque-v2.png" unoptimized alt="" width={72} height={72} className="size-9 shrink-0 rounded-full" />
             <div className="min-w-0 flex-1 leading-tight">
               <p className="flex items-center gap-1 truncate text-[14px] font-semibold">
                 ɖevi ƒe agbalẽ <BadgeCheck className="size-3.5 fill-[#25d366] text-[#075e54]" />

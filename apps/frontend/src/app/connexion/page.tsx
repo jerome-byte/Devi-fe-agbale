@@ -1,10 +1,10 @@
 "use client";
 
-import { ArrowLeft, BarChart3, ChevronRight, Eye, EyeOff, HeartPulse, Info, LockKeyhole, Store } from "lucide-react";
+import { ArrowLeft, BarChart3, ChevronRight, Eye, EyeOff, HeartPulse, Info, Loader2, LockKeyhole, Store } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { LogoMarque } from "@/components/logo";
 import { ACCUEIL, LIBELLE_ROLE } from "@/components/shell/nav";
 import { EMAILS_DEMO, MODE_BASE, seConnecter, seDeconnecter } from "@/lib/base";
@@ -168,7 +168,18 @@ function ConnexionParEspace() {
 
 export default function Connexion() {
   const connecter = useStore((s) => s.connecter);
+  const session = useStore((s) => s.session);
+  const hydrate = useStore((s) => s.hydrate);
   const router = useRouter();
+
+  // Déjà connecté (session vérifiée auprès de Supabase en mode base) : on ouvre directement
+  // son espace. C'est le cas à chaque ouverture de l'application installée.
+  useEffect(() => {
+    if (!hydrate || !session) return;
+    const suite = new URLSearchParams(window.location.search).get("suite");
+    router.replace(suite && suite.startsWith("/") ? suite : ACCUEIL[session.role]);
+  }, [hydrate, session, router]);
+  const verification = !hydrate || Boolean(session);
 
   const entrer = (r: Role) => {
     connecter(r);
@@ -201,7 +212,11 @@ export default function Connexion() {
             <LogoMarque className="size-8" />
             <span className="font-vitrine text-xl font-bold">ɖevi ƒe agbalẽ</span>
           </div>
-          {MODE_BASE ? (
+          {verification ? (
+            <p className="flex items-center gap-2 text-muted">
+              <Loader2 size={16} className="animate-spin" /> {session ? "Ouverture de votre espace…" : "Chargement…"}
+            </p>
+          ) : MODE_BASE ? (
             <Suspense fallback={null}>
               <ConnexionParEspace />
             </Suspense>

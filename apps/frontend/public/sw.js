@@ -5,7 +5,7 @@
 // Aucune donnée d'enfant n'est mise en cache : les appels à Supabase et à /api/ passent
 // toujours par le réseau.
 
-const CACHE = "devi-statique-v1";
+const CACHE = "devi-statique-v2";
 const STATIQUES = ["/_next/static/", "/icons/", "/images/", "/voix/"];
 
 self.addEventListener("install", () => self.skipWaiting());
@@ -23,7 +23,7 @@ const PAGE_HORS_LIGNE = `<!doctype html><html lang="fr"><head><meta charset="utf
 <style>body{margin:0;min-height:100vh;display:grid;place-items:center;font-family:system-ui,sans-serif;background:#102b49;color:#fff;text-align:center;padding:24px}
 img{width:96px;height:96px;border-radius:22px}h1{font-size:1.3rem;margin:20px 0 8px}p{opacity:.8;max-width:22rem;margin:0 auto 20px}
 button{font:inherit;font-weight:600;border:0;border-radius:8px;padding:10px 18px;background:#fff;color:#102b49}</style></head>
-<body><div><img src="/icons/icon-192.png" alt=""><h1>Pas de connexion</h1><p>ɖevi ƒe agbalẽ a besoin d'Internet pour afficher les carnets. Réessayez dès que le réseau revient.</p>
+<body><div><img src="/icons/icon-192-v2.png" alt=""><h1>Pas de connexion</h1><p>ɖevi ƒe agbalẽ a besoin d'Internet pour afficher les carnets. Réessayez dès que le réseau revient.</p>
 <button onclick="location.reload()">Réessayer</button></div></body></html>`;
 
 self.addEventListener("fetch", (event) => {

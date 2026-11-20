@@ -27,6 +27,8 @@ export const metadata: Metadata = {
   description:
     "Carnet numérique de l'enfant de 0 à 6 ans au Togo : rappels vocaux en éwé, suivi des vaccins et de la croissance, tableau de bord pour les districts.",
   applicationName: "ɖevi ƒe agbalẽ",
+  // Nom court sous l'icône de l'écran d'accueil (iPhone) ; Android le lit dans le manifeste.
+  appleWebApp: { capable: true, title: "ɖevi gbalẽ", statusBarStyle: "default" },
 };
 
 export const viewport: Viewport = {
