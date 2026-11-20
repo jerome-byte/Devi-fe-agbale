@@ -69,7 +69,7 @@ async def envoyer_lot(
 ) -> Rapport:
     rapport = Rapport()
     deja_vus: list = []
-    params = {"retard_h": settings.retard_max_h, "autorises": settings.liste_autorises}
+    params = {"retard_h": settings.retard_max_h, "autorises": settings.filtre_destinataires}
 
     for _ in range(maximum):
         async with pool.connection() as conn, conn.transaction():

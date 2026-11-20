@@ -52,6 +52,13 @@ class Settings(BaseSettings):
         numeros = [n for n in numeros if n]
         return numeros or None
 
+    @property
+    def filtre_destinataires(self) -> list[str] | None:
+        """Numéros à qui l'on envoie. En simulation, rien ne part vraiment : tous les messages
+        sont « envoyés » et s'affichent dans le téléphone simulé de l'application. La liste
+        DESTINATAIRES_AUTORISES ne s'applique qu'avec le vrai WhatsApp (mode live)."""
+        return None if self.simulation else self.liste_autorises
+
     def verifier(self) -> None:
         if self.whatsapp_mode == "live":
             manquants = [

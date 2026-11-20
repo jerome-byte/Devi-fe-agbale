@@ -125,3 +125,14 @@ async def test_client_meta_erreurs(code, definitive):
     with pytest.raises(ErreurWhatsApp) as e:
         await client.envoyer_boutons("228", "t", ["1"])
     assert e.value.definitive is definitive
+
+
+def test_liste_autorises_seulement_en_live():
+    from app.config import Settings
+
+    sim = Settings(database_url="postgresql://x", destinataires_autorises="+228 90 00 00 01")
+    live = Settings(
+        database_url="postgresql://x", whatsapp_mode="live", destinataires_autorises="+228 90 00 00 01"
+    )
+    assert sim.filtre_destinataires is None
+    assert live.filtre_destinataires == ["22890000001"]

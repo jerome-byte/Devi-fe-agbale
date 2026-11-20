@@ -36,7 +36,7 @@ Déploiement sur Render et branchement de WhatsApp : `apps/docs/`.
 | `simulation` (par défaut) | Aucun appel à Meta. Les messages passent à `sent` avec `is_simulated = true`. Pour répéter la démo sans compte WhatsApp. |
 | `live` | Envoi réel. Il faut `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_APP_SECRET` et `WHATSAPP_VERIFY_TOKEN`. |
 
-**`DESTINATAIRES_AUTORISES`** : seuls ces numéros reçoivent des messages. Les 300 enfants du seed ont de faux numéros : en démo, mettre ici uniquement les téléphones de l'équipe.
+**`DESTINATAIRES_AUTORISES`** : avec le vrai WhatsApp (`WHATSAPP_MODE=live`), seuls ces numéros reçoivent des messages. Les 300 enfants du seed ont de faux numéros : en démo, mettre ici uniquement les téléphones de l'équipe. En simulation, la liste est ignorée : tous les messages sont « envoyés » et s'affichent dans le téléphone simulé de l'application.
 
 Garde-fous :
 - un rappel prévu il y a plus de 24 h n'est plus envoyé ;

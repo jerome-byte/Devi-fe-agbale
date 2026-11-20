@@ -215,7 +215,7 @@ function MenuCompte() {
         <div className="my-1 h-px bg-line" />
         {confirme ? (
           <div className="flex items-center gap-2 px-3 py-2">
-            <span className="flex-1 text-sm text-muted">Recharger les données fictives ?</span>
+            <span className="flex-1 text-sm text-muted">{MODE_BASE ? "Remettre la démo à zéro ?" : "Recharger les données fictives ?"}</span>
             <button
               onClick={() => {
                 reinitialiser();

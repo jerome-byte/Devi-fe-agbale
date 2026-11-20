@@ -68,7 +68,7 @@ async def lifespan(app: FastAPI):
     app.state.pool = pool
     app.state.catalogue = Catalogue(settings.voix_racine)
     app.state.client = client
-    log.info("mode %s, destinataires autorisés : %s", settings.whatsapp_mode, settings.liste_autorises or "tous")
+    log.info("mode %s, destinataires autorisés : %s", settings.whatsapp_mode, settings.filtre_destinataires or "tous")
 
     taches = []
     if settings.envoi_intervalle_s > 0:

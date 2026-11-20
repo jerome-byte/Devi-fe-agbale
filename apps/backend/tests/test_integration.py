@@ -85,7 +85,7 @@ async def _statuts(pool):
 
 
 async def test_circuit_complet(pool):
-    settings = Settings(database_url=URL, destinataires_autorises=f"{AMA},{ENYONAM}")
+    settings = Settings(database_url=URL, whatsapp_mode="live", destinataires_autorises=f"{AMA},{ENYONAM}")
     client = FauxClient()
     catalogue = Catalogue(RACINE_DEPOT)
 
