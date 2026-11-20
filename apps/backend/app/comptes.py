@@ -14,6 +14,8 @@ Règles :
 - un mot de passe provisoire est généré ici et renvoyé une seule fois ;
 - un compte désactivé ne peut plus se connecter (Supabase Auth) et ne lit plus rien
   dans la base (profiles.active, voir sql/07_comptes_structures.sql) ;
+- un compte supprimé disparaît de Supabase Auth et de profiles ; les enfants inscrits,
+  les vaccins et les pesées qu'il a saisis restent, sans auteur ;
 - les comptes de pilotage et d'administration ne se gèrent pas depuis ces pages.
 """
 
@@ -315,6 +317,34 @@ async def changer_etat(request: Request, uid: UUID, corps: EtatCompte):
     async with request.app.state.pool.connection() as conn:
         await conn.execute("update profiles set active = %s where id = %s", (corps.actif, uid))
     return {"id": str(uid), "actif": corps.actif}
+
+
+# Liens vers un compte, détachés avant sa suppression (les données restent).
+LIENS_COMPTE = (
+    ("children", "created_by"),
+    ("appointments", "recorded_by"),
+    ("weigh_ins", "recorded_by"),
+    ("profiles", "created_by"),
+)
+
+
+@router.post("/comptes/{uid}/supprimer")
+async def supprimer_compte(request: Request, uid: UUID, utilisateur: Utilisateur = None):
+    """Supprime définitivement un compte d'agent ou d'éducatrice.
+
+    Tout se fait dans une transaction : si Supabase Auth refuse la suppression,
+    la base est remise comme avant.
+    """
+    if utilisateur and utilisateur == uid:
+        raise HTTPException(403, "vous ne pouvez pas supprimer votre propre compte")
+    auth = auth_admin(request)
+    async with request.app.state.pool.connection() as conn, conn.transaction():
+        await _compte_gere(conn, uid)
+        for table, colonne in LIENS_COMPTE:
+            await conn.execute(f"update {table} set {colonne} = null where {colonne} = %s", (uid,))
+        await conn.execute("delete from profiles where id = %s", (uid,))
+        await auth.supprimer(str(uid))
+    return {"id": str(uid), "supprime": True}
 
 
 @router.post("/comptes/{uid}/mot-de-passe")

@@ -32,7 +32,7 @@ git pull origin master
 - **Connexion** : une page de connexion par rôle (agent, garderie, pilotage). Si une session est déjà ouverte, la page renvoie directement vers l'accueil du rôle.
 - **Pilotage** : vos écrans branchés sur les calculs de Cherif. Deux pages nouvelles :
   - **Structures** : liste des hôpitaux, centres de santé et garderies ; création d'une structure. On peut créer une zone depuis le même formulaire.
-  - **Comptes** : création d'un compte agent ou éducatrice rattaché à sa structure, désactivation et réactivation, nouveau mot de passe. Un compte désactivé ne peut plus rien lire, même avec une session encore ouverte.
+  - **Comptes** : création d'un compte agent ou éducatrice rattaché à sa structure, désactivation et réactivation, nouveau mot de passe, **suppression définitive** (menu ⋯ du compte, avec confirmation). Un compte désactivé ne peut plus rien lire, même avec une session encore ouverte. Un compte supprimé disparaît ; les enfants, vaccins et pesées qu'il a saisis restent, sans auteur.
 - **Inscription** : l'enfant est inscrit directement dans le centre de l'agent connecté.
 - **Application installable** sur téléphone :
   - `manifest.ts`, avec le nom court « ɖevi gbalẽ » sous l'icône ;
@@ -59,7 +59,7 @@ git pull origin master
 - **Pilotage** : nouvelle carte « Enfants à risque élevé » et nouvelle colonne « Risque élevé » dans le tableau des zones (voir la partie Cherif). Sur téléphone, la 5e carte prend toute la largeur.
 
 ### Backend (`apps/backend`)
-- `app/comptes.py` (nouveau) : routes `/admin/zones`, `/admin/structures` et `/admin/comptes`. La clé d'administration de Supabase reste sur le serveur. Avec les nouvelles clés `sb_secret_…`, elle passe dans l'en-tête `apikey` seulement. Tests : `tests/test_comptes.py`.
+- `app/comptes.py` (nouveau) : routes `/admin/zones`, `/admin/structures` et `/admin/comptes`, dont `POST /admin/comptes/{id}/supprimer`. La suppression détache d'abord le compte (`children.created_by`, `appointments.recorded_by`, `weigh_ins.recorded_by`, `profiles.created_by`), puis supprime le profil et le compte Supabase Auth dans une même transaction. La clé d'administration de Supabase reste sur le serveur. Avec les nouvelles clés `sb_secret_…`, elle passe dans l'en-tête `apikey` seulement. Tests : `tests/test_comptes.py`.
 - `DESTINATAIRES_AUTORISES` ne s'applique plus qu'en mode `live`. En simulation, tous les messages s'affichent dans le téléphone simulé (`Settings.filtre_destinataires`).
 - `catalogue.py` : les codes PESEE, CROISSANCE et VITAMINE_A sont reliés à leurs audios. DEPARASITAGE attend son enregistrement.
 - `sql/06_demo_envoi.sql` : `demo_reset_envoi` ne remet à « prévu » que les rendez-vous manqués.

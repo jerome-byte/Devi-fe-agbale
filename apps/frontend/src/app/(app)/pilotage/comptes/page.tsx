@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle, Building2, CheckCircle2, Copy, KeyRound, Power, PowerOff, ShieldCheck, Store, UserPlus, Users } from "lucide-react";
+import { AlertCircle, Building2, CheckCircle2, Copy, KeyRound, Power, PowerOff, ShieldCheck, Store, Trash2, UserPlus, Users } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
@@ -15,6 +15,7 @@ import {
   messageErreur,
   reinitialiserMotDePasse,
   structuresPour,
+  supprimerCompte,
   useChargement,
   type Compte,
   type RoleGere,
@@ -83,7 +84,7 @@ function PageComptes() {
   const [acces, setAcces] = useState<{ email: string; nom: string; motDePasse: string } | null>(null);
 
   // Actions sur un compte (confirmation dans la page, pas de fenêtre du navigateur).
-  const [aConfirmer, setAConfirmer] = useState<{ compte: Compte; action: "desactiver" | "reinitialiser" } | null>(null);
+  const [aConfirmer, setAConfirmer] = useState<{ compte: Compte; action: "desactiver" | "reinitialiser" | "supprimer" } | null>(null);
   const [actionEnCours, setActionEnCours] = useState(false);
   const [retourAction, setRetourAction] = useState<{ ok: boolean; texte: string } | null>(null);
 
@@ -110,13 +111,17 @@ function PageComptes() {
     }
   }
 
-  async function executer(compte: Compte, action: "desactiver" | "reactiver" | "reinitialiser") {
+  async function executer(compte: Compte, action: "desactiver" | "reactiver" | "reinitialiser" | "supprimer") {
     setActionEnCours(true);
     setRetourAction(null);
     try {
       if (action === "reinitialiser") {
         const r = await reinitialiserMotDePasse(compte.id);
         setAcces({ email: compte.email ?? "", nom: compte.nom ?? "", motDePasse: r.mot_de_passe });
+      } else if (action === "supprimer") {
+        await supprimerCompte(compte.id);
+        setRetourAction({ ok: true, texte: `Le compte de ${compte.nom ?? compte.email} est supprimé.` });
+        comptes.recharger();
       } else {
         await changerEtat(compte.id, action === "reactiver");
         setRetourAction({ ok: true, texte: action === "reactiver" ? `${compte.nom} peut de nouveau se connecter.` : `${compte.nom} ne peut plus se connecter ni lire de dossier.` });
@@ -164,6 +169,10 @@ function PageComptes() {
                     <>
                       Désactiver le compte de <strong>{aConfirmer.compte.nom}</strong> ? La personne ne pourra plus se connecter ni lire de dossier. Vous pourrez le réactiver.
                     </>
+                  ) : aConfirmer.action === "supprimer" ? (
+                    <>
+                      Supprimer définitivement le compte de <strong>{aConfirmer.compte.nom ?? aConfirmer.compte.email}</strong> ? On ne pourra pas le récupérer. Les enfants inscrits, les vaccins et les pesées saisis par ce compte restent dans la base.
+                    </>
                   ) : (
                     <>
                       Générer un nouveau mot de passe provisoire pour <strong>{aConfirmer.compte.nom}</strong> ? L&apos;ancien ne fonctionnera plus.
@@ -175,13 +184,13 @@ function PageComptes() {
                     Annuler
                   </Bouton>
                   <Bouton
-                    variante={aConfirmer.action === "desactiver" ? "danger" : "primaire"}
+                    variante={aConfirmer.action === "reinitialiser" ? "primaire" : "danger"}
                     taille="sm"
                     chargement={actionEnCours}
                     disabled={actionEnCours}
                     onClick={() => executer(aConfirmer.compte, aConfirmer.action)}
                   >
-                    {aConfirmer.action === "desactiver" ? "Désactiver" : "Générer"}
+                    {aConfirmer.action === "desactiver" ? "Désactiver" : aConfirmer.action === "supprimer" ? "Supprimer" : "Générer"}
                   </Bouton>
                 </div>
               </div>
@@ -266,8 +275,13 @@ function PageComptes() {
                                   { libelle: "Nouveau mot de passe", icone: KeyRound, onClick: () => setAConfirmer({ compte: c, action: "reinitialiser" }) },
                                   "separateur",
                                   { libelle: "Désactiver le compte", icone: PowerOff, danger: true, onClick: () => setAConfirmer({ compte: c, action: "desactiver" }) },
+                                  { libelle: "Supprimer le compte", icone: Trash2, danger: true, onClick: () => setAConfirmer({ compte: c, action: "supprimer" }) },
                                 ]
-                              : [{ libelle: "Réactiver le compte", icone: Power, onClick: () => executer(c, "reactiver") }]
+                              : [
+                                  { libelle: "Réactiver le compte", icone: Power, onClick: () => executer(c, "reactiver") },
+                                  "separateur",
+                                  { libelle: "Supprimer le compte", icone: Trash2, danger: true, onClick: () => setAConfirmer({ compte: c, action: "supprimer" }) },
+                                ]
                           }
                         />
                       </td>

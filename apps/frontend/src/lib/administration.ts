@@ -64,6 +64,8 @@ export const creerCompte = (corps: { nom: string; email: string; role: RoleGere;
 
 export const changerEtat = (id: string, actif: boolean) => backend(`admin/comptes/${id}`, "PATCH", { actif });
 
+export const supprimerCompte = (id: string) => backend<{ id: string; supprime: boolean }>(`admin/comptes/${id}/supprimer`, "POST");
+
 export const reinitialiserMotDePasse = (id: string) => backend<{ mot_de_passe: string }>(`admin/comptes/${id}/mot-de-passe`, "POST");
 
 /** Message lisible à partir d'une erreur du backend (« Backend (409) : ... »). */
