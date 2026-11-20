@@ -37,6 +37,8 @@ type Etat = {
   messages: MessageEnvoye[];
   decalageJours: number;
   dernierInscrit: string | null;
+  /** Mode base : enfants avancés dans le temps pendant la démo (remis à zéro ensemble). */
+  simules: string[];
   /** Dernière erreur de lecture ou d'écriture dans la base (affichée en bandeau). */
   erreur: string | null;
 };
@@ -119,6 +121,7 @@ export const useStore = create<Etat & Actions>()(
         messages: [],
         decalageJours: 0,
         dernierInscrit: null,
+        simules: [],
         erreur: null,
 
         // Mode local seulement : en mode base, on passe par la page de connexion.
@@ -225,7 +228,7 @@ export const useStore = create<Etat & Actions>()(
             manque_7j: ajouterJours(rdv.date, 7),
           }[etape];
           const decalage = ecartJours(reel, cible);
-          set({ decalageJours: decalage });
+          set((s) => ({ decalageJours: decalage, simules: s.simules.includes(id) ? s.simules : [...s.simules, id] }));
           if (MODE_BASE) {
             // La base décide des messages, le backend les envoie vraiment sur WhatsApp.
             ecrire(() => backend(`admin/demo/${id}/${EVENEMENTS_BASE[etape]}`, "POST"));
@@ -289,8 +292,11 @@ export const useStore = create<Etat & Actions>()(
 
         reinitialiser: () => {
           if (MODE_BASE) {
-            set({ decalageJours: 0, dernierInscrit: null });
-            void get().rafraichir();
+            // Remise à zéro dans la base (sql/06_demo_envoi.sql) des enfants avancés dans le temps :
+            // messages et alertes effacés, rendez-vous manqués repassés à « prévu », vaccins faits gardés.
+            const ids = get().simules;
+            set({ decalageJours: 0, dernierInscrit: null, simules: [] });
+            ecrire(() => Promise.all(ids.map((id) => backend(`admin/demo/${id}/reset`, "POST"))));
             return;
           }
           const { enfants, messages } = genererDonnees();
