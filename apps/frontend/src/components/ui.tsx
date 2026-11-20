@@ -1,9 +1,12 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Loader2, MoreHorizontal, Search, X, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, MoreHorizontal, Search, X, type LucideIcon } from "lucide-react";
 import { animate, motion, useInView, useMotionValue, useTransform } from "motion/react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { forwardRef, useEffect, useRef, useState, type ReactNode } from "react";
+import { ACCUEIL } from "@/components/shell/nav";
+import { useStore } from "@/lib/store";
 import { cn, couleurDe, initiales } from "@/lib/utils";
 
 /* ------------------------------------------------------------------ boutons */
@@ -199,10 +202,30 @@ export function EntetePage({
   ariane?: { libelle: string; href?: string }[];
   children?: ReactNode;
 }) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const role = useStore((s) => s.session?.role);
+  // Pas de retour sur la page d'accueil de chaque rôle.
+  const accueil = Object.values(ACCUEIL).includes(pathname);
+  const retour = () => {
+    if (window.history.length > 1) router.back();
+    else router.push(role ? ACCUEIL[role] : "/");
+  };
   return (
     <header className="mb-4">
-      {ariane && (
-        <nav aria-label="Fil d'Ariane" className="mb-1 flex flex-wrap items-center gap-0.5 text-[0.82rem] text-muted">
+      {(ariane || !accueil) && (
+        <div className="mb-1 flex flex-wrap items-center gap-x-3 gap-y-1">
+          {!accueil && (
+            <button
+              type="button"
+              onClick={retour}
+              className="-ml-1.5 inline-flex items-center gap-1 rounded-md px-1.5 py-1 text-[0.85rem] font-medium text-fg-soft hover:bg-card-muted hover:text-fg"
+            >
+              <ArrowLeft size={16} /> Retour
+            </button>
+          )}
+          {ariane && (
+        <nav aria-label="Fil d'Ariane" className="flex flex-wrap items-center gap-0.5 text-[0.82rem] text-muted">
           {ariane.map((b, i) => (
             <span key={i} className="inline-flex items-center gap-1">
               {i > 0 && <ChevronRight size={14} className="opacity-60" />}
@@ -216,6 +239,8 @@ export function EntetePage({
             </span>
           ))}
         </nav>
+          )}
+        </div>
       )}
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="min-w-0">

@@ -27,3 +27,8 @@ export function initiales(prenom: string, nom?: string) {
 export function masquerTelephone(t: string) {
   return t.replace(/(\d{2}) (\d{2}) (\d{2})$/, "$1 •• ••");
 }
+
+/** Code imprimé sous le QR : DV-XXXXXX en local, 8 premiers caractères de l'UUID en base. */
+export function codeCarte(id: string) {
+  return id.startsWith("DV-") ? id : id.slice(0, 8).toUpperCase();
+}

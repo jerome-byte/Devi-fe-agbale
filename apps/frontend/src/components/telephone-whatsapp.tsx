@@ -8,7 +8,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { heure } from "@/lib/dates";
 import { useStore } from "@/lib/store";
 import type { Enfant, MessageEnvoye } from "@/lib/types";
-import { cn, masquerTelephone } from "@/lib/utils";
+import { cn, codeCarte, masquerTelephone } from "@/lib/utils";
 import { audioPour, messageCatalogue, texteMessage } from "@/lib/voix";
 import { LecteurAudio } from "./lecteur-audio";
 
@@ -131,7 +131,7 @@ function Bulle({
             <div className="text-[11px] leading-tight">
               <p className="font-display text-[13px] font-bold">{enfant.prenom}</p>
               <p className="opacity-75">Carte de suivi</p>
-              <p className="mt-1 font-mono text-[10px] opacity-90">{enfant.id}</p>
+              <p className="mt-1 font-mono text-[10px] opacity-90">{codeCarte(enfant.id)}</p>
             </div>
           </div>
           <p className="px-1 pt-1.5 text-[11px] text-[#667781]">Montrez cette carte au centre de santé.</p>

@@ -29,7 +29,7 @@ import { CONTACTS, calendrierEnfant, dateContact } from "@/lib/pev";
 import { GARDERIES, QUARTIERS } from "@/lib/seed";
 import { useAuJour, useEnfant, useStore } from "@/lib/store";
 import type { CentreId, Langue, Sexe } from "@/lib/types";
-import { cn } from "@/lib/utils";
+import { cn, codeCarte } from "@/lib/utils";
 import { CENTRES, SEXE_PRENOM, prenomCanonique } from "@/lib/voix";
 
 const PRENOMS = ["Kossi", "Ama", "Yao", "Afi", "Kodjo", "Akossiwa", "Komi", "Sena", "Abla", "Mawuli"];
@@ -521,7 +521,7 @@ function Succes({ id, onAutre }: { id: string; onAutre: () => void }) {
                 <p className="text-[0.9rem] text-white/70">
                   {enfant.sexe === "F" ? "Née" : "Né"} le {dateCourte(enfant.naissance)} · {enfant.centreNom ?? CENTRES[enfant.centre]}
                 </p>
-                <p className="mt-2 inline-block rounded bg-white/10 px-2 py-0.5 font-mono text-sm tracking-widest">{enfant.id}</p>
+                <p className="mt-2 inline-block rounded bg-white/10 px-2 py-0.5 font-mono text-sm tracking-widest">{codeCarte(enfant.id)}</p>
               </div>
             </div>
             <div className="flex items-center gap-2 px-4 py-2.5 text-[0.85rem] text-muted">

@@ -6,11 +6,30 @@ import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
 import { useEnfantsDuPerimetre } from "@/components/shell/compteurs";
 import { Bouton, Carte, CarteEntete, EntetePage, Pastille } from "@/components/ui";
+import { MODE_BASE } from "@/lib/base";
 import { libelleAge } from "@/lib/dates";
 import { useAuJour, useStore } from "@/lib/store";
-import { cn } from "@/lib/utils";
+import { cn, codeCarte } from "@/lib/utils";
 
 type Scanner = { stop: () => Promise<void>; clear: () => void; isScanning: boolean };
+
+const RE_DV = /DV-[A-Z0-9]{6}/i;
+const RE_UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+
+/** Le QR contient l'identifiant de l'enfant (DV-XXXXXX en local, UUID en base), parfois dans une URL. */
+function extraireCode(brut: string) {
+  const t = brut.trim();
+  return (t.match(RE_UUID)?.[0] ?? t.match(RE_DV)?.[0] ?? t).toLowerCase();
+}
+
+/** Code complet, ou début du code (au moins 6 caractères) s'il ne désigne qu'un enfant. */
+function trouverEnfant<T extends { id: string }>(enfants: T[], code: string) {
+  if (!code) return undefined;
+  const exact = enfants.find((x) => x.id.toLowerCase() === code);
+  if (exact || code.length < 6) return exact;
+  const debut = enfants.filter((x) => x.id.toLowerCase().startsWith(code));
+  return debut.length === 1 ? debut[0] : undefined;
+}
 
 export default function Scan() {
   const router = useRouter();
@@ -24,6 +43,7 @@ export default function Scan() {
   const [erreur, setErreur] = useState<string | null>(null);
   const [trouve, setTrouve] = useState<string | null>(null);
   const scanner = useRef<Scanner | null>(null);
+  const enCours = useRef(false);
 
   const arreter = async () => {
     const s = scanner.current;
@@ -38,12 +58,15 @@ export default function Scan() {
   };
 
   const ouvrir = (brut: string) => {
-    const id = brut.trim().toUpperCase().replace(/^.*\/(DV-[A-Z0-9]{6}).*$/, "$1");
-    const e = useStore.getState().enfants.find((x) => x.id === id);
+    if (enCours.current) return; // la caméra lit le même QR plusieurs fois par seconde
+    const code = extraireCode(brut);
+    const e = trouverEnfant(useStore.getState().enfants, code);
     if (!e) {
-      setErreur(`Aucun enfant avec le code ${id || "saisi"}.`);
+      const ou = role === "educatrice" ? "votre garderie" : role === "agent" ? "votre centre" : "votre zone";
+      setErreur(code ? `Aucun enfant de ${ou} avec le code ${code}.` : "Saisissez le code de la carte.");
       return;
     }
+    enCours.current = true;
     setErreur(null);
     setTrouve(e.id);
     if (role === "educatrice" && !e.presences.includes(auJour)) pointer(e.id);
@@ -144,7 +167,7 @@ export default function Scan() {
                 ouvrir(code);
               }}
             >
-              <input value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="DV-XXXXXX" className="input font-mono tracking-widest" aria-label="Code de la carte" />
+              <input value={code} onChange={(e) => setCode(e.target.value)} placeholder={MODE_BASE ? "Code sous le QR, ex. 0D49633F" : "DV-XXXXXX"} className="input font-mono tracking-wider" aria-label="Code de la carte" autoCapitalize="off" autoCorrect="off" spellCheck={false} />
               <Bouton type="submit" disabled={code.length < 4}>
                 Ouvrir
               </Bouton>
@@ -166,7 +189,7 @@ export default function Scan() {
                         {e.prenom} {e.nom}
                       </span>
                       <span className="block truncate text-[0.82rem] text-muted">
-                        {libelleAge(e.naissance, auJour)} · <span className="font-mono">{e.id}</span>
+                        {libelleAge(e.naissance, auJour)} · <span className="font-mono">{codeCarte(e.id)}</span>
                       </span>
                     </span>
                     {e.id === dernier && (

@@ -8,6 +8,7 @@ import { Bouton, Squelette } from "@/components/ui";
 import { dateCourte } from "@/lib/dates";
 import { calendrierEnfant } from "@/lib/pev";
 import { useEnfant, useStore } from "@/lib/store";
+import { codeCarte } from "@/lib/utils";
 import { CENTRES } from "@/lib/voix";
 
 export function CarteImprimable({ id }: { id: string }) {
@@ -45,7 +46,7 @@ export function CarteImprimable({ id }: { id: string }) {
               <div className="min-w-0 pb-1">
                 <p className="font-vitrine text-2xl font-bold leading-tight">{e.prenom}</p>
                 <p className="text-sm text-white/80">{e.nom}</p>
-                <p className="mt-2 font-mono text-sm tracking-widest text-accent-300">{e.id}</p>
+                <p className="mt-2 font-mono text-sm tracking-widest text-accent-300">{codeCarte(e.id)}</p>
               </div>
             </div>
           </div>
