@@ -4,7 +4,7 @@ import { AlertTriangle, BarChart3, Baby, ChevronRight, FileX2, Headphones, Info,
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Bar, BarChart, CartesianGrid, Cell, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { Carte, CarteEntete, EntetePage, Indicateur, Onglets, Pastille, Selecteur, Tableau } from "@/components/ui";
+import { Aide, Carte, CarteEntete, EntetePage, Indicateur, Onglets, Pastille, Selecteur, Tableau } from "@/components/ui";
 import { MODE_BASE } from "@/lib/base";
 import { dateLongue } from "@/lib/dates";
 import { ZONES_LOCALES, chargerVuesPilotage, pilotageBase, pilotageLocal, zonesBase, type DonneesPilotage, type VuesPilotage } from "@/lib/pilotage";
@@ -14,8 +14,17 @@ import type { CentreId } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 const CIBLE = 90;
-const AIDE_RISQUE =
-  "Score de risque d'abandon calculé pour chaque enfant : 3 points par rendez-vous de vaccin manqué, 2 sans acte de naissance, 2 si la courbe de poids stagne ou chute, 1 par message vocal non écouté (3 au plus), 1 si la famille habite à plus de 4 km du centre. Risque élevé : 10 points ou plus. Seuls les totaux sont affichés ici.";
+const AIDE_RISQUE = (
+  <>
+    <span className="block font-semibold">Score de risque d&apos;abandon de chaque enfant</span>
+    <span className="mt-1.5 block">3 points par rendez-vous de vaccin manqué</span>
+    <span className="block">2 points sans acte de naissance</span>
+    <span className="block">2 points si la courbe de poids stagne ou chute</span>
+    <span className="block">1 point par message vocal non écouté (3 au plus)</span>
+    <span className="block">1 point si la famille habite à plus de 4 km du centre</span>
+    <span className="mt-1.5 block text-muted">Risque élevé : 10 points ou plus. Seuls les totaux par zone sont affichés, jamais les noms.</span>
+  </>
+);
 const RAFRAICHIR_MS = 30_000;
 
 /**
@@ -132,8 +141,8 @@ export default function Pilotage() {
         <Indicateur libelle="Sans acte de naissance" valeur={`${Math.round(d.sansActe.taux)} %`} sous={`${d.sansActe.n} enfants à accompagner`} icone={FileX2} ton={d.sansActe.taux <= 10 ? "ok" : "warn"} />
         <Indicateur
           libelle={
-            <span className="inline-flex items-center gap-1" title={AIDE_RISQUE}>
-              Enfants à risque élevé <Info size={13} className="shrink-0" aria-label={AIDE_RISQUE} />
+            <span className="inline-flex items-center gap-1">
+              Enfants à risque élevé <Aide>{AIDE_RISQUE}</Aide>
             </span>
           }
           valeur={d.risque.n}
@@ -141,7 +150,9 @@ export default function Pilotage() {
           icone={ShieldAlert}
           ton={d.risque.taux <= 10 ? "ok" : d.risque.taux <= 25 ? "warn" : "danger"}
         />
-        <Indicateur libelle="Vocaux écoutés" valeur={`${Math.round(d.ecoute.taux)} %`} sous={d.ecoute.detail} icone={Headphones} ton={d.ecoute.taux >= 70 ? "ok" : "warn"} />
+        <div className="col-span-2 md:col-span-1 [&>*]:h-full">
+          <Indicateur libelle="Vocaux écoutés" valeur={`${Math.round(d.ecoute.taux)} %`} sous={d.ecoute.detail} icone={Headphones} ton={d.ecoute.taux >= 70 ? "ok" : "warn"} />
+        </div>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-3">
@@ -187,8 +198,10 @@ export default function Pilotage() {
                     <th className="text-right">Penta 3</th>
                     <th className="text-right">Abandon</th>
                     <th className="text-right">Sans acte</th>
-                    <th className="text-right" title={AIDE_RISQUE}>
-                      Risque élevé
+                    <th className="text-right">
+                      <span className="inline-flex items-center justify-end gap-1">
+                        Risque élevé <Aide>{AIDE_RISQUE}</Aide>
+                      </span>
                     </th>
                     <th className="text-right">{d.source === "base" ? "RDV manqués" : "Retards"}</th>
                     <th>Niveau</th>

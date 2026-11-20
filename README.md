@@ -28,7 +28,7 @@ Parcours de démonstration :
 
 Outils : Next.js (PWA) · Supabase · WhatsApp Cloud API · Meta MMS (voix éwé et kabiyè) · tables OMS.
 
-Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse). L'**appel vocal automatique** (Twilio Voice ou équivalent), pour les mères sans WhatsApp, est prévu pour la **finale du 10 décembre**.
+Pour le prototype, **tout passe par WhatsApp** (vocaux + boutons de réponse).
 
 En ligne :
 - application (agent, garderie, pilotage) : https://devi-fe-agbale.vercel.app
@@ -38,7 +38,7 @@ Ce qui a changé depuis la fusion des branches : **`README_Cherif_Blaise.md`**.
 
 ## Tâches par membre — état au 20 novembre
 
-✅ fait · ⏳ reste à faire pour le prototype · 🎯 pour la finale du 10 décembre
+✅ fait · ⏳ reste à faire pour le prototype
 
 Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à 00 h).
 
@@ -61,9 +61,6 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 - ✅ Comptes de démonstration
 - ⏳ Brancher le vrai WhatsApp (Meta) : numéro, jeton, webhook sur Render, `DESTINATAIRES_AUTORISES` = numéros de l'équipe, `WHATSAPP_MODE=live`, puis un essai complet sur un téléphone de l'équipe (21 nov., guide `apps/docs/02-whatsapp-meta.md`)
 - ⏳ Essai sur un vrai téléphone Android : installation de l'application, scan d'une carte imprimée avec la caméra (21 nov.)
-- 🎯 Appel vocal automatique pour les mères sans WhatsApp
-- 🎯 Liste « À appeler en priorité » de l'agent classée par score de risque (score par enfant de Cherif, vue `v_child_risk`)
-- 🎯 Présences de la garderie enregistrées dans la base (aujourd'hui elles restent dans le navigateur de l'éducatrice et s'effacent à la déconnexion)
 
 ### Cherif Tenga — moteur de règles, données, tableau de bord
 - ✅ Modèle de données, 300 enfants fictifs, référentiels (calendrier PEV, OMS poids, taille et IMC, vitamine A)
@@ -75,7 +72,6 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 - ✅ Rapport de vérification pour Gerson : `docs/verification_gerson_20nov.md`
 - ⏳ Corriger les calculs si Gerson signale une erreur (21 nov.)
 - ⏳ Donner à Jérôme 3 ou 4 chiffres du tableau de bord et du score de risque pour le PDF (21 nov.)
-- 🎯 Table des présences de la garderie, avec Blaise
 
 ### Gerson Akagbe — référent médical
 - ✅ Calendrier PEV du Togo, textes des messages en français, tables OMS, règle de stagnation (`donnees_sante/`)

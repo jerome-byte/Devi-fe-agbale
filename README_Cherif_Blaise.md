@@ -13,7 +13,7 @@ git pull origin master
 - Après le `pull` : `npm install` dans `apps/frontend` et dans `scripts/`.
 - **Tout ce qui touche la base est déjà appliqué sur Supabase**. Il n'y a rien à rejouer.
 - Backend en local : ajoutez dans `apps/backend/.env` les deux nouvelles variables `SUPABASE_URL` et `SUPABASE_SERVICE_ROLE_KEY` (voir `.env.example`). Elles servent seulement aux pages Structures et Comptes. Sur Render, elles sont déjà réglées.
-- Rappels : aucun secret dans git (`.env`, clés, mots de passe), uniquement des données fictives. Pour le prototype, tout passe par WhatsApp ; l'appel vocal est pour la finale.
+- Rappels : aucun secret dans git (`.env`, clés, mots de passe), uniquement des données fictives. Pour le prototype, tout passe par WhatsApp.
 
 ## 2. Ce qui a changé dans le dépôt
 
@@ -55,6 +55,8 @@ git pull origin master
 
   Testé en ligne avec les deux rôles.
 - **Flèche « ← Retour »** en haut de toutes les pages (dans `EntetePage`, `components/ui.tsx`). Elle est masquée sur les accueils Agent, Garderie et Pilotage.
+- **Bulle d'aide `Aide`** (`components/ui.tsx`), nouvelle : une icône ⓘ qui ouvre une petite explication au survol de la souris ou au toucher sur téléphone. Elle n'est pas coupée par un tableau qui défile. Pour l'instant, elle sert au score de risque du Pilotage ; vous pouvez la réutiliser ailleurs : `<Aide>texte</Aide>`.
+- **Pilotage** : nouvelle carte « Enfants à risque élevé » et nouvelle colonne « Risque élevé » dans le tableau des zones (voir la partie Cherif). Sur téléphone, la 5e carte prend toute la largeur.
 
 ### Backend (`apps/backend`)
 - `app/comptes.py` (nouveau) : routes `/admin/zones`, `/admin/structures` et `/admin/comptes`. La clé d'administration de Supabase reste sur le serveur. Avec les nouvelles clés `sb_secret_…`, elle passe dans l'en-tête `apikey` seulement. Tests : `tests/test_comptes.py`.
@@ -76,7 +78,7 @@ git pull origin master
   - Les présences de la garderie ne sont **pas** dans la base : elles restent dans le navigateur de l'éducatrice (`fusionnerLocal` dans `lib/base.ts`) et s'effacent quand on se déconnecte. Pendant la démo, l'éducatrice reste donc connectée sur le même appareil.
 - **Votre score de risque est maintenant dans le Pilotage**, sans aucun nom :
   - nouvelle vue **`v_risk_by_zone`** dans `sql/02_views.sql`, déjà créée sur Supabase. Elle compte par zone les enfants à risque élevé (score de 10 ou plus) et moyen (5 à 9), avec la zone 0 pour le total. `v_child_risk` reste fermée au navigateur ;
-  - une carte « Enfants à risque élevé » en haut du tableau de bord (81 enfants sur 304, soit 27 %) et une colonne « Risque élevé » dans le tableau des zones (Baguida en tête, avec 30 enfants sur 39). Une bulle d'aide explique le calcul ;
+  - une carte « Enfants à risque élevé » en haut du tableau de bord (81 enfants sur 304, soit 27 %) et une colonne « Risque élevé » dans le tableau des zones (Baguida en tête, avec 30 enfants sur 39). L'icône ⓘ ouvre une bulle d'aide qui explique le calcul ;
   - sans Supabase, l'application calcule le même score dans le navigateur (`scoreRisque()` dans `lib/indicateurs.ts`), sans la distance.
 
   Si vous changez les poids ou le seuil de 10, changez aussi `scoreRisque()` et `SEUIL_RISQUE`.
@@ -94,7 +96,6 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 
    Faites ensuite un essai complet sur un téléphone de l'équipe : vocal reçu, réponse 1 et réponse 2. Si Meta n'est pas prêt à temps, la démo se fait avec le téléphone simulé, qui marche déjà.
 2. **Essai sur un vrai téléphone Android**, le 21 novembre : installer l'application, scanner une carte imprimée avec la caméra, en garderie et en centre de santé.
-3. Pour la finale : l'appel vocal automatique.
 
 ### Cherif
 1. Corriger les calculs si Gerson signale une erreur dans `docs/verification_gerson_20nov.md` (21 nov.).
@@ -106,11 +107,6 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 - Faire le PDF, les captures, la vidéo facultative et les notes du dépôt, avec les liens et les comptes de démonstration.
 - Supprimer les branches fusionnées, désactiver mon compte de test.
 - Faire le dépôt sur U-Events.
-
-### Pour la finale du 10 décembre
-- **Blaise** : appel vocal automatique pour les mères sans WhatsApp.
-- **Blaise** : classer la liste « À appeler en priorité » de l'agent par score de risque. Le score par enfant de Cherif est dans `v_child_risk` ; l'agent a le droit de voir les noms des enfants de son centre.
-- **Cherif et Blaise** : une table des présences de la garderie, et la route du backend pour l'écrire, pour que le pointage de l'éducatrice soit gardé et visible partout.
 
 ### Toute l'équipe
 - **22 novembre** : répétition complète du parcours de démonstration en ligne (inscription, vocal de bienvenue, avance rapide, rendez-vous manqué et réponse, scan au centre, tableau de bord), puis « Réinitialiser la démo ».

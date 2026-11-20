@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft, ChevronLeft, ChevronRight, Loader2, MoreHorizontal, Search, X, type LucideIcon } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Info, Loader2, MoreHorizontal, Search, X, type LucideIcon } from "lucide-react";
 import { animate, motion, useInView, useMotionValue, useTransform } from "motion/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -368,6 +368,76 @@ export function Onglets<T extends string>({
 }
 
 /* ----------------------------------------------------------------- tableau */
+
+/**
+ * Petite bulle d'aide : s'ouvre au survol de l'icône (souris) ou au toucher (téléphone),
+ * se ferme en touchant ailleurs, avec Échap ou en faisant défiler la page.
+ * Position fixe, pour ne pas être coupée par un tableau qui défile.
+ */
+export function Aide({ children, libelle = "Comment ce chiffre est calculé" }: { children: ReactNode; libelle?: string }) {
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const [epingle, setEpingle] = useState(false);
+  const ref = useRef<HTMLSpanElement>(null);
+  const LARGEUR = 272;
+
+  const ouvrir = () => {
+    const r = ref.current?.getBoundingClientRect();
+    if (!r) return;
+    const left = Math.min(Math.max(r.left + r.width / 2 - LARGEUR / 2, 8), window.innerWidth - LARGEUR - 8);
+    setPos({ top: r.bottom + 6, left });
+  };
+  const fermer = () => {
+    setPos(null);
+    setEpingle(false);
+  };
+
+  useEffect(() => {
+    if (!pos) return;
+    const dehors = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) fermer();
+    };
+    const echap = (e: KeyboardEvent) => e.key === "Escape" && fermer();
+    document.addEventListener("pointerdown", dehors);
+    document.addEventListener("keydown", echap);
+    window.addEventListener("scroll", fermer, true);
+    return () => {
+      document.removeEventListener("pointerdown", dehors);
+      document.removeEventListener("keydown", echap);
+      window.removeEventListener("scroll", fermer, true);
+    };
+  }, [pos]);
+
+  return (
+    <span ref={ref} className="inline-flex align-middle" onMouseEnter={ouvrir} onMouseLeave={() => !epingle && setPos(null)}>
+      <button
+        type="button"
+        aria-label={libelle}
+        aria-expanded={Boolean(pos)}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          if (epingle) fermer();
+          else {
+            ouvrir();
+            setEpingle(true);
+          }
+        }}
+        className="grid size-5 place-items-center rounded-full text-muted transition-colors hover:bg-card-muted hover:text-fg"
+      >
+        <Info size={14} />
+      </button>
+      {pos && (
+        <span
+          role="tooltip"
+          style={{ top: pos.top, left: pos.left, width: LARGEUR }}
+          className="fixed z-50 block animate-fade-in rounded-lg border border-line bg-card p-3 text-left text-[0.8rem] font-normal normal-case leading-snug tracking-normal whitespace-normal text-fg shadow-lg"
+        >
+          {children}
+        </span>
+      )}
+    </span>
+  );
+}
 
 export function Tableau({ children, className }: { children: ReactNode; className?: string }) {
   return (
