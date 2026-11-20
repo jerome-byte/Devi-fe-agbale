@@ -654,12 +654,31 @@ export function MenuActions({
   libelle?: string;
 }) {
   const [ouvert, setOuvert] = useState(false);
+  // Position fixe, calculée depuis le bouton : le menu n'est jamais coupé par un tableau
+  // qui défile, et s'ouvre vers le haut s'il manque de place en bas de l'écran.
+  const [pos, setPos] = useState<{ top?: number; bottom?: number; right: number }>({ right: 0 });
   const ref = useFermetureExterieure<HTMLDivElement>(ouvert, () => setOuvert(false));
+  useEffect(() => {
+    if (!ouvert) return;
+    const fermer = () => setOuvert(false);
+    window.addEventListener("scroll", fermer, true);
+    window.addEventListener("resize", fermer);
+    return () => {
+      window.removeEventListener("scroll", fermer, true);
+      window.removeEventListener("resize", fermer);
+    };
+  }, [ouvert]);
   return (
     <div ref={ref} className="relative">
       <button
         onClick={(e) => {
           e.stopPropagation();
+          if (!ouvert) {
+            const r = e.currentTarget.getBoundingClientRect();
+            const hauteur = elements.length * 40 + 16;
+            const right = Math.max(window.innerWidth - r.right, 8);
+            setPos(window.innerHeight - r.bottom < hauteur && r.top > hauteur ? { bottom: window.innerHeight - r.top + 4, right } : { top: r.bottom + 4, right });
+          }
           setOuvert((o) => !o);
         }}
         aria-label={libelle}
@@ -670,7 +689,7 @@ export function MenuActions({
         <MoreHorizontal size={18} />
       </button>
       {ouvert && (
-        <div role="menu" className="absolute right-0 z-50 mt-1 min-w-52 origin-top-right animate-scale-in overflow-hidden rounded-md border border-line bg-card p-1 shadow-lg">
+        <div role="menu" style={pos} className="fixed z-50 min-w-52 origin-top-right animate-scale-in overflow-hidden rounded-md border border-line bg-card p-1 shadow-lg">
           {elements.map((it, i) =>
             it === "separateur" ? (
               <div key={i} className="my-1 h-px bg-line" />
