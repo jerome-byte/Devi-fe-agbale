@@ -56,7 +56,7 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 - ✅ Scan QR corrigé et testé en ligne (garderie et centre de santé), flèche « Retour » sur les pages
 - ✅ Score de risque dans le Pilotage : carte « Enfants à risque élevé » et colonne par zone
 - ⏳ Audio du déparasitage, le seul message sans enregistrement (21 nov.)
-- ⏳ Présentation PDF, 1 à 5 captures d'écran, courte vidéo facultative, notes du dépôt avec les liens et les comptes de démonstration (21-22 nov.)
+- ⏳ Présentation PDF (21-22 nov.), à partir des captures, de la vidéo et des notes préparées par Cherif
 - ⏳ Dépôt officiel sur U-Events (22 nov.)
 
 ### Blaise Moune Tchoubou — applications
@@ -78,6 +78,7 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 - ✅ Rapport de vérification pour Gerson : `docs/verification_gerson_20nov.md`
 - ⏳ Corriger les calculs si Gerson signale une erreur (21 nov.)
 - ⏳ Donner à Jérôme 3 ou 4 chiffres du tableau de bord et du score de risque pour le PDF (21 nov.)
+- ⏳ Supports du dépôt : 1 à 5 captures d'écran, courte vidéo facultative, notes du dépôt avec les liens et les comptes de démonstration (21 nov. au soir, issue #7)
 
 ### Gerson Akagbe — référent médical
 - ✅ Calendrier PEV du Togo, textes des messages en français, tables OMS, règle de stagnation (`donnees_sante/`)

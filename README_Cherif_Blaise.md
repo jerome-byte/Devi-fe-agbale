@@ -104,10 +104,16 @@ Dépôt sur U-Events **le 22 novembre au plus tard** (clôture le 23 novembre à
 1. Corriger les calculs si Gerson signale une erreur dans `docs/verification_gerson_20nov.md` (21 nov.).
 2. M'envoyer 3 ou 4 chiffres du tableau de bord et du score de risque pour le PDF : couverture Penta 3, taux d'abandon, enfants à risque élevé, enfants sans acte de naissance (21 nov.).
 3. Après la répétition : vérifier que les chiffres du Pilotage reviennent à la normale avec « Réinitialiser la démo ».
+4. **Supports du dépôt U-Events** (21 nov. au soir, détails dans l'issue #7) :
+   - 1 à 5 captures d'écran (PNG, JPEG ou WEBP, 4 Mo au plus chacune), une par étape du parcours ;
+   - une courte vidéo facultative (30 à 45 secondes, MP4 ou WEBM, 4 Mo au plus) ;
+   - les notes du dépôt (4 000 caractères au plus) : lien de démonstration, identifiants des trois comptes de démonstration, lien de la vidéo longue s'il y en a une.
+
+   Données fictives uniquement. Dépose les fichiers dans `docs/depot/` par une pull request, ou envoie-les-moi.
 
 ### Jérôme (pour info)
 - Enregistrer l'audio du déparasitage.
-- Faire le PDF, les captures, la vidéo facultative et les notes du dépôt, avec les liens et les comptes de démonstration.
+- Faire la présentation PDF, avec tes captures, ta vidéo et tes notes.
 - Faire le dépôt sur U-Events.
 
 ### Toute l'équipe
