@@ -2,6 +2,7 @@
 
 import { MotionConfig } from "motion/react";
 import { useEffect } from "react";
+import { InstallerApp } from "@/components/installer-app";
 import { appliquerTheme, usePrefs } from "@/lib/prefs";
 import { MODE_BASE } from "@/lib/base";
 import { useStore } from "@/lib/store";
@@ -30,5 +31,10 @@ export function Providers({ children }: { children: React.ReactNode }) {
     return () => mq.removeEventListener("change", maj);
   }, [theme]);
 
-  return <MotionConfig reducedMotion="user">{children}</MotionConfig>;
+  return (
+    <MotionConfig reducedMotion="user">
+      {children}
+      <InstallerApp />
+    </MotionConfig>
+  );
 }
