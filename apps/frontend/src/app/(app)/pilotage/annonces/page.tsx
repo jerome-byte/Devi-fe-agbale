@@ -124,9 +124,14 @@ export default function Annonces() {
               icone={Send}
               disabled={!familles}
               onClick={() => {
-                envoyer(choix, cible, familles);
-                setEnvoye(`Annonce envoyée à ${familles} familles (${cible}).`);
-                setTimeout(() => setEnvoye(null), 3500);
+                // On n'affiche le succès qu'après l'accord du backend ; en cas d'échec,
+                // le bandeau d'erreur du store prend le relais.
+                envoyer(choix, cible, familles)
+                  .then((n) => {
+                    setEnvoye(`Annonce envoyée à ${n} familles (${cible}).`);
+                    setTimeout(() => setEnvoye(null), 3500);
+                  })
+                  .catch(() => undefined);
               }}
             >
               Envoyer l&apos;annonce

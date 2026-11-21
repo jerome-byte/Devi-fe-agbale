@@ -58,7 +58,7 @@ type Actions = {
   traiterEmpechement: (id: string) => void;
   pointer: (id: string) => void;
   depister: (id: string, age: number, resultat: "ok" | "a_orienter") => void;
-  envoyerAnnonce: (messageId: string, cible: string, nbFamilles: number) => void;
+  envoyerAnnonce: (messageId: string, cible: string, nbFamilles: number) => Promise<number>;
   revenirAujourdhui: () => void;
   reinitialiser: () => void;
   rafraichir: () => Promise<void>;
@@ -297,19 +297,28 @@ export const useStore = create<Etat & Actions>()(
           envoyer("orientation", id, { local: true });
         },
 
-        envoyerAnnonce: (messageId, cible, nbFamilles) => {
-          if (MODE_BASE) {
-            // Une annonce devient un message par famille ciblée : elle arrive sur le
-            // téléphone de chaque mère et se compte dans le journal de l'agent.
-            ecrire(() =>
-              backend("app/annonces", "POST", {
-                modele: messageId,
-                zone: cible === "Tout le district" ? null : cible,
-              }),
-            );
+        envoyerAnnonce: async (messageId, cible, nbFamilles) => {
+          if (!MODE_BASE) {
+            // Sans base, l'annonce reste une trace locale : rien ne peut partir.
+            envoyer(messageId, null, { cible, nbFamilles, local: true });
+            return nbFamilles;
           }
-          // Trace de campagne, pour l'écran « Annonces envoyées ».
-          envoyer(messageId, null, { cible, nbFamilles, local: !MODE_BASE });
+          // Une annonce devient un message par famille ciblée : elle arrive sur le
+          // téléphone de chaque mère et se compte dans le journal de l'agent.
+          try {
+            const r = await backend<{ familles: number }>("app/annonces", "POST", {
+              modele: messageId,
+              zone: cible === "Tout le district" ? null : cible,
+            });
+            // Trace de campagne seulement une fois l'envoi accepté, avec le compte réel.
+            envoyer(messageId, null, { cible, nbFamilles: r.familles ?? nbFamilles });
+            await get().rafraichir();
+            return r.familles ?? nbFamilles;
+          } catch (e) {
+            // Rien n'est affiché comme envoyé : le bandeau du store explique l'échec.
+            set({ erreur: (e as Error).message });
+            throw e;
+          }
         },
 
         revenirAujourdhui: () => set({ decalageJours: 0 }),
