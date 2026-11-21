@@ -11,6 +11,8 @@ type Role = "agent" | "educatrice" | "pilotage" | "admin";
 
 // Routes du backend accessibles depuis l'application, et rôles autorisés.
 const AUTORISEES: { motif: RegExp; roles: Role[] }[] = [
+  // Les annonces vocales partent du pilotage ; elles créent un message par famille.
+  { motif: /^app\/annonces$/, roles: ["pilotage", "admin"] },
   { motif: /^app\//, roles: ["agent", "educatrice", "admin"] },
   { motif: /^admin\/demo\//, roles: ["agent", "educatrice", "pilotage", "admin"] },
   { motif: /^simulation\/reponse$/, roles: ["agent", "educatrice", "pilotage", "admin"] },

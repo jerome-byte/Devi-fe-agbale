@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { LecteurAudio } from "@/components/lecteur-audio";
 import { Carte, EntetePage, Indicateur, Onglets, Pagination, Pastille, Recherche, Selecteur, Tableau, Vide, usePagination, type Ton } from "@/components/ui";
 import { dateCourte, heure } from "@/lib/dates";
+import { MODE_BASE } from "@/lib/base";
 import { useStore } from "@/lib/store";
 import { pourcent } from "@/lib/utils";
 import { audioPour, messageCatalogue, texteMessage } from "@/lib/voix";
@@ -43,7 +44,14 @@ export default function Messages() {
 
   const parId = useMemo(() => new Map(enfants.map((e) => [e.id, e])), [enfants]);
   const perimetre = useMemo(
-    () => messages.filter((m) => anonyme || m.enfantId === null || parId.get(m.enfantId)?.centre === "be_kpota"),
+    () =>
+      messages.filter(
+        (m) =>
+          (anonyme || m.enfantId === null || parId.get(m.enfantId)?.centre === "be_kpota") &&
+          // En mode base, une annonce devient un message par famille : la ligne de
+          // campagne ne sert qu'à l'écran « Annonces envoyées ».
+          !(MODE_BASE && m.enfantId === null),
+      ),
     [messages, anonyme, parId],
   );
 
@@ -82,7 +90,7 @@ export default function Messages() {
         <Indicateur libelle="Vocaux envoyés" valeur={individuels.length} icone={MessageCircle} />
         <Indicateur libelle="Écoutés" valeur={`${pourcent(ecoutes, individuels.length)} %`} sous={`${ecoutes} messages`} icone={Headphones} ton="ok" />
         <Indicateur libelle="Réponses 1 ou 2" valeur={reponses} icone={Reply} onClick={() => setFiltre("reponses")} />
-        <Indicateur libelle="Annonces" valeur={perimetre.filter((m) => !m.enfantId).length} icone={Megaphone} onClick={() => setFiltre("Annonce")} />
+        <Indicateur libelle="Annonces" valeur={perimetre.filter((m) => messageCatalogue(m.messageId)?.categorie === "Annonce").length} icone={Megaphone} onClick={() => setFiltre("Annonce")} />
       </div>
 
       <Carte>

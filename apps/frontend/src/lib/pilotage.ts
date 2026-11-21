@@ -26,6 +26,8 @@ export type DonneesPilotage = {
   antigenes: { nom: string; taux: number; faits: number; eligibles: number }[];
   courbe: { mois: string; taux: number; n: number }[];
   signaux: { enRetard: number; croissance: number; reponses: string; reponsesDetail: string };
+  /** Nombre total d'alertes ouvertes (croissance, vaccin manqué, acte de naissance, rappel). */
+  alertes: number;
   textes: { zones: string; vaccins: string; courbe: string; enRetard: string };
 };
 
@@ -79,6 +81,7 @@ export function pilotageLocal(enfants: Enfant[], messages: MessageEnvoye[], zone
       reponses: `${Math.round(ind.tauxReponse)} %`,
       reponsesDetail: `des relances ont reçu une réponse 1 ou 2 (${ind.relances})`,
     },
+    alertes: ind.enRetard + ind.croissance,
     textes: {
       zones: "Couverture Penta 3 par quartier",
       vaccins: "Enfants en âge d'avoir reçu la dose depuis au moins 4 semaines",
@@ -170,6 +173,9 @@ export function pilotageBase(v: VuesPilotage, zoneId: number): DonneesPilotage {
   const enRetard = v.alertes
     .filter((a) => a.type === "missed_7d" && (zoneId === 0 || Number(a.zone_id) === zoneId))
     .reduce((s, a) => s + nombre(a.open_count), 0);
+  const alertes = v.alertes
+    .filter((a) => zoneId === 0 || Number(a.zone_id) === zoneId)
+    .reduce((s, a) => s + nombre(a.open_count), 0);
 
   const zones: LigneZone[] = v.zones
     .map((z) => {
@@ -211,6 +217,7 @@ export function pilotageBase(v: VuesPilotage, zoneId: number): DonneesPilotage {
       return { nom: a.l, taux: Math.round(c.taux), faits: c.faits, eligibles: c.eligibles };
     }),
     courbe,
+    alertes,
     signaux: {
       enRetard,
       croissance: nombre(crois?.a_surveiller) + nombre(crois?.a_orienter),

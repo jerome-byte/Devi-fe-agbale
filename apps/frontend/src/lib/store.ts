@@ -287,12 +287,30 @@ export const useStore = create<Etat & Actions>()(
 
         depister: (id, age, resultat) => {
           majEnfant(id, (e) => ({ ...e, depistages: { ...e.depistages, [String(age)]: resultat } }));
-          if (resultat === "a_orienter") envoyer("orientation", id, { local: true });
+          if (resultat !== "a_orienter") return;
+          if (MODE_BASE) {
+            // Le vocal d'orientation part par WhatsApp : il se voit dans le journal de
+            // l'agent et sur le téléphone de la mère.
+            ecrire(() => backend(`app/enfants/${id}/orientation`, "POST", {}));
+            return;
+          }
+          envoyer("orientation", id, { local: true });
         },
 
-        // Annonce préparée dans l'application : aucune route du backend ne l'envoie encore.
-        // Elle reste `local` pour que le journal ne la présente pas comme envoyée.
-        envoyerAnnonce: (messageId, cible, nbFamilles) => envoyer(messageId, null, { cible, nbFamilles, local: true }),
+        envoyerAnnonce: (messageId, cible, nbFamilles) => {
+          if (MODE_BASE) {
+            // Une annonce devient un message par famille ciblée : elle arrive sur le
+            // téléphone de chaque mère et se compte dans le journal de l'agent.
+            ecrire(() =>
+              backend("app/annonces", "POST", {
+                modele: messageId,
+                zone: cible === "Tout le district" ? null : cible,
+              }),
+            );
+          }
+          // Trace de campagne, pour l'écran « Annonces envoyées ».
+          envoyer(messageId, null, { cible, nbFamilles, local: !MODE_BASE });
+        },
 
         revenirAujourdhui: () => set({ decalageJours: 0 }),
 
@@ -311,6 +329,9 @@ export const useStore = create<Etat & Actions>()(
 
         rafraichir: async () => {
           if (!MODE_BASE) return;
+          // Sans session, la clé publique ne peut rien lire (RLS) : inutile d'appeler
+          // la base, et cela évitait des 401 dans la console après une déconnexion.
+          if (!get().session) return;
           try {
             const base = await chargerDepuisBase();
             set((s) => ({

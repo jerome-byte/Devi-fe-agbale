@@ -58,6 +58,13 @@ class Acte(BaseModel):
     valeur: bool
 
 
+class Annonce(BaseModel):
+    """Annonce vocale ciblée depuis le pilotage (campagne vitamine A, journée de santé...)."""
+
+    modele: str = Field(min_length=1)  # id du catalogue : annonce_vaccination, annonce_vitamine_a...
+    zone: str | None = None  # nom de zone ; None = tout le district
+
+
 SQL_DOSE_FAITE = """
 update appointments a set status = 'done', done_at = %(date)s
 from vaccine_schedule s
@@ -170,6 +177,66 @@ async def acte(request: Request, enfant_id: UUID, corps: Acte):
             (corps.valeur, corps.valeur, enfant_id),
         )
     return {"ok": True}
+
+
+@router.post("/enfants/{enfant_id}/orientation", status_code=201)
+async def orientation(request: Request, enfant_id: UUID):
+    """Vocal d'orientation après un dépistage « à orienter ».
+
+    Il part par WhatsApp comme les autres messages : il apparaît dans le journal de
+    l'agent et sur le téléphone simulé de la mère. Rien n'était envoyé auparavant :
+    la ligne restait dans le navigateur de l'éducatrice.
+    """
+    s = request.app.state
+    async with s.pool.connection() as conn:
+        ligne = await (
+            await conn.execute(
+                """insert into messages (child_id, guardian_id, template_code, channel, language,
+                                         scheduled_for, sent_at, status, is_simulated)
+                   select c.id, g.id, 'orientation', 'whatsapp', coalesce(g.language, 'ewe'),
+                          now(),
+                          case when %(simule)s::boolean then now() end,
+                          case when %(simule)s::boolean then 'sent' else 'scheduled' end,
+                          %(simule)s::boolean
+                   from children c
+                   join guardians g on g.child_id = c.id and g.is_primary
+                   where c.id = %(enfant)s
+                   returning id""",
+                {"enfant": enfant_id, "simule": s.settings.simulation},
+            )
+        ).fetchone()
+    if ligne is None:
+        raise HTTPException(404, "enfant ou responsable introuvable")
+    return {"id": str(ligne["id"])}
+
+
+@router.post("/annonces", status_code=201)
+async def annoncer(request: Request, corps: Annonce):
+    """Annonce vocale ciblée : un message par famille, pas une ligne de campagne.
+
+    Une annonce doit arriver sur le téléphone de chaque mère et se compter dans le
+    journal : il faut donc une ligne `messages` par enfant ciblé.
+    """
+    s = request.app.state
+    async with s.pool.connection() as conn:
+        lignes = await (
+            await conn.execute(
+                """insert into messages (child_id, guardian_id, template_code, channel, language,
+                                         scheduled_for, sent_at, status, is_simulated)
+                   select c.id, g.id, %(modele)s, 'whatsapp', coalesce(g.language, 'ewe'),
+                          now(),
+                          case when %(simule)s::boolean then now() end,
+                          case when %(simule)s::boolean then 'sent' else 'scheduled' end,
+                          %(simule)s::boolean
+                   from children c
+                   join guardians g on g.child_id = c.id and g.is_primary
+                   left join zones z on z.id = c.zone_id
+                   where %(zone)s::text is null or z.name = %(zone)s::text
+                   returning id""",
+                {"modele": corps.modele, "zone": corps.zone, "simule": s.settings.simulation},
+            )
+        ).fetchall()
+    return {"familles": len(lignes)}
 
 
 @router.post("/messages/{message_id}/ecoute")

@@ -276,6 +276,8 @@ export default function Pilotage() {
             <CarteEntete titre="Signaux à suivre" icone={AlertTriangle} />
             <ul className="divide-y divide-line">
               {[
+                // Le total, puis le détail : la somme des lignes doit se lire sans calcul.
+                { i: ShieldAlert, v: d.alertes, l: "alertes ouvertes au total (croissance, vaccin, acte de naissance)" },
                 { i: Baby, v: d.signaux.enRetard, l: d.textes.enRetard },
                 { i: Ruler, v: d.signaux.croissance, l: "enfants à surveiller ou à orienter pour la croissance" },
                 { i: Headphones, v: d.signaux.reponses, l: d.signaux.reponsesDetail },
