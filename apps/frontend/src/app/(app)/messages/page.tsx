@@ -169,8 +169,8 @@ export default function Messages() {
                         <Pastille ton={m.reponse === "1" ? "ok" : "danger"} point>
                           Réponse {m.reponse}
                         </Pastille>
-                      ) : m.enfantId === null ? (
-                        <Pastille ton="neutre">Annonce</Pastille>
+                      ) : m.local ? (
+                        <Pastille ton="neutre">{m.enfantId === null ? "Annonce · démo" : "Démo · non envoyé"}</Pastille>
                       ) : m.statut === "ecoute" ? (
                         <Pastille ton="info" icone={CheckCheck}>
                           Écouté

@@ -51,6 +51,9 @@ export type MessageEnvoye = {
   cible?: string; // pour les annonces
   nbFamilles?: number;
   origine: "famille" | "systeme";
+  /** Message préparé dans le navigateur (annonce, orientation) : rien n'est encore parti
+   *  vers WhatsApp. Le journal l'affiche comme « démo » et non comme « envoyé ». */
+  local?: boolean;
 };
 
 export type Session = {

@@ -569,6 +569,8 @@ function Journal({ enfant }: { enfant: Enfant }) {
                       <Pastille ton={m.reponse === "1" ? "ok" : "danger"} point>
                         Réponse {m.reponse}
                       </Pastille>
+                    ) : m.local ? (
+                      <Pastille ton="neutre">Démo · non envoyé</Pastille>
                     ) : (
                       <Pastille ton={m.statut === "ecoute" ? "info" : "neutre"}>{m.statut === "ecoute" ? "Écouté" : "Envoyé"}</Pastille>
                     )}

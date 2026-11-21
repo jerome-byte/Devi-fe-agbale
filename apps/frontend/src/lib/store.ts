@@ -134,13 +134,17 @@ export const useStore = create<Etat & Actions>()(
           void get().rafraichir();
         },
         deconnecter: () => {
+          // On revient toujours au jour réel : l'avance rapide ne doit pas survivre à une
+          // déconnexion, sinon la démo se rouvre plusieurs jours dans le futur.
           if (MODE_BASE) {
-            // On efface aussi les données gardées dans le navigateur.
-            set({ session: null, enfants: [], messages: [], dernierInscrit: null });
+            // On efface les données gardées dans le navigateur, sauf `dernierInscrit` :
+            // c'est un identifiant de démonstration, et le parcours de démonstration s'en
+            // sert pour rejoindre l'enfant après un changement de rôle (étapes 2 et 3).
+            set({ session: null, enfants: [], messages: [], decalageJours: 0 });
             void seDeconnecter();
             return;
           }
-          set({ session: null });
+          set({ session: null, decalageJours: 0 });
         },
 
         inscrire: async (data) => {
@@ -283,10 +287,12 @@ export const useStore = create<Etat & Actions>()(
 
         depister: (id, age, resultat) => {
           majEnfant(id, (e) => ({ ...e, depistages: { ...e.depistages, [String(age)]: resultat } }));
-          if (resultat === "a_orienter") envoyer("orientation", id);
+          if (resultat === "a_orienter") envoyer("orientation", id, { local: true });
         },
 
-        envoyerAnnonce: (messageId, cible, nbFamilles) => envoyer(messageId, null, { cible, nbFamilles }),
+        // Annonce préparée dans l'application : aucune route du backend ne l'envoie encore.
+        // Elle reste `local` pour que le journal ne la présente pas comme envoyée.
+        envoyerAnnonce: (messageId, cible, nbFamilles) => envoyer(messageId, null, { cible, nbFamilles, local: true }),
 
         revenirAujourdhui: () => set({ decalageJours: 0 }),
 
@@ -334,6 +340,10 @@ export const useStore = create<Etat & Actions>()(
       },
       onRehydrateStorage: () => () => {
         const s = useStore.getState();
+        // À chaque ouverture de l'application, on repart du jour réel. L'avance rapide
+        // ne doit jamais survivre à un rechargement ni à une déconnexion : sinon la démo
+        // se rouvre plusieurs jours dans le futur.
+        useStore.setState({ decalageJours: 0 });
         if (MODE_BASE) {
           // La session gardée dans le navigateur ne suffit pas : on vérifie celle de Supabase.
           void (async () => {

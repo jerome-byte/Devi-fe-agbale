@@ -35,6 +35,14 @@ fichier.
 
 Les deux scripts sont rejouables.
 
+### Rattrapage des alertes de croissance (21 nov.)
+
+`08_alertes_croissance.sql` crée les alertes `growth_surveiller` et `growth_orient`
+manquantes : `run_rules` n'examine que les pesées de moins de 45 jours et saute les
+enfants qui ont déjà une alerte de stagnation, si bien que des enfants « à surveiller »
+ou « à orienter » n'avaient aucune alerte. À exécuter une fois dans le SQL Editor,
+après `07`. Rejouable.
+
 ## Référentiels validés par Gerson
 
 | Fichier | Table | Vue de compatibilité |

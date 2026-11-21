@@ -16,7 +16,7 @@ export function scoreRisque(e: Enfant, messages: MessageEnvoye[], auJour: string
   const manques = calendrierEnfant(e, auJour).filter((r) => r.joursRetard > 0).length;
   const niveau = etatCroissance(e).niveau;
   const croissance = niveau === "a_surveiller" || niveau === "a_orienter";
-  const nonEcoutes = messages.filter((m) => m.enfantId === e.id && m.statut === "envoye" && ecartJours(m.date.slice(0, 10), auJour) <= 60).length;
+  const nonEcoutes = messages.filter((m) => m.enfantId === e.id && !m.local && m.statut === "envoye" && ecartJours(m.date.slice(0, 10), auJour) <= 60).length;
   return 3 * manques + (e.acteNaissance ? 0 : 2) + (croissance ? 2 : 0) + Math.min(nonEcoutes, 3);
 }
 
