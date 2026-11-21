@@ -67,11 +67,16 @@ async function profilDe(userId: string, email: string | undefined): Promise<Sess
   if (p.active === false) throw new Error("Ce compte est désactivé. Contactez le pilotage du district.");
   // Un administrateur utilise l'interface de pilotage.
   const role: Role = p.role === "admin" ? "pilotage" : p.role;
+  // Le lieu sert de périmètre : pour une éducatrice c'est sa garderie, jamais son centre.
+  const lieu =
+    role === "educatrice"
+      ? (p.daycares?.name ?? p.health_centers?.name ?? "Grand Lomé")
+      : (p.health_centers?.name ?? p.daycares?.name ?? "Grand Lomé");
   return {
     role,
     nom: p.full_name || email || "Utilisateur",
     fonction: FONCTIONS[role],
-    lieu: p.health_centers?.name ?? p.daycares?.name ?? "Grand Lomé",
+    lieu,
   };
 }
 
